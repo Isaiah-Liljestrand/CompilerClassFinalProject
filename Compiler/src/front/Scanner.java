@@ -13,6 +13,7 @@ public class Scanner {
 		boolean countcharacters = false;
 		boolean tokenize = false;
 		String filename = null;
+		Scanner test = new Scanner();
 		for (String arg: args) {
 			if (arg.equals("-s"))
 				countcharacters = true;
@@ -27,6 +28,51 @@ public class Scanner {
 				System.out.printf("Number of characters in file = %d\n", count_chars(lines));
 			}
 		}
+		else{
+			System.out.println("file not found");
+			String list[] = new String[1024];
+			list = test.tokenize("hello, (I am the) world"); //very rudementry tokenizer testing (splits on spaces and ()
+			for(int i = 0; i < 5; i++){
+				System.out.println(list[i]);
+			}
+		}
+	}
+	
+	private String[] tokenize(String in){
+		String list[] = new String[1024];
+		int j = 0;
+		char tmp;
+		for(int i = 0; i < in.length(); i++){
+			tmp = in.charAt(i);
+			System.out.println(tmp);
+			switch (tmp){
+			case '(':
+				for (int k = 1; k < in.length(); k++){ //looking for )
+					tmp = in.charAt(k);
+					if(tmp == ')'){
+						list[j] = in.substring(0, k + 1);
+						if(in.charAt(k + 1) == ' '){ //might not be a space after )
+							in = in.substring(k + 2);
+						}
+						else{
+							in = in.substring(k + 1);
+						}
+						j++;
+						i = -1; //-1 to off set the loop's ++
+						break;
+					}
+				}
+				break;
+			case ' ': //found end of a word
+				list[j] = in.substring(0, i); //grab word, minus spaces
+				in = in.substring(i + 1); //remove the word from the input string
+				j++; //index the list of tokens
+				i = -1; //reseting the loop as in no longer contains the prior word, -1 to off set the loop's ++
+				break;		
+			}
+		}
+		list[j] = in;
+		return list;
 	}
 	
 	private static List<String> read_file(String filename)
