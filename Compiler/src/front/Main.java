@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Scanner {
+public class Main {
 
 	public static void main(String[] args) {
 		boolean countcharacters = false;
 		boolean tokenize = false;
 		String filename = null;
-		Scanner test = new Scanner();
+		Main test = new Main();
 		for (String arg: args) {
 			if (arg.equals("-s"))
 				countcharacters = true;
@@ -31,45 +31,52 @@ public class Scanner {
 		else{
 			System.out.println("file not found");
 			String list[] = new String[1024];
-			list = test.tokenize("hello, (I am the) world"); //very rudementry tokenizer testing (splits on spaces and ()
-			for(int i = 0; i < 5; i++){
+			list = test.tokenize("hello (the) world 3+ (4)"); //very rudementry tokenizer testing (splits on spaces and ()
+			for(int i = 0; i < 10; i++){
 				System.out.println(list[i]);
 			}
 		}
 	}
 	
+	
 	private String[] tokenize(String in){
 		String list[] = new String[1024];
 		int j = 0;
 		char tmp;
+		in = in.trim();
 		for(int i = 0; i < in.length(); i++){
+			in=in.trim();
 			tmp = in.charAt(i);
-			System.out.println(tmp);
 			switch (tmp){
+			case ' ':
 			case '(':
-				for (int k = 1; k < in.length(); k++){ //looking for )
-					tmp = in.charAt(k);
-					if(tmp == ')'){
-						list[j] = in.substring(0, k + 1);
-						if(in.charAt(k + 1) == ' '){ //might not be a space after )
-							in = in.substring(k + 2);
-						}
-						else{
-							in = in.substring(k + 1);
-						}
-						j++;
-						i = -1; //-1 to off set the loop's ++
-						break;
-					}
-				}
-				break;
-			case ' ': //found end of a word
-				list[j] = in.substring(0, i); //grab word, minus spaces
-				in = in.substring(i + 1); //remove the word from the input string
+			case '{':
+				//System.out.println(tmp);
+				list[j] = in.substring(0, i+1); //grab word
+				in = in.substring(i+1); //remove the word from the input string
 				j++; //index the list of tokens
 				i = -1; //reseting the loop as in no longer contains the prior word, -1 to off set the loop's ++
-				break;		
+				break;
+			case ')':
+			case '}':
+			case ';':
+			case '=':
+			case '+':
+			case '-':
+			case '*':
+			case '/':
+				//System.out.println(tmp);
+				list[j] = in.substring(0, i); //grab word
+				list[j+1] = in.substring(i, i+1);
+				in = in.substring(i+1); //remove the word from the input string
+				j = j + 2; //index the list of tokens
+				i = -1; //reseting the loop as in no longer contains the prior word, -1 to off set the loop's ++
+				break;
+			default:
+				break;
 			}
+			//System.out.println(in);
+			in = in.trim();
 		}
 		list[j] = in;
 		return list;
