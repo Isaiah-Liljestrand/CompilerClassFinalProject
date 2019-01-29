@@ -17,11 +17,14 @@ public class Main {
 		boolean tokenize = false;
 		String filename = null;
 		//Main test = new Main();
+		//Check for command line arguments
 		for (String arg: args) {
-			if (arg.equals("-s"))
+			if (arg.equals("-s")) {
 				countcharacters = true;
-			if (arg == args[args.length - 1])
+			}
+			if (arg == args[args.length - 1]) {
 				filename = arg;
+			}
 		}
 		
 		if (filename != null)
@@ -45,29 +48,47 @@ public class Main {
 		}
 	}
 	
+	/**
+	 * Takes a string of text and splits it into tokens. Each possible token is defined using the global variable REGEX.
+	 * @param text a string of text to scan
+	 * @return A List of strings containing each found token
+	 */
 	private static List<String> tokenizeNew(String text) {
-		List<String> tokens = new ArrayList<String>();
+		//The basic logic of this function is to slowly build up tokens character by character.
+		//If the current token plus an additional character is still valid according to regular expressions, then the token is still valid.
+		//If the current token plus the new character is not valid, then the current token should be added to the list of valid tokens.
+		List<String> tokens = new ArrayList<String>(); //List to return
 		String currentToken = "";
+		//Loop through every character in the string
 		for (char character : text.toCharArray()) {
-			String currentWithNewChar = currentToken + character;
-			boolean validToken = false;
-			Matcher m = REGEX.matcher(currentWithNewChar);
-			if (m.matches()) {
+			String currentWithNewChar = currentToken + character; //Testing current token with appended new character
+			if (stringMatchesToken(currentWithNewChar)) { //If any regular expression matches, then the current token has the new character appended
 				currentToken = currentWithNewChar;
 			}
-			else {
-				Matcher test = REGEX.matcher(currentToken);
-				if (test.matches()) {
+			else { //If no regular expression matches, then the current token is finished.
+				//If the current token is valid, add it to our list of tokens
+				if (stringMatchesToken(currentToken)) {
 					tokens.add(currentToken);
 				}
+				//Reset current token to be the newest character
 				currentToken = String.valueOf(character);
 			}
 		}
-		Matcher test = REGEX.matcher(currentToken);
-		if (test.matches()) {
+		//At end of loop check if the current token is valid. If so, add it to our list of tokens.
+		if (stringMatchesToken(currentToken)) {
 			tokens.add(currentToken);
 		}
 		return tokens;
+	}
+	
+	/**
+	 * Checks if a string matches any token in the global variable REGEX
+	 * @param value The string to check
+	 * @return A boolean. True if there is a match. False otherwise
+	 */
+	private static boolean stringMatchesToken(String value) {
+		Matcher test = REGEX.matcher(value); //Checks for matchs using the global REGEX variable.
+		return test.matches();
 	}
 	
 	private static String[] tokenize(String in) {
@@ -113,6 +134,11 @@ public class Main {
 		return list;
 	}
 	
+	/**
+	 * Read in file and return a list of strings for each line
+	 * @param filename The name of the file to open.
+	 * @return a list of strings
+	 */
 	private static List<String> readFile(String filename)
 	{
 		List<String> lines = new ArrayList<String>();
@@ -139,12 +165,4 @@ public class Main {
 		}
 		return count;
 	}
-
-	/*private int count(String check){
-		int i = 0, cnt = 0;
-		for(i = 0; i < check.length(); i++){
-			cnt++;
-		}
-		return cnt;
-	}*/
 }
