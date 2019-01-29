@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,11 +25,25 @@ public class Main {
 				filename = arg;
 		}
 		
+		Scanner fname = new Scanner(System.in);
+		System.out.print("Input name of file: ");
+		filename = fname.nextLine().trim(); 
+		
 		if (filename != null)
 		{
+			String Bigstring = "";
 			List<String> lines = readFile(filename);
-			if (countcharacters) {
-				System.out.printf("Number of characters in file = %d\n", countChars(lines));
+			//if (countcharacters) {
+			System.out.printf("Number of characters in file = %d\n", countChars(lines));
+			//}
+			
+			System.out.printf(filename);
+			for (String line : lines) {
+				Bigstring = Bigstring + line;
+			}
+			List<String> tokens = tokenizeNew(Bigstring);
+			for (String tok : tokens) {
+				System.out.println(tok);
 			}
 		}
 		else{
