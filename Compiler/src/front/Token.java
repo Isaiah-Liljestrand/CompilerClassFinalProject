@@ -3,8 +3,6 @@ package front;
 public class Token {
 	String token;
 	int type;
-	Token left;
-	Token right;
 	
 	Token(){
 		
@@ -30,17 +28,4 @@ public class Token {
 	public void setType(int type) {
 		this.type = type;
 	}
-	public Token getLeft() {
-		return left;
-	}
-	public void setLeft(Token left) {
-		this.left = left;
-	}
-	public Token getRight() {
-		return right;
-	}
-	public void setRight(Token right) {
-		this.right = right;
-	}
-
 }

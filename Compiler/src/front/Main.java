@@ -6,14 +6,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
-
+	public static Pattern REGEX = Pattern.compile("(\\w+)|\\(|\\)|\\{|\\}");
+	
 	public static void main(String[] args) {
 		boolean countcharacters = false;
 		boolean tokenize = false;
 		String filename = null;
-		Main test = new Main();
+		//Main test = new Main();
 		for (String arg: args) {
 			if (arg.equals("-s"))
 				countcharacters = true;
@@ -23,28 +26,56 @@ public class Main {
 		
 		if (filename != null)
 		{
-			List<String> lines = read_file(filename);
+			List<String> lines = readFile(filename);
 			if (countcharacters) {
-				System.out.printf("Number of characters in file = %d\n", count_chars(lines));
+				System.out.printf("Number of characters in file = %d\n", countChars(lines));
 			}
 		}
 		else{
 			System.out.println("file not found");
-			String list[] = new String[1024];
-			list = test.tokenize("hello (the) world 3+ (4)"); //very rudementry tokenizer testing (splits on spaces and ()
-			for(int i = 0; i < 10; i++){
-				System.out.println(list[i]);
+			//String list[] = new String[1024];
+			//list = test.tokenize("hello (the) world 3+ (4)"); //very rudementry tokenizer testing (splits on spaces and ()
+			List<String> tokens = tokenizeNew("hello (the) world 32+ (4)");
+			for (String tok : tokens) {
+				System.out.println(tok);
 			}
+			/*for(int i = 0; i < 10; i++){
+				System.out.println(list[i]);
+			}*/
 		}
 	}
 	
+	private static List<String> tokenizeNew(String text) {
+		List<String> tokens = new ArrayList<String>();
+		String currentToken = "";
+		for (char character : text.toCharArray()) {
+			String currentWithNewChar = currentToken + character;
+			boolean validToken = false;
+			Matcher m = REGEX.matcher(currentWithNewChar);
+			if (m.matches()) {
+				currentToken = currentWithNewChar;
+			}
+			else {
+				Matcher test = REGEX.matcher(currentToken);
+				if (test.matches()) {
+					tokens.add(currentToken);
+				}
+				currentToken = String.valueOf(character);
+			}
+		}
+		Matcher test = REGEX.matcher(currentToken);
+		if (test.matches()) {
+			tokens.add(currentToken);
+		}
+		return tokens;
+	}
 	
-	private String[] tokenize(String in){
+	private static String[] tokenize(String in) {
 		String list[] = new String[1024];
 		int j = 0;
 		char tmp;
 		in = in.trim();
-		for(int i = 0; i < in.length(); i++){
+		for(int i = 0; i < in.length(); i++) {
 			in=in.trim();
 			tmp = in.charAt(i);
 			switch (tmp){
@@ -82,7 +113,7 @@ public class Main {
 		return list;
 	}
 	
-	private static List<String> read_file(String filename)
+	private static List<String> readFile(String filename)
 	{
 		List<String> lines = new ArrayList<String>();
 		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
@@ -100,7 +131,7 @@ public class Main {
 		return lines;
 	}
 	
-	private static int count_chars(List<String> lines) {
+	private static int countChars(List<String> lines) {
 		int count = 0;
 		for (String line: lines)
 		{
@@ -109,12 +140,11 @@ public class Main {
 		return count;
 	}
 
-	private int count(String check){
+	/*private int count(String check){
 		int i = 0, cnt = 0;
 		for(i = 0; i < check.length(); i++){
 			cnt++;
 		}
 		return cnt;
-	}
-
+	}*/
 }
