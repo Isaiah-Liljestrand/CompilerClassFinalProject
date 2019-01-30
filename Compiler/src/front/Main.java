@@ -11,34 +11,30 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Main {
-	public static Pattern REGEX = Pattern.compile("(\\w+)|\\(|\\)|\\{|\\}");
+	public static Pattern REGEX = Pattern.compile(buildRegularExpression());
 	
 	public static void main(String[] args) {
-		boolean countcharacters = false;
 		boolean tokenize = false;
 		String filename = null;
-		//Main test = new Main();
 		//Check for command line arguments
 		for (String arg: args) {
-			if (arg.equals("-s")) {
-				countcharacters = true;
-			}
 			if (arg == args[args.length - 1]) {
-				filename = arg;
+				if(args.length > 1) {
+					filename = arg;
+				}
 			}
 		}
 		
-		Scanner fname = new Scanner(System.in);
-		System.out.print("Input name of file: ");
-		filename = fname.nextLine().trim(); 
+		//To be removed when command line arguments are figured out
+		//Scanner fname = new Scanner(System.in);
+		//System.out.print("Input name of file: ");
+		//filename = fname.nextLine().trim();
 		
 		if (filename != null)
 		{
-			String Bigstring = "";
+			String Bigstring = null;
 			List<String> lines = readFile(filename);
-			//if (countcharacters) {
 			System.out.printf("Number of characters in file = %d\n", countChars(lines));
-			//}
 			
 			System.out.printf(filename);
 			for (String line : lines) {
@@ -51,15 +47,10 @@ public class Main {
 		}
 		else{
 			System.out.println("file not found");
-			//String list[] = new String[1024];
-			//list = test.tokenize("hello (the) world 3+ (4)"); //very rudementry tokenizer testing (splits on spaces and ()
 			List<String> tokens = tokenizeNew("hello (the) world 32+ (4)");
 			for (String tok : tokens) {
 				System.out.println(tok);
 			}
-			/*for(int i = 0; i < 10; i++){
-				System.out.println(list[i]);
-			}*/
 		}
 	}
 	
@@ -102,7 +93,7 @@ public class Main {
 	 * @return A boolean. True if there is a match. False otherwise
 	 */
 	private static boolean stringMatchesToken(String value) {
-		Matcher test = REGEX.matcher(value); //Checks for matchs using the global REGEX variable.
+		Matcher test = REGEX.matcher(value); //Checks for matches using the global REGEX variable.
 		return test.matches();
 	}
 	
@@ -179,5 +170,24 @@ public class Main {
 			count += line.length();
 		}
 		return count;
+	}
+	
+	/**
+	 * Builds a regular expression to separate out tokens
+	 * @return string usable by Pattern.compile()
+	 */
+	private static String buildRegularExpression() {
+		String string = "\\{|\\}|"; // { and }
+		string = string + "\\[|\\]|"; // [ and ]
+		string = string + "\\(|\\)|"; // ( and )
+		string = string + "[a-zA-Z]\\w*|"; // accepts any expressions that only use letters and digits that start with a letter
+		string = string + "\\d\\d*|"; // accepts any length of number
+		string = string + "/|\\*|"; // / and *
+		string = string + "\\+|\\-|"; // + and -
+		string = string + "\\^|\\|"; // ^ and |
+		string = string + "&|%|"; // & and %
+		string = string + "\\!|\\?|"; // ! and ?
+		string = string + ";";
+		return string;
 	}
 }
