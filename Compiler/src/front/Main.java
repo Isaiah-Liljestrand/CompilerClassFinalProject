@@ -26,28 +26,29 @@ public class Main {
 		}
 		
 		//To be removed when command line arguments are figured out
-		//Scanner fname = new Scanner(System.in);
-		//System.out.print("Input name of file: ");
-		//filename = fname.nextLine().trim();
+		Scanner fname = new Scanner(System.in);
+		System.out.print("Input name of file: ");
+		filename = fname.nextLine().trim();
+		fname.close();
 		
 		if (filename != null)
 		{
-			String Bigstring = null;
+			String bigString = "";
 			List<String> lines = readFile(filename);
 			System.out.printf("Number of characters in file = %d\n", countChars(lines));
 			
-			System.out.printf(filename);
+			System.out.println(filename);
 			for (String line : lines) {
-				Bigstring = Bigstring + line;
+				bigString = bigString + line;
 			}
-			List<String> tokens = tokenizeNew(Bigstring);
+			List<String> tokens = tokenize(bigString);
 			for (String tok : tokens) {
 				System.out.println(tok);
 			}
 		}
 		else{
 			System.out.println("file not found");
-			List<String> tokens = tokenizeNew("hello (the) world 32+ (4)");
+			List<String> tokens = tokenize("hello (the) world 32+ (4)");
 			for (String tok : tokens) {
 				System.out.println(tok);
 			}
@@ -59,7 +60,7 @@ public class Main {
 	 * @param text a string of text to scan
 	 * @return A List of strings containing each found token
 	 */
-	private static List<String> tokenizeNew(String text) {
+	private static List<String> tokenize(String text) {
 		//The basic logic of this function is to slowly build up tokens character by character.
 		//If the current token plus an additional character is still valid according to regular expressions, then the token is still valid.
 		//If the current token plus the new character is not valid, then the current token should be added to the list of valid tokens.
@@ -95,49 +96,6 @@ public class Main {
 	private static boolean stringMatchesToken(String value) {
 		Matcher test = REGEX.matcher(value); //Checks for matches using the global REGEX variable.
 		return test.matches();
-	}
-	
-	private static String[] tokenize(String in) {
-		String list[] = new String[1024];
-		int j = 0;
-		char tmp;
-		in = in.trim();
-		for(int i = 0; i < in.length(); i++) {
-			in=in.trim();
-			tmp = in.charAt(i);
-			switch (tmp){
-			case ' ':
-			case '(':
-			case '{':
-				//System.out.println(tmp);
-				list[j] = in.substring(0, i+1); //grab word
-				in = in.substring(i+1); //remove the word from the input string
-				j++; //index the list of tokens
-				i = -1; //reseting the loop as in no longer contains the prior word, -1 to off set the loop's ++
-				break;
-			case ')':
-			case '}':
-			case ';':
-			case '=':
-			case '+':
-			case '-':
-			case '*':
-			case '/':
-				//System.out.println(tmp);
-				list[j] = in.substring(0, i); //grab word
-				list[j+1] = in.substring(i, i+1);
-				in = in.substring(i+1); //remove the word from the input string
-				j = j + 2; //index the list of tokens
-				i = -1; //reseting the loop as in no longer contains the prior word, -1 to off set the loop's ++
-				break;
-			default:
-				break;
-			}
-			//System.out.println(in);
-			in = in.trim();
-		}
-		list[j] = in;
-		return list;
 	}
 	
 	/**
@@ -187,7 +145,7 @@ public class Main {
 		string = string + "\\^|\\|"; // ^ and |
 		string = string + "&|%|"; // & and %
 		string = string + "\\!|\\?|"; // ! and ?
-		string = string + ";";
+		string = string + ";|\\=";      //; and =
 		return string;
 	}
 }

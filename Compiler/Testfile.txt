@@ -1,1 +1,8 @@
-HelloWorld
+int main() {
+	//Comment
+	int i = 5;
+	int x = 5;
+	int y = i * x;
+	printf("string literal");
+	return y;
+}
