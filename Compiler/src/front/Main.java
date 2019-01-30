@@ -145,7 +145,8 @@ public class Main {
 		string = string + "\\^|\\|"; // ^ and |
 		string = string + "&|%|"; // & and %
 		string = string + "\\!|\\?|"; // ! and ?
-		string = string + ";|\\=";      //; and =
+		string = string + ";|\\=|";      //; and =
+		string = string + "0x[a-f0-9][a-f0-9]*"; // accepts hexidecimal input
 		return string;
 	}
 }
