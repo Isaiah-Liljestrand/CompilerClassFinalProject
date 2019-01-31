@@ -9,10 +9,16 @@ public class Token {
 	}
 	Token(String token){
 		this.token = token;
+		this.type = Interpret(token);
 	}
 	Token(String token, int type){
 		this.token = token;
 		this.type = type;
+	}
+	
+	//need to do
+	int Interpret(String Token){ //interpreting what each token is
+		return 0;
 	}
 	
 	
