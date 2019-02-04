@@ -41,9 +41,9 @@ public class Main {
 			for (String line : lines) {
 				bigString = bigString + line;
 			}
-			List<String> tokens = tokenize(bigString);
-			for (String tok : tokens) {
-				System.out.println(tok);
+			List<Token> tokens = tokenize(bigString);
+			for (Token tok : tokens) {
+				System.out.println(tok.token);
 			}
 		}
 		else{

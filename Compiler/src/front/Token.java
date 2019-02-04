@@ -13,7 +13,6 @@ public class Token {
 
 		//assignment arithmatic
 		assignmentOperator,
-		equalsOperator,
 		incrementOperator,
 		decrementOperator,
 		subtractionAssignmentOperator,
@@ -22,6 +21,8 @@ public class Token {
 		divisionAssignmentOperator,
 
 		//logic operators
+		notEqualOperator,
+		equalsOperator,
 		orLogicOperator,
 		andLogicOperator,
 		
@@ -41,9 +42,11 @@ public class Token {
 		semicolon,
 		
 		//Words ???? I don't know what to call this section
+		//keyword needs to be split up into sections such as identifier, and loops and such
 		variable,
-		identifier,
+		number,
 		function,
+		keyword
 	};
 	
 	
@@ -59,8 +62,30 @@ public class Token {
 	}
 	
 	public void addTokenIdentity() {
+		this.type = null;
 		char t = this.token.charAt(0);
 		switch(t) {
+		case ';':
+			this.type = type_enum.semicolon;
+			break;
+		case '(':
+			this.type = type_enum.openParenthesis;
+			break;
+		case ')':
+			this.type = type_enum.closedParenthesis;
+			break;
+		case '{':
+			this.type = type_enum.openCurlyBracket;
+			break;
+		case '}':
+			this.type = type_enum.closedCurlyBracket;
+			break;
+		case '[':
+			this.type = type_enum.openSquareBracket;
+			break;
+		case ']':
+			this.type = type_enum.closedSquareBracket;
+			break;
 		case '+':
 			if(this.token.equals("+=")) {
 				this.type = type_enum.additionAssignmentOperator;
@@ -104,7 +129,11 @@ public class Token {
 			}
 			break;
 		case '!':
-			this.type = type_enum.notOperator;
+			if(this.token.equals("!=")) {
+				this.type = type_enum.notEqualOperator;
+			} else {
+				this.type = type_enum.notOperator;
+			}
 			break;
 		case '^':
 			this.type = type_enum.xorOperator;
@@ -124,7 +153,32 @@ public class Token {
 			}
 			break;
 		}
-		String keywords[] = {"auto", "break"};//...
+		if(this.type != null) {
+			return;
+		}
+		//list will be shortened at some point as many of these won't be used
+		String keywords[] = {"auto", "break", "case", "char", "const", "continue",
+				"default", "do", "double", "else", "enum", "extern", "float", "for",
+				"goto", "if", "int", "long", "register", "return", "short", "signed",
+				"sizeof", "static", "struct", "switch", "typedef", "union", "unsigned",
+				"void", "volatile", "while"};
+		for(String keyword : keywords) {
+			if(keyword.equals(this.token)) {
+				//intent to make enum of every keyword individually and account for it here
+				this.type = type_enum.keyword;
+				return;
+			}
+		}
+		//could be written better, temporary fix
+		if(this.token.charAt(0) >= '0' && this.token.charAt(0) <= '9') {
+			this.type = type_enum.number;
+			if(this.token.subSequence(0, 1).equals("0x")) {
+				//todo: convert hex number to decimal form
+			}
+			return;
+		}
+		//function support to be added
+		this.type = type_enum.variable;
 	}
 	
 	public String getToken() {
