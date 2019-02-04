@@ -1,5 +1,4 @@
 int main() {
-	//Comment
-	printf("string literal");
+	int y;
 	return y;
 }

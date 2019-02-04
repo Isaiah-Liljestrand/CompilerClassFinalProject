@@ -8,60 +8,39 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Matcher;
 
 public class Main {
-	
-	
 	public static void main(String[] args) {
 		boolean tokenize = false;
 		String filename = null;
 		Scan test;
 		//Check for command line arguments
 		for (String arg: args) {
+			if (arg.compareTo("-t") == 0) {
+				tokenize = true;
+			}
+			
 			if (arg == args[args.length - 1]) {
 				if(args.length > 1) {
 					filename = arg;
 				}
 			}
 		}
-		filename = "Testfile.txt";
-		//To be removed when command line arguments are figured out
-		Scanner fname = new Scanner(System.in);
-		System.out.print("Input name of file: ");
-		filename = fname.nextLine().trim();
-		fname.close();
 		
-		if (filename != null)
-		{
-			test = new Scan(filename);
-			
-
+		if (filename == null) {
+			Scanner fname = new Scanner(System.in);
+			System.out.print("Input name of file: ");
+			filename = fname.nextLine().trim();
+			fname.close();
 		}
-		else{
-			test = new Scan();
-		}
+		
+		List<String> lines = readFile(filename);
+		String file = String.join("", lines);
+		test = new Scan(file);
+		
+		if (tokenize)
+			test.PrintTokens();
 	}
-	
-
-
-			/*System.out.println(filename);
-			for (String line : lines) {
-				bigString = bigString + line;
-			}
-			List<Token> tokens = tokenize(bigString);
-			for (Token tok : tokens) {
-				System.out.println(tok.token);
-			}
-		}
-		else{
-			System.out.println("file not found");
-			List<Token> tokens = tokenize("hello (the) world 32+ (4)");
-			for (Token tok : tokens) {
-				System.out.println(tok.token);
-			}
-		}
-	}*/
 
 	
 	/**

@@ -1,9 +1,5 @@
 package front;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -15,35 +11,28 @@ import java.util.regex.Pattern;
  * Named Scan as Scanner already exists in java
  */
 public class Scan {
-	
-	List<Token> tokens;
+	private List<Token> tokens;
+	private static String defaultText = "int main() {\n	int x;\n	return x;\n}\n";
 	
 	/**
 	 * Basic Constructor
 	 */
 	Scan(){
-		System.out.println("file not found");
-		tokens = tokenize("hello (the) world 32+ (4)");
-		PrintOut();
+		tokens = tokenize(defaultText);
 	}
 	
 	/**
 	 * Constructor with file name as an argument
 	 */
-	Scan(String Fname){
-		String bigString = "";
-		List<String> lines = readFile(Fname);
-		System.out.printf("Number of characters in file = %d\n", countChars(lines));
-		
-		System.out.println(Fname);
-		for (String line : lines) {
-			bigString = bigString + line;
-		}
-		tokens = tokenize(bigString);
-		PrintOut();
+	Scan(String file){
+		tokens = tokenize(file);
 	}
 	
-	public void PrintOut(){
+	public List<Token> GetTokens() {
+		return tokens;
+	}
+	
+	public void PrintTokens(){
 		for (Token tok : tokens) {
 			System.out.println(tok.token);
 		}
@@ -102,37 +91,6 @@ public class Scan {
 		return test.matches();
 	}
 	
-	/**
-	 * Read in file and return a list of strings for each line
-	 * @param filename The name of the file to open.
-	 * @return a list of strings
-	 */
-	public static List<String> readFile(String filename)
-	{
-		List<String> lines = new ArrayList<String>();
-		try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-		    String line;
-		    while ((line = br.readLine()) != null) {
-		       lines.add(line);
-		    }
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return lines;
-	}
-	
-	public static int countChars(List<String> lines) {
-		int count = 0;
-		for (String line: lines)
-		{
-			count += line.length();
-		}
-		return count;
-	}
 	
 	/**
 	 * Builds a regular expression to separate out tokens
