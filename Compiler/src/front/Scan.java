@@ -33,8 +33,8 @@ public class Scan {
 	}
 	
 	public void PrintTokens(){
-		for (Token tok : tokens) {
-			System.out.println(tok.token);
+		for (Token tok : this.tokens) {
+			System.out.println(tok.token + "\t" + tok.type.toString());
 		}
 	}
 	
@@ -54,7 +54,6 @@ public class Scan {
 		//If the current token plus the new character is not valid, then the current token should be added to the list of valid tokens.
 		List<Token> tokens = new ArrayList<Token>(); //List to return
 		String currentToken = "";
-		Token token = new Token();
 		//Loop through every character in the string
 		for (char character : text.toCharArray()) {
 			String currentWithNewChar = currentToken + character; //Testing current token with appended new character
@@ -64,6 +63,7 @@ public class Scan {
 			else { //If no regular expression matches, then the current token is finished.
 				//If the current token is valid, add it to our list of tokens
 				if (stringMatchesToken(currentToken)) {
+					Token token = new Token();
 					token.setToken(currentToken);
 					token.addTokenIdentity();
 					tokens.add(token);
@@ -74,6 +74,7 @@ public class Scan {
 		}
 		//At end of loop check if the current token is valid. If so, add it to our list of tokens.
 		if (stringMatchesToken(currentToken)) {
+			Token token = new Token();
 			token.setToken(currentToken);
 			token.addTokenIdentity();
 			tokens.add(token);
