@@ -63,9 +63,7 @@ public class Scan {
 			else { //If no regular expression matches, then the current token is finished.
 				//If the current token is valid, add it to our list of tokens
 				if (stringMatchesToken(currentToken)) {
-					Token token = new Token();
-					token.setToken(currentToken);
-					token.addTokenIdentity();
+					Token token = new Token(currentToken);
 					tokens.add(token);
 				}
 				//Reset current token to be the newest character
@@ -74,9 +72,7 @@ public class Scan {
 		}
 		//At end of loop check if the current token is valid. If so, add it to our list of tokens.
 		if (stringMatchesToken(currentToken)) {
-			Token token = new Token();
-			token.setToken(currentToken);
-			token.addTokenIdentity();
+			Token token = new Token(currentToken);
 			tokens.add(token);
 		}
 		return tokens;
@@ -110,13 +106,17 @@ public class Scan {
 		string = string + "\\!|"; 					// !
 		string = string + ";|\\=|";      			// ; and =
 		string = string + "0x[a-f0-9]++"; 			// Accepts hex input
-		string = string + "\".*\"|";  				// Accepts string literals
 		string = string + "\\+\\+|"; 				// ++
 		string = string + "\\-\\-|"; 				// --
 		string = string + "\\-\\=";  				// -=
 		string = string + "\\+\\=";  				// +=
 		string = string + "\\*\\="; 				// *=
 		string = string + "\\/\\=";  				// /=
+		string = string + "\\&\\=";					// &=
+		string = string + "\\|\\=";					// |=
+		string = string + "\\%\\=";					// %=
+		string = string + "\\^\\=";					// ^=
+		string = string + "\\!\\=";					// !=
 		string = string + "\\=\\=";					// ==
 		string = string + "\\&\\&";					// &&
 		string = string + "\\|\\|";					// ||
