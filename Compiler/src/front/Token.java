@@ -62,8 +62,8 @@ public class Token {
 		this.type = type;
 	}
 
-	int Interpret(String Token){ //interpreting what each token is
-		return 0;
+	type_enum Interpret(String Token){ //interpreting what each token is
+		return type_enum.keyword;
 	}
 
 	public void addTokenIdentity() {

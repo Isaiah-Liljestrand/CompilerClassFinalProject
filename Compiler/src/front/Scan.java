@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  */
 public class Scan {
 	
-	List<String> tokens;
+	List<Token> tokens;
 	
 	/**
 	 * Basic Constructor
@@ -44,8 +44,8 @@ public class Scan {
 	}
 	
 	public void PrintOut(){
-		for (String tok : tokens) {
-			System.out.println(tok);
+		for (Token tok : tokens) {
+			System.out.println(tok.token);
 		}
 	}
 	
@@ -59,22 +59,25 @@ public class Scan {
 	 * @param text a string of text to scan
 	 * @return A List of strings containing each found token
 	 */
-	public static List<String> tokenize(String text) {
+	private static List<Token> tokenize(String text) {
 		//The basic logic of this function is to slowly build up tokens character by character.
 		//If the current token plus an additional character is still valid according to regular expressions, then the token is still valid.
 		//If the current token plus the new character is not valid, then the current token should be added to the list of valid tokens.
-		List<String> tokens = new ArrayList<String>(); //List to return
+		List<Token> tokens = new ArrayList<Token>(); //List to return
 		String currentToken = "";
+		Token token = new Token();
 		//Loop through every character in the string
 		for (char character : text.toCharArray()) {
 			String currentWithNewChar = currentToken + character; //Testing current token with appended new character
-			if (stringMatchesToken(currentWithNewChar)) { //If any regular expression matches, then the current token has the new character appended
+			if (stringMatchesToken(currentWithNewChar) || (currentWithNewChar.charAt(0) == '\"' && !currentWithNewChar.substring(1).contains("\""))) { //If any regular expression matches, then the current token has the new character appended
 				currentToken = currentWithNewChar;
 			}
 			else { //If no regular expression matches, then the current token is finished.
 				//If the current token is valid, add it to our list of tokens
 				if (stringMatchesToken(currentToken)) {
-					tokens.add(currentToken);
+					token.setToken(currentToken);
+					token.addTokenIdentity();
+					tokens.add(token);
 				}
 				//Reset current token to be the newest character
 				currentToken = String.valueOf(character);
@@ -82,7 +85,9 @@ public class Scan {
 		}
 		//At end of loop check if the current token is valid. If so, add it to our list of tokens.
 		if (stringMatchesToken(currentToken)) {
-			tokens.add(currentToken);
+			token.setToken(currentToken);
+			token.addTokenIdentity();
+			tokens.add(token);
 		}
 		return tokens;
 	}
@@ -134,18 +139,28 @@ public class Scan {
 	 * @return string usable by Pattern.compile()
 	 */
 	private static String buildRegularExpression() {
-		String string = "\\{|\\}|"; // { and }
-		string = string + "\\[|\\]|"; // [ and ]
-		string = string + "\\(|\\)|"; // ( and )
-		string = string + "[a-zA-Z]\\w*|"; // accepts any expressions that only use letters and digits that start with a letter
-		string = string + "\\d\\d*|"; // accepts any length of number
-		string = string + "/|\\*|"; // / and *
-		string = string + "\\+|\\-|"; // + and -
-		string = string + "\\^|\\|"; // ^ and |
-		string = string + "&|%|"; // & and %
-		string = string + "\\!|\\?|"; // ! and ?
-		string = string + ";|\\=|";      //; and =
-		string = string + "0x[a-f0-9][a-f0-9]*"; // accepts hexidecimal input
+		String string = "\\{|\\}|"; 				// { and }
+		string = string + "\\[|\\]|"; 				// [ and ]
+		string = string + "\\(|\\)|"; 				// ( and )
+		string = string + "[a-zA-Z]\\w*|"; 			// accepts any expressions that only use letters and digits that start with a letter
+		string = string + "\\d++|"; 				// accepts any length of number
+		string = string + "/|\\*|"; 				// / and *
+		string = string + "\\+|\\-|"; 				// + and -
+		string = string + "\\^|\\|"; 				// ^ and |
+		string = string + "&|%|"; 					// & and %
+		string = string + "\\!|"; 					// !
+		string = string + ";|\\=|";      			// ; and =
+		string = string + "0x[a-f0-9]++"; 			// Accepts hex input
+		string = string + "\".*\"|";  				// Accepts string literals
+		string = string + "\\+\\+|"; 				// ++
+		string = string + "\\-\\-|"; 				// --
+		string = string + "\\-\\=";  				// -=
+		string = string + "\\+\\=";  				// +=
+		string = string + "\\*\\="; 				// *=
+		string = string + "\\/\\=";  				// /=
+		string = string + "\\=\\=";					// ==
+		string = string + "\\&\\&";					// &&
+		string = string + "\\|\\|";					// ||
 		return string;
 	}
 }
