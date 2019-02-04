@@ -6,6 +6,7 @@ function
         
 deceleration
         :keyword assignment
+        |keyword variable
         ;
 
 assignment
@@ -25,7 +26,6 @@ arithmetic_expression
         |variable unary_operator variable
         |number
         |variable
-        |
         ;
         
 return
@@ -53,6 +53,7 @@ else
         :'else' '{' 
                 [statement ';']*
         '}'
+        | //nothing
         ;
 
 boolean_expression //not sure if complete
@@ -64,7 +65,7 @@ boolean_expression //not sure if complete
         
 goto
         :'goto' variable
-        '
+        ;
         
 variable
         :letter identifier*
@@ -104,4 +105,5 @@ statement
         |if
         |while
         |arithmetic_expression
-        |deceleration //if we want to allow for 'return int i = 10'
+        |deceleration //if we want to allow for 'return int i = 10;'
+        ;
