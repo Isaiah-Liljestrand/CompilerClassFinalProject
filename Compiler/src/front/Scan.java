@@ -17,14 +17,14 @@ public class Scan {
 	/**
 	 * Basic Constructor
 	 */
-	Scan(){
+	Scan() {
 		tokens = tokenize(defaultText);
 	}
 	
 	/**
 	 * Constructor with file name as an argument
 	 */
-	Scan(String file){
+	Scan(String file) {
 		tokens = tokenize(file);
 	}
 	
@@ -63,8 +63,7 @@ public class Scan {
 			else { //If no regular expression matches, then the current token is finished.
 				//If the current token is valid, add it to our list of tokens
 				if (stringMatchesToken(currentToken)) {
-					Token token = new Token(currentToken);
-					tokens.add(token);
+					tokens.add(new Token(currentToken));
 				}
 				//Reset current token to be the newest character
 				currentToken = String.valueOf(character);
@@ -72,8 +71,7 @@ public class Scan {
 		}
 		//At end of loop check if the current token is valid. If so, add it to our list of tokens.
 		if (stringMatchesToken(currentToken)) {
-			Token token = new Token(currentToken);
-			tokens.add(token);
+			tokens.add(new Token(currentToken));
 		}
 		return tokens;
 	}
@@ -95,7 +93,6 @@ public class Scan {
 	 */
 	private static String buildRegularExpression() {
 		String string = "\\{|\\}|"; 				// { and }
-		string = string + "\\[|\\]|"; 				// [ and ]
 		string = string + "\\(|\\)|"; 				// ( and )
 		string = string + "[a-zA-Z]\\w*|"; 			// accepts any expressions that only use letters and digits that start with a letter
 		string = string + "\\d++|"; 				// accepts any length of number

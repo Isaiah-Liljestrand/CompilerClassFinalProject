@@ -39,17 +39,13 @@ public class Token {
 		//brackets and semicolon
 		openCurlyBracket,
 		closedCurlyBracket,
-		openSquareBracket,
-		closedSquareBracket,
 		openParenthesis,
 		closedParenthesis,
 		semicolon,
 		
-		//Words ???? I don't know what to call this section
-		//keyword needs to be split up into sections such as identifier, and loops and such
-		variable,
+		//identifiers and keywordsh
 		number,
-		function,
+		identifier,
 		keyword
 	};
 	
@@ -61,7 +57,7 @@ public class Token {
 		this.token = token;
 		this.addTokenIdentity();
 	}
-	Token(String token, type_enum type){
+	Token(String token, type_enum type) {
 		this.token = token;
 		this.type = type;
 	}
@@ -85,12 +81,6 @@ public class Token {
 			break;
 		case '}':
 			this.type = type_enum.closedCurlyBracket;
-			break;
-		case '[':
-			this.type = type_enum.openSquareBracket;
-			break;
-		case ']':
-			this.type = type_enum.closedSquareBracket;
 			break;
 		case '+':
 			if(this.token.equals("+=")) {
@@ -195,9 +185,10 @@ public class Token {
 			}
 			return;
 		}
-		//function support to be added
-		this.type = type_enum.variable;
+		//function or variable
+		this.type = type_enum.identifier;
 	}
+	
 	
 	public String getToken() {
 		return token;
