@@ -1,0 +1,109 @@
+function
+        :type variable '(' [type variable]* ')' '{' 
+                [statement ';']*
+        '}'
+        ;
+        
+deceleration
+        :keyword assignment
+        |keyword variable
+        ;
+
+assignment
+        :variable '=' arithmetic_expression
+        ;
+        
+keyword
+        :'int'
+        |... //expand list as needed
+        ;
+        
+
+arithmetic_expression
+        :number unary_operator number
+        |number unary_operator variable
+        |variable unary_operator number
+        |variable unary_operator variable
+        |number
+        |variable
+        ;
+        
+return
+        :'return' statement ';'
+        ;
+        
+break
+        "'break' ';'
+        ;
+        
+while
+        :'while' '(' boolean_expression ')' '{'
+                [statement ';']*
+        '}'
+        ;
+        
+if
+        :'if' '(' boolean_expression ')' '{'
+                [statement ';']*
+        '}'
+        else
+        ;
+        
+else
+        :'else' '{' 
+                [statement ';']*
+        '}'
+        | //nothing
+        ;
+
+boolean_expression //not sure if complete
+        :'True'
+        |'False'
+        |variable
+        |number
+        ;
+        
+goto
+        :'goto' variable
+        ;
+        
+variable
+        :letter identifier*
+        ;
+        
+identifier
+        :number
+        |letter
+        |'_'
+        ;
+        
+letter
+        :'a-z'
+        |'A-Z'
+        ;
+        
+number
+        :'0-9'*
+        ;
+        
+unary_operator
+	:'&'
+	|'*'
+	|'+'
+	|'-'
+	|'~'
+	|'!'
+	;
+        
+statement
+        : //nothing
+        |unary_operator
+        |number
+        |identifier
+        |variable
+        |boolean_expression
+        |if
+        |while
+        |arithmetic_expression
+        |deceleration //if we want to allow for 'return int i = 10;'
+        ;
