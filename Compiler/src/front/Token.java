@@ -19,6 +19,10 @@ public class Token {
 		additionAssignmentOperator,
 		multiplicationAssignmentOperator,
 		divisionAssignmentOperator,
+		andAssignmentOperator,
+		orAssignmentOperator,
+		xorAssignmentOperator,
+		modulusAssignmentOperator,
 
 		//logic operators
 		notEqualOperator,
@@ -35,17 +39,13 @@ public class Token {
 		//brackets and semicolon
 		openCurlyBracket,
 		closedCurlyBracket,
-		openSquareBracket,
-		closedSquareBracket,
 		openParenthesis,
 		closedParenthesis,
 		semicolon,
 		
-		//Words ???? I don't know what to call this section
-		//keyword needs to be split up into sections such as identifier, and loops and such
-		variable,
+		//identifiers and keywordsh
 		number,
-		function,
+		identifier,
 		keyword
 	};
 	
@@ -55,18 +55,15 @@ public class Token {
 	}
 	Token(String token){
 		this.token = token;
-		this.type = Interpret(token);
+		this.addTokenIdentity();
 	}
-	Token(String token, type_enum type){
+	Token(String token, type_enum type) {
 		this.token = token;
 		this.type = type;
 	}
 
-	type_enum Interpret(String Token){ //interpreting what each token is
-		return type_enum.keyword;
-	}
 
-	public void addTokenIdentity() {
+	private void addTokenIdentity() {
 		this.type = null;
 		char t = this.token.charAt(0);
 		switch(t) {
@@ -84,12 +81,6 @@ public class Token {
 			break;
 		case '}':
 			this.type = type_enum.closedCurlyBracket;
-			break;
-		case '[':
-			this.type = type_enum.openSquareBracket;
-			break;
-		case ']':
-			this.type = type_enum.closedSquareBracket;
 			break;
 		case '+':
 			if(this.token.equals("+=")) {
@@ -124,7 +115,11 @@ public class Token {
 			}
 			break;
 		case '%':
-			this.type = type_enum.modulusOperator;
+			if(this.token.equals("%=")) {
+				this.type = type_enum.modulusAssignmentOperator;
+			} else {
+				this.type = type_enum.modulusOperator;
+			}
 			break;
 		case '=':
 			if(this.token.equals("==")) {
@@ -141,18 +136,26 @@ public class Token {
 			}
 			break;
 		case '^':
-			this.type = type_enum.xorOperator;
+			if(this.token.equals("^=")) {
+				this.type = type_enum.xorAssignmentOperator;
+			} else {
+				this.type = type_enum.xorOperator;
+			}
 			break;
 		case '|':
 			if(this.token.equals("||")) {
 				this.type = type_enum.orLogicOperator;
+			} else if (this.token.equals("|=")) {
+				this.type = type_enum.orAssignmentOperator;
 			} else {
 				this.type = type_enum.orOperator;
 			}
 			break;
 		case '&':
-			if(this.token.contentEquals("&&")) {
+			if(this.token.equals("&&")) {
 				this.type = type_enum.andLogicOperator;
+			} else if (this.token.equals("&=")){
+				this.type = type_enum.andAssignmentOperator;
 			} else {
 				this.type = type_enum.andOperator;
 			}
@@ -182,9 +185,10 @@ public class Token {
 			}
 			return;
 		}
-		//function support to be added
-		this.type = type_enum.variable;
+		//function or variable
+		this.type = type_enum.identifier;
 	}
+	
 	
 	public String getToken() {
 		return token;
