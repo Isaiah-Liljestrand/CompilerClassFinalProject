@@ -4,6 +4,8 @@ public class Token {
 	String token;
 	type_enum type;
 	enum type_enum {
+		lineNumber,
+		
 		//basic arithmatic
 		additionOperator,
 		subtractionOperator,
@@ -147,6 +149,9 @@ public class Token {
 		}
 		if(this.type != null) {
 			return;
+		}
+		if(this.token.charAt(0) == '@') {
+			this.type = type_enum.lineNumber;
 		}
 		//list will be shortened at some point as many of these won't be used
 		String keywords[] = {"auto", "break", "case", "char", "const", "continue",
