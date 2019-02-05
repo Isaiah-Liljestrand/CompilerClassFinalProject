@@ -35,8 +35,7 @@ public class Main {
 		}
 		
 		List<String> lines = readFile(filename);
-		String file = String.join("", lines);
-		test = new Scan(file);
+		test = new Scan(lines);
 		
 		if (tokenize)
 			test.PrintTokens();

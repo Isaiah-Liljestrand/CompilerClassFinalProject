@@ -12,19 +12,11 @@ import java.util.regex.Pattern;
  */
 public class Scan {
 	private List<Token> tokens;
-	private static String defaultText = "int main() {\n	int x;\n	return x;\n}\n";
-	
-	/**
-	 * Basic Constructor
-	 */
-	Scan() {
-		tokens = tokenize(defaultText);
-	}
 	
 	/**
 	 * Constructor with file name as an argument
 	 */
-	Scan(String file) {
+	Scan(List<String> file) {
 		tokens = tokenize(file);
 	}
 	
@@ -48,30 +40,34 @@ public class Scan {
 	 * @param text a string of text to scan
 	 * @return A List of strings containing each found token
 	 */
-	private static List<Token> tokenize(String text) {
+	private static List<Token> tokenize(List<String> text) {
 		//The basic logic of this function is to slowly build up tokens character by character.
 		//If the current token plus an additional character is still valid according to regular expressions, then the token is still valid.
 		//If the current token plus the new character is not valid, then the current token should be added to the list of valid tokens.
 		List<Token> tokens = new ArrayList<Token>(); //List to return
 		String currentToken = "";
+		int lineNumber = 0;
 		//Loop through every character in the string
-		for (char character : text.toCharArray()) {
-			String currentWithNewChar = currentToken + character; //Testing current token with appended new character
-			if (stringMatchesToken(currentWithNewChar) || (currentWithNewChar.charAt(0) == '\"' && !currentWithNewChar.substring(1).contains("\""))) { //If any regular expression matches, then the current token has the new character appended
-				currentToken = currentWithNewChar;
-			}
-			else { //If no regular expression matches, then the current token is finished.
-				//If the current token is valid, add it to our list of tokens
-				if (stringMatchesToken(currentToken)) {
-					tokens.add(new Token(currentToken));
+		for(String line : text) {
+			lineNumber++;
+			tokens.add(new Token("@" + lineNumber));
+			for (char character : line.toCharArray()) {
+				String currentWithNewChar = currentToken + character; //Testing current token with appended new character
+				if (stringMatchesToken(currentWithNewChar) || (currentWithNewChar.charAt(0) == '\"' && !currentWithNewChar.substring(1).contains("\""))) { //If any regular expression matches, then the current token has the new character appended
+					currentToken = currentWithNewChar;
+				} else { //If no regular expression matches, then the current token is finished.
+					//If the current token is valid, add it to our list of tokens
+					if (stringMatchesToken(currentToken)) {
+						tokens.add(new Token(currentToken));
+					}
 				}
 				//Reset current token to be the newest character
 				currentToken = String.valueOf(character);
 			}
-		}
-		//At end of loop check if the current token is valid. If so, add it to our list of tokens.
-		if (stringMatchesToken(currentToken)) {
-			tokens.add(new Token(currentToken));
+			//At end of loop check if the current token is valid. If so, add it to our list of tokens.
+			if (stringMatchesToken(currentToken)) {
+				tokens.add(new Token(currentToken));
+			}
 		}
 		return tokens;
 	}
@@ -109,10 +105,10 @@ public class Scan {
 		string = string + "\\+\\=";  				// +=
 		string = string + "\\*\\="; 				// *=
 		string = string + "\\/\\=";  				// /=
-		string = string + "\\&\\=";					// &=
-		string = string + "\\|\\=";					// |=
-		string = string + "\\%\\=";					// %=
-		string = string + "\\^\\=";					// ^=
+		//string = string + "\\&\\=";					// &=
+		//string = string + "\\|\\=";					// |=
+		//string = string + "\\%\\=";					// %=
+		//string = string + "\\^\\=";					// ^=
 		string = string + "\\!\\=";					// !=
 		string = string + "\\=\\=";					// ==
 		string = string + "\\&\\&";					// &&

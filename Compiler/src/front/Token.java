@@ -19,10 +19,6 @@ public class Token {
 		additionAssignmentOperator,
 		multiplicationAssignmentOperator,
 		divisionAssignmentOperator,
-		andAssignmentOperator,
-		orAssignmentOperator,
-		xorAssignmentOperator,
-		modulusAssignmentOperator,
 
 		//logic operators
 		notEqualOperator,
@@ -115,11 +111,7 @@ public class Token {
 			}
 			break;
 		case '%':
-			if(this.token.equals("%=")) {
-				this.type = type_enum.modulusAssignmentOperator;
-			} else {
-				this.type = type_enum.modulusOperator;
-			}
+			this.type = type_enum.modulusOperator;
 			break;
 		case '=':
 			if(this.token.equals("==")) {
@@ -136,17 +128,11 @@ public class Token {
 			}
 			break;
 		case '^':
-			if(this.token.equals("^=")) {
-				this.type = type_enum.xorAssignmentOperator;
-			} else {
-				this.type = type_enum.xorOperator;
-			}
+			this.type = type_enum.xorOperator;
 			break;
 		case '|':
 			if(this.token.equals("||")) {
 				this.type = type_enum.orLogicOperator;
-			} else if (this.token.equals("|=")) {
-				this.type = type_enum.orAssignmentOperator;
 			} else {
 				this.type = type_enum.orOperator;
 			}
@@ -154,8 +140,6 @@ public class Token {
 		case '&':
 			if(this.token.equals("&&")) {
 				this.type = type_enum.andLogicOperator;
-			} else if (this.token.equals("&=")){
-				this.type = type_enum.andAssignmentOperator;
 			} else {
 				this.type = type_enum.andOperator;
 			}
