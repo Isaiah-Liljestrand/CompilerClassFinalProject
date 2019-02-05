@@ -3,8 +3,8 @@ package front;
 public class Token {
 	String token;
 	type_enum type;
+	int lineNumber;
 	enum type_enum {
-		lineNumber,
 		
 		//basic arithmatic
 		additionOperator,
@@ -48,16 +48,10 @@ public class Token {
 	};
 	
 	
-	Token(){
-		setToken("");
-	}
-	Token(String token){
+	Token(String token, int lineNumber){
 		this.token = token;
+		this.lineNumber = lineNumber;
 		this.addTokenIdentity();
-	}
-	Token(String token, type_enum type) {
-		this.token = token;
-		this.type = type;
 	}
 
 

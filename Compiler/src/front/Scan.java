@@ -50,7 +50,6 @@ public class Scan {
 		//Loop through every character in the string
 		for(String line : text) {
 			lineNumber++;
-			tokens.add(new Token("@" + lineNumber));
 			for (char character : line.toCharArray()) {
 				String currentWithNewChar = currentToken + character; //Testing current token with appended new character
 				if (stringMatchesToken(currentWithNewChar) || (currentWithNewChar.charAt(0) == '\"' && !currentWithNewChar.substring(1).contains("\""))) { //If any regular expression matches, then the current token has the new character appended
@@ -58,7 +57,7 @@ public class Scan {
 				} else { //If no regular expression matches, then the current token is finished.
 					//If the current token is valid, add it to our list of tokens
 					if (stringMatchesToken(currentToken)) {
-						tokens.add(new Token(currentToken));
+						tokens.add(new Token(currentToken, lineNumber));
 					}
 				}
 				//Reset current token to be the newest character
@@ -66,7 +65,7 @@ public class Scan {
 			}
 			//At end of loop check if the current token is valid. If so, add it to our list of tokens.
 			if (stringMatchesToken(currentToken)) {
-				tokens.add(new Token(currentToken));
+				tokens.add(new Token(currentToken, lineNumber));
 			}
 		}
 		return tokens;
