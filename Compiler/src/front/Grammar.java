@@ -9,7 +9,7 @@ public class Grammar {
 	Grammar(List<Token> tokens){ // Essentially the first few parts of the grammar
 		List<Token> Feed = new ArrayList<Token>();
 		
-		if(tokens.get(0).getType() == Token.type_enum.identifier) {
+		if(tokens.get(0).getType() == Token.type_enum.identifier) { //This block of ifs only checks for Int Main() at the moment
 			if(tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.openParenthesis) {
 				if(tokens.get(3).getType() == Token.type_enum.closedParenthesis && tokens.get(4).getType() == Token.type_enum.openCurlyBracket) {
 					while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
@@ -35,7 +35,7 @@ public class Grammar {
 					while(tokens.get(0).getType() != Token.type_enum.closedParenthesis) {
 						Feed1.add(tokens.remove(0));
 					}
-					Feed1.add(tokens.remove(0)); //The function declaration up to closed paranthesis E.G. int main()
+					Feed1.add(tokens.remove(0)); //The function declaration up to closed parenthesis E.G. int main()
 					while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
 						Feed2.add(tokens.remove(0));
 					}
@@ -83,11 +83,11 @@ public class Grammar {
 		return false;
 	}
 	
-	private boolean compoundStmt(List<Token> tokens) {
+	private boolean compoundStmt(List<Token> tokens) { // Checks for rtn statement
 		List<Token> rtnStmt = new ArrayList<Token>();
 		int i = 0;
 		
-		while(tokens.get(i).getToken() != "return") {
+		while(!tokens.get(0).getToken().contentEquals("return")) {
 			i++;
 		}
 		while(tokens.get(i).getType() != Token.type_enum.semicolon) {
@@ -95,12 +95,39 @@ public class Grammar {
 		}
 		rtnStmt.add(tokens.remove(i));
 		
+		//This next part is bad because we are just removing curly brackets and assuming the remaining
+		//Tokens are local declarations
+		if(tokens.get(i).getType() == Token.type_enum.closedCurlyBracket) {
+			tokens.remove(i);
+		}
+		if(tokens.get(0).getType() == Token.type_enum.openCurlyBracket) {
+			tokens.remove(0);
+		}
 		
-		
-		return returnStmt(rtnStmt);
+		return localDeclarations(tokens) && returnStmt(rtnStmt);
+	}
+	
+	private boolean localDeclarations(List<Token> tokens) { 
+		//I'm about to just handle this for the basic program only, so this is gonna need further work
+		if(tokens.size() == 3) {
+			if(tokens.get(0).getType() == Token.type_enum.identifier && tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.semicolon) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private boolean returnStmt(List<Token> tokens) {
+		if(tokens.size() == 2) {
+			if(tokens.get(0).getToken().contentEquals("return") && tokens.get(1).getType() == Token.type_enum.semicolon) {
+				return true;
+			}
+		}
+		if(tokens.size() == 3) {
+			if(tokens.get(0).getToken().contentEquals("return") && tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.semicolon) {
+				return true; // This actually needs to check the expression which would be the middle token
+			}
+		}
 		return false;
 	}
 		
@@ -116,10 +143,20 @@ public class Grammar {
 	}
 	
 	private boolean typeSpecifier(List<Token> tokens) {
+		if(tokens.size() == 1) {
+			if(tokens.get(0).getToken().contentEquals("int") | tokens.get(0).getToken().contentEquals("bool") | tokens.get(0).getToken().contentEquals("char") | tokens.get(0).getToken().contentEquals("float")) {
+				return true;
+			}
+		}
 		return false;
 	}
 	
-	private boolean params(List<Token> tokens) {
+	private boolean params(List<Token> tokens) { // Only handles basic program right now
+		if(tokens.size() == 2) {
+			if(tokens.get(0).getType() == Token.type_enum.openParenthesis && tokens.get(1).getType() == Token.type_enum.closedParenthesis) {
+				return true;
+			}
+		}
 		return false;
 	}
 	
@@ -168,10 +205,6 @@ public class Grammar {
 	}
 	
 	private boolean paramId() {
-		return false;
-	}
-	
-	private boolean localDeclarations() {
 		return false;
 	}
 	
@@ -269,5 +302,9 @@ public class Grammar {
 	
 	private boolean constant() {
 		return false;
+	}
+	
+	public boolean getValid() {
+		return this.valid;
 	}
 }
