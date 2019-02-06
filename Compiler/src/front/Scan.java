@@ -52,24 +52,65 @@ public class Scan {
 		for(String line : text) {
 			lineNumber++;
 			for (char character : line.toCharArray()) {
+				if(!isValidCharacter(character)) {
+					System.out.println("Error: '" + character + "' not recognized");
+					
+				}
 				currentWithNewChar = currentToken + character; //Testing current token with appended new character
-				if (stringMatchesToken(currentWithNewChar) || (currentWithNewChar.charAt(0) == '\"' && !currentWithNewChar.substring(1).contains("\""))) { //If any regular expression matches, then the current token has the new character appended
+				if (stringMatchesToken(currentWithNewChar)) { //If any regular expression matches, then the current token has the new character appended
 					currentToken = currentWithNewChar;
-				} else { //If no regular expression matches, then the current token is finished.
+				} else {
+					//If no regular expression matches, then the current token is finished.
 					//If the current token is valid, add it to our list of tokens
-					if (stringMatchesToken(currentToken)) {
+					if (stringMatchesToken(currentToken) && !isInvalidWord(currentToken)) {
 						tokens.add(new Token(currentToken, lineNumber));
+					} else if(isInvalidWord(currentToken)) {
+						System.out.println("Error: '" + currentToken + "' not recognized");
 					}
 				}
 				//Reset current token to be the newest character
 				currentToken = String.valueOf(character);
 			}
 			//At end of loop check if the current token is valid. If so, add it to our list of tokens.
-			if (stringMatchesToken(currentToken)) {
+			if (stringMatchesToken(currentToken) && !isInvalidWord(currentToken)) {
 				tokens.add(new Token(currentToken, lineNumber));
+			} else if(isInvalidWord(currentToken)) {
+				System.out.println("Error: '" + currentToken + "' not recognized");
 			}
 		}
 		return tokens;
+	}
+	
+	/**
+	 * Checks that all identifiers and digits are of the correct form.
+	 * @param value. string that is being checked
+	 * @return true or false depending on validity
+	 */
+	private static boolean isInvalidWord(String value) {
+		Pattern antiREGEX = Pattern.compile("//d//w*//[a-zA-Z]//w*");
+		Matcher test = antiREGEX.matcher(value);
+		return test.matches();
+	}
+	
+	/**
+	 * Checks if any unsupported charcters are in the string
+	 * @param character character in code
+	 * @return true if character is supported. False if not
+	 */
+	private static boolean isValidCharacter(char character) {
+		switch(character) {
+		case '@':
+		case '#':
+		case '$':
+		case '[':
+		case ']':
+		case '\"':
+		case '\'':
+		case '.':
+		case '\\':
+			return false;
+		}
+		return true;
 	}
 	
 	/**
@@ -90,15 +131,14 @@ public class Scan {
 	private static String buildRegularExpression() {
 		String string = "\\{|\\}|"; 				// { and }
 		string = string + "\\(|\\)|"; 				// ( and )
-		string = string + "[a-zA-Z]\\w*|"; 			// accepts any expressions that only use letters and digits that start with a letter
-		string = string + "\\d++|"; 				// accepts any length of number
+		string = string + "\\w+|"; 					// accepts any expressions that only use letters and digits that start with a letter
 		string = string + "/|\\*|"; 				// / and *
 		string = string + "\\+|\\-|"; 				// + and -
 		string = string + "\\^|\\|"; 				// ^ and |
 		string = string + "&|%|"; 					// & and %
 		string = string + "\\!|"; 					// !
 		string = string + ";|\\=|";      			// ; and =
-		string = string + "0x[a-f0-9]++"; 			// Accepts hex input
+		string = string + "0x[a-f0-9]+"; 			// Accepts hex input
 		string = string + "\\+\\+|"; 				// ++
 		string = string + "\\-\\-|"; 				// --
 		string = string + "\\-\\=";  				// -=

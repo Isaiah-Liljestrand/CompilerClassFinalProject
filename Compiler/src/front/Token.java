@@ -41,7 +41,7 @@ public class Token {
 		closedParenthesis,
 		semicolon,
 		
-		//identifiers and keywordsh
+		//identifiers and keywords
 		number,
 		identifier,
 		keyword
@@ -161,7 +161,7 @@ public class Token {
 		if(this.token.charAt(0) >= '0' && this.token.charAt(0) <= '9') {
 			this.type = type_enum.number;
 			if(this.token.subSequence(0, 1).equals("0x")) {
-				//todo: convert hex number to decimal form
+				this.token = String.valueOf(Integer.parseInt(this.token, 16));
 			}
 			return;
 		}
