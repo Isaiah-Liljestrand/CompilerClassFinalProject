@@ -67,9 +67,10 @@ public class Scan {
 					} else if(isInvalidWord(currentToken)) {
 						System.out.println("Error: '" + currentToken + "' not recognized");
 					}
+					currentToken = String.valueOf(character);
 				}
 				//Reset current token to be the newest character
-				currentToken = String.valueOf(character);
+				//currentToken = String.valueOf(character);
 			}
 		}
 		//At end of loop check if the current token is valid. If so, add it to our list of tokens.

@@ -16,7 +16,15 @@ public class Grammar {
 						Feed.add(tokens.remove(0));
 					}
 					Feed.add(tokens.remove(0));
+					for( Token tok : Feed) {
+						System.out.println(tok.getToken());
+					}
 					valid = funDeclaration(Feed);
+					if(valid == true) {
+						System.out.println(true);
+					}else {
+						System.out.print(valid);
+					}
 				}
 			}
 		}
@@ -67,6 +75,7 @@ public class Grammar {
 			}
 		}
 		
+		System.out.println("funDeclaration is false");
 		return false; 
 	}
 	
@@ -80,6 +89,7 @@ public class Grammar {
 			return compoundStmt(Feed);
 		}
 		
+		System.out.println("statement is false");
 		return false;
 	}
 	
@@ -114,6 +124,7 @@ public class Grammar {
 				return true;
 			}
 		}
+		System.out.println("compoundStmt is false");
 		return false;
 	}
 	
@@ -128,6 +139,7 @@ public class Grammar {
 				return true; // This actually needs to check the expression which would be the middle token
 			}
 		}
+		System.out.println("returnStmt is false");
 		return false;
 	}
 		
@@ -136,9 +148,11 @@ public class Grammar {
 			if(tokens.get(0).getType() == Token.type_enum.identifier) {
 				return true;
 			} else {
+				System.out.println("IDfunc is false");
 				return false;
 			}
 		}
+		System.out.println("IDfunc is false");
 		return false;
 	}
 	
@@ -148,6 +162,7 @@ public class Grammar {
 				return true;
 			}
 		}
+		System.out.println("typeSpecifier is false");
 		return false;
 	}
 	
@@ -157,6 +172,7 @@ public class Grammar {
 				return true;
 			}
 		}
+		System.out.println("params is false");
 		return false;
 	}
 	
