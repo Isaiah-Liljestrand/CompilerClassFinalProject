@@ -32,13 +32,16 @@ public class Main {
 			System.out.print("Input name of file: ");
 			filename = fname.nextLine().trim();
 			fname.close();
+			tokenize = true;
 		}
 		
 		List<String> lines = readFile(filename);
 		test = new Scan(lines);
 		
-		if (tokenize)
+		if (tokenize) {
 			test.PrintTokens();
+			new Grammar(test.GetTokens());
+		}
 	}
 
 	
