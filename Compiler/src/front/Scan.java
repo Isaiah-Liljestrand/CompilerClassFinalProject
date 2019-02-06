@@ -71,13 +71,14 @@ public class Scan {
 				//Reset current token to be the newest character
 				currentToken = String.valueOf(character);
 			}
-			//At end of loop check if the current token is valid. If so, add it to our list of tokens.
-			if (stringMatchesToken(currentToken) && !isInvalidWord(currentToken)) {
-				tokens.add(new Token(currentToken, lineNumber));
-			} else if(isInvalidWord(currentToken)) {
-				System.out.println("Error: '" + currentToken + "' not recognized");
-			}
 		}
+		//At end of loop check if the current token is valid. If so, add it to our list of tokens.
+		if (stringMatchesToken(currentToken) && !isInvalidWord(currentToken)) {
+			tokens.add(new Token(currentToken, lineNumber));
+		} else if(isInvalidWord(currentToken)) {
+			System.out.println("Error: '" + currentToken + "' not recognized");
+		}
+		
 		return tokens;
 	}
 	
