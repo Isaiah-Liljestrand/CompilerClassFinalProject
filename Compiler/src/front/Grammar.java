@@ -1,34 +1,41 @@
 package front;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Grammar {
+	private String program;
+	private String declarationList;
+	private String declaration;
+	private String varDeclaration;
+	private String funDeclaration;
+	private String recDeclaration;
+	private String returnStmt;
+	private boolean valid;
 	
 	Grammar(List<Token> tokens){
-		program(tokens);
-	}
-	
-	private boolean program(List<Token> tokens) {
-		if(tokens.isEmpty()) {
-			return false;
-		} else if(tokens.size() == 1) {
-			return declaration(tokens);
-		} else {
-			return declarationList(tokens);
+		List<Token> Feed = new ArrayList<Token>();
+		
+		if(tokens.get(0).getType() == Token.type_enum.identifier) {
+			if(tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.openParenthesis) {
+				if(tokens.get(3).getType() == Token.type_enum.closedParenthesis && tokens.get(4).getType() == Token.type_enum.openCurlyBracket) {
+					while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
+						Feed.add(tokens.remove(0));
+					}
+					valid = funDeclaration(Feed);
+				}
+			}
 		}
 	}
 	
-	private boolean declarationList(List<Token> tokens) {
-		if(tokens.isEmpty()) {
-			return false;
-		} else if(tokens.size() == 1) {
-			return declaration(tokens);
-		} else{
-			return declarationList(tokens); 
-		}
+	private boolean funDeclaration(List<Token> tokens) {
+		List<Token> Feed = new ArrayList<Token>();
+		
+		
+		return false;
 	}
 	
-	private boolean declaration(List<Token> tokens) {
+	private boolean declaration() {
 		return false;
 	}
 	
@@ -65,10 +72,6 @@ public class Grammar {
 	}
 	
 	private boolean returnTypeSpecifier() {
-		return false;
-	}
-	
-	private boolean funDeclaration() {
 		return false;
 	}
 	

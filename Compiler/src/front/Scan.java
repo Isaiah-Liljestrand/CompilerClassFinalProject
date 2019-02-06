@@ -46,12 +46,13 @@ public class Scan {
 		//If the current token plus the new character is not valid, then the current token should be added to the list of valid tokens.
 		List<Token> tokens = new ArrayList<Token>(); //List to return
 		String currentToken = "";
+		String currentWithNewChar;
 		int lineNumber = 0;
 		//Loop through every character in the string
 		for(String line : text) {
 			lineNumber++;
 			for (char character : line.toCharArray()) {
-				String currentWithNewChar = currentToken + character; //Testing current token with appended new character
+				currentWithNewChar = currentToken + character; //Testing current token with appended new character
 				if (stringMatchesToken(currentWithNewChar) || (currentWithNewChar.charAt(0) == '\"' && !currentWithNewChar.substring(1).contains("\""))) { //If any regular expression matches, then the current token has the new character appended
 					currentToken = currentWithNewChar;
 				} else { //If no regular expression matches, then the current token is finished.
