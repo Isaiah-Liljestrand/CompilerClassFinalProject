@@ -30,6 +30,10 @@ public class Grammar {
 					}else {
 						System.out.print(valid);
 					}
+				} else if(tokens.get(3).getType() != Token.type_enum.closedParenthesis) {
+					System.out.println("Missing closing Parenthesis");
+					System.out.println("False");
+					return;
 				}
 			}
 		}
