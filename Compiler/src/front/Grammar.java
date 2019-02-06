@@ -14,6 +14,11 @@ public class Grammar {
 				if(tokens.get(3).getType() == Token.type_enum.closedParenthesis && tokens.get(4).getType() == Token.type_enum.openCurlyBracket) {
 					while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
 						Feed.add(tokens.remove(0));
+						if(tokens.isEmpty()) {
+							System.out.println("Missing Closing Curly Brace");
+						    System.out.println("False");
+							return;
+						}
 					}
 					Feed.add(tokens.remove(0));
 					//for( Token tok : Feed) {
@@ -44,10 +49,21 @@ public class Grammar {
 				if(tokens.get(3).getType() == Token.type_enum.closedParenthesis && tokens.get(4).getType() == Token.type_enum.openCurlyBracket) {
 					while(tokens.get(0).getType() != Token.type_enum.closedParenthesis) {
 						Feed1.add(tokens.remove(0));
+						if(Feed1.isEmpty()) {
+							System.out.println("Missing Closed Parenthisis");
+							System.out.println("funDeclaration is false");
+							return false;
+						}
 					}
 					Feed1.add(tokens.remove(0)); //The function declaration up to closed parenthesis E.G. int main()
 					while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
 						Feed2.add(tokens.remove(0));
+						if(Feed2.isEmpty()) {
+							System.out.println("Missing Closing Curly Brace");
+							System.out.println("funDeclaration is false");
+							System.out.println("False");
+							return false;
+						}
 					}
 					Feed2.add(tokens.remove(0)); //The statement for { to }
 				}
@@ -62,6 +78,11 @@ public class Grammar {
 				if(Feed1.get(0).getType() == Token.type_enum.openParenthesis) {
 					while(Feed1.get(0).getType() != Token.type_enum.closedParenthesis) {
 						params.add(Feed1.remove(0));
+						if(Feed1.isEmpty()) {
+							System.out.println("Missing Closed Parenthisis");
+							System.out.println("funDeclaration is false");
+							return false;
+						}
 					}
 					params.add(Feed1.remove(0));
 				}
@@ -71,6 +92,11 @@ public class Grammar {
 				if(Feed1.get(0).getType() == Token.type_enum.openParenthesis) {
 					while(Feed1.get(0).getType() != Token.type_enum.closedParenthesis) {
 						params.add(Feed1.remove(0));
+						if(Feed1.isEmpty()) {
+							System.out.println("Missing Closed Parenthisis");
+							System.out.println("funDeclaration is false");
+							return false;
+						}
 					}
 					params.add(Feed1.remove(0));
 				}
@@ -87,6 +113,11 @@ public class Grammar {
 		List<Token> Feed = new ArrayList<Token>();
 		if(tokens.get(0).getType() == Token.type_enum.openCurlyBracket) {
 			while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
+				if(tokens.isEmpty()) {
+					System.out.println("Missing Closed curly bracket");
+					System.out.println("statement is false");
+					return false;
+				}
 				Feed.add(tokens.remove(0));
 			}
 			Feed.add(tokens.remove(0));
@@ -109,8 +140,14 @@ public class Grammar {
 			i++;
 		}
 		while(tokens.get(i).getType() != Token.type_enum.semicolon) {
+			if(tokens.isEmpty()) {
+				System.out.println("Expected semicolon at end of return statement");
+				System.out.println("compoundStmt is false");
+				return false;
+			}
 			rtnStmt.add(tokens.remove(i));
 		}
+		
 		rtnStmt.add(tokens.remove(i));
 		
 		//This next part is bad because we are just removing curly brackets and assuming the remaining
@@ -132,6 +169,13 @@ public class Grammar {
 		if(tokens.size() == 3) {
 			if(tokens.get(0).getType() == Token.type_enum.keyword && tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.semicolon) {
 				return true;
+			}
+		} else if(tokens.size() > 3) {
+			if(tokens.get(0).getType() == Token.type_enum.keyword && tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.semicolon) {
+				tokens.remove(0);
+				tokens.remove(0);
+				tokens.remove(0);
+				return localDeclarations(tokens);
 			}
 		}
 		System.out.println("localDeclarations is false");
