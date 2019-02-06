@@ -9,19 +9,19 @@ public class Grammar {
 	Grammar(List<Token> tokens){ // Essentially the first few parts of the grammar
 		List<Token> Feed = new ArrayList<Token>();
 		
-		if(tokens.get(0).getType() == Token.type_enum.identifier) { //This block of ifs only checks for Int Main() at the moment
+		if(tokens.get(0).getType() == Token.type_enum.keyword) { //This block of ifs only checks for Int Main() at the moment
 			if(tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.openParenthesis) {
 				if(tokens.get(3).getType() == Token.type_enum.closedParenthesis && tokens.get(4).getType() == Token.type_enum.openCurlyBracket) {
 					while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
 						Feed.add(tokens.remove(0));
 					}
 					Feed.add(tokens.remove(0));
-					for( Token tok : Feed) {
-						System.out.println(tok.getToken());
-					}
+					//for( Token tok : Feed) {
+					//	System.out.println(tok.getToken());
+					//}
 					valid = funDeclaration(Feed);
 					if(valid == true) {
-						System.out.println(true);
+						System.out.println("\n\nValid Grammar");
 					}else {
 						System.out.print(valid);
 					}
@@ -37,7 +37,9 @@ public class Grammar {
 		List<Token> ID = new ArrayList<Token>();
 		List<Token> params = new ArrayList<Token>();
 		
-		if(tokens.get(0).getType() == Token.type_enum.identifier) {
+		System.out.println("funDeclaration");
+		
+		if(tokens.get(0).getType() == Token.type_enum.keyword) {
 			if(tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.openParenthesis) {
 				if(tokens.get(3).getType() == Token.type_enum.closedParenthesis && tokens.get(4).getType() == Token.type_enum.openCurlyBracket) {
 					while(tokens.get(0).getType() != Token.type_enum.closedParenthesis) {
@@ -53,9 +55,10 @@ public class Grammar {
 		}
 		
 		if(!Feed1.isEmpty()) {
-			if(Feed1.get(0).getType() == Token.type_enum.identifier && Feed1.get(1).getType() == Token.type_enum.identifier && Feed1.get(2).getType() == Token.type_enum.openParenthesis) {
+			if(Feed1.get(0).getType() == Token.type_enum.keyword && Feed1.get(1).getType() == Token.type_enum.identifier && Feed1.get(2).getType() == Token.type_enum.openParenthesis) {
 				typeSpec.add(Feed1.remove(0));
 				ID.add(Feed1.remove(0));
+				//System.out.println(ID.get(0).getToken());
 				if(Feed1.get(0).getType() == Token.type_enum.openParenthesis) {
 					while(Feed1.get(0).getType() != Token.type_enum.closedParenthesis) {
 						params.add(Feed1.remove(0));
@@ -80,6 +83,7 @@ public class Grammar {
 	}
 	
 	private boolean statement(List<Token> tokens) {
+		System.out.println("statement");
 		List<Token> Feed = new ArrayList<Token>();
 		if(tokens.get(0).getType() == Token.type_enum.openCurlyBracket) {
 			while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
@@ -94,10 +98,14 @@ public class Grammar {
 	}
 	
 	private boolean compoundStmt(List<Token> tokens) { // Checks for rtn statement
+		System.out.println("compoundStmt");
+		//for(Token tok : tokens) {
+	//		System.out.println(tok.getToken());
+		//}
 		List<Token> rtnStmt = new ArrayList<Token>();
 		int i = 0;
 		
-		while(!tokens.get(0).getToken().contentEquals("return")) {
+		while(!tokens.get(i).getToken().contentEquals("return")) {
 			i++;
 		}
 		while(tokens.get(i).getType() != Token.type_enum.semicolon) {
@@ -107,6 +115,7 @@ public class Grammar {
 		
 		//This next part is bad because we are just removing curly brackets and assuming the remaining
 		//Tokens are local declarations
+		
 		if(tokens.get(i).getType() == Token.type_enum.closedCurlyBracket) {
 			tokens.remove(i);
 		}
@@ -118,17 +127,19 @@ public class Grammar {
 	}
 	
 	private boolean localDeclarations(List<Token> tokens) { 
+		System.out.println("localDeclarations");
 		//I'm about to just handle this for the basic program only, so this is gonna need further work
 		if(tokens.size() == 3) {
-			if(tokens.get(0).getType() == Token.type_enum.identifier && tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.semicolon) {
+			if(tokens.get(0).getType() == Token.type_enum.keyword && tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.semicolon) {
 				return true;
 			}
 		}
-		System.out.println("compoundStmt is false");
+		System.out.println("localDeclarations is false");
 		return false;
 	}
 	
 	private boolean returnStmt(List<Token> tokens) {
+		System.out.println("returnStmt");
 		if(tokens.size() == 2) {
 			if(tokens.get(0).getToken().contentEquals("return") && tokens.get(1).getType() == Token.type_enum.semicolon) {
 				return true;
@@ -144,6 +155,7 @@ public class Grammar {
 	}
 		
 	private boolean IDfunc(List<Token> tokens) {
+		System.out.println("IDfunc");
 		if(tokens.size() == 1) {
 			if(tokens.get(0).getType() == Token.type_enum.identifier) {
 				return true;
@@ -157,6 +169,7 @@ public class Grammar {
 	}
 	
 	private boolean typeSpecifier(List<Token> tokens) {
+		System.out.println("typeSpecifier");
 		if(tokens.size() == 1) {
 			if(tokens.get(0).getToken().contentEquals("int") | tokens.get(0).getToken().contentEquals("bool") | tokens.get(0).getToken().contentEquals("char") | tokens.get(0).getToken().contentEquals("float")) {
 				return true;
@@ -167,6 +180,10 @@ public class Grammar {
 	}
 	
 	private boolean params(List<Token> tokens) { // Only handles basic program right now
+		System.out.println("params");
+		//for( Token tok : tokens) {
+		//	System.out.println(tok.getToken());
+		//}
 		if(tokens.size() == 2) {
 			if(tokens.get(0).getType() == Token.type_enum.openParenthesis && tokens.get(1).getType() == Token.type_enum.closedParenthesis) {
 				return true;
