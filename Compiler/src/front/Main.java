@@ -12,12 +12,17 @@ import java.util.Scanner;
 public class Main {
 	public static void main(String[] args) {
 		boolean tokenize = false;
+		boolean abstractSyntaxTree = false;
 		String filename = null;
-		Scan test;
+		Scan scanner;
 		//Check for command line arguments
 		for (String arg: args) {
 			if (arg.compareTo("-t") == 0) {
 				tokenize = true;
+			}
+			
+			if (arg.compareTo("-a") == 0) {
+				abstractSyntaxTree = true;
 			}
 			
 			if (arg == args[args.length - 1]) {
@@ -36,11 +41,15 @@ public class Main {
 		}
 		
 		List<String> lines = readFile(filename);
-		test = new Scan(lines);
+		scanner = new Scan(lines);
+		Grammar grammar;
 		
 		if (tokenize) {
-			test.PrintTokens();
-			new Grammar(test.GetTokens());
+			scanner.PrintTokens();
+		}
+		
+		if (abstractSyntaxTree) {
+			grammar = new Grammar(scanner.GetTokens());
 		}
 	}
 
