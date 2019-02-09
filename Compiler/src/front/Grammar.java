@@ -4,13 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Grammar {
+	private PTree root;
 	private boolean valid;
 	
+	/**
+	 * Effectivly Main function of Grammar as a builder?
+	 * @param tokens
+	 */
 	Grammar(List<Token> tokens){ // Essentially the first few parts of the grammar
+		this.root = new PTree();
+		root.equals("root");
 		List<Token> Feed = new ArrayList<Token>();
 		
 		if(tokens.get(0).getType() == Token.type_enum.keyword) { //This block of ifs only checks for Int Main() at the moment
-			if(tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.openParenthesis) {
+			if(tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.openParenthesis) {				
 				if(tokens.get(3).getType() == Token.type_enum.closedParenthesis && tokens.get(4).getType() == Token.type_enum.openCurlyBracket) {
 					while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
 						Feed.add(tokens.remove(0));
@@ -19,12 +26,16 @@ public class Grammar {
 						    System.out.println("False");
 							return;
 						}
+						
 					}
+					
 					Feed.add(tokens.remove(0));
 					//for( Token tok : Feed) {
-					//	System.out.println(tok.getToken());
+						//System.out.println(tok.getToken());
 					//}
-					valid = funDeclaration(Feed);
+					
+					root.addChild(funDeclaration(Feed));
+					root.printTree();
 					if(valid == true) {
 						System.out.println("\n\nValid Grammar");
 					}else {
@@ -39,12 +50,13 @@ public class Grammar {
 		}
 	}
 	
-	private boolean funDeclaration(List<Token> tokens) { 
+	private PTree funDeclaration(List<Token> tokens) { 
 		List<Token> Feed1 = new ArrayList<Token>();
 		List<Token> Feed2 = new ArrayList<Token>();
 		List<Token> typeSpec = new ArrayList<Token>();
 		List<Token> ID = new ArrayList<Token>();
 		List<Token> params = new ArrayList<Token>();
+		PTree tree = new PTree("funDeclaration");
 		
 		System.out.println("funDeclaration");
 		
@@ -56,7 +68,7 @@ public class Grammar {
 						if(Feed1.isEmpty()) {
 							System.out.println("Missing Closed Parenthisis");
 							System.out.println("funDeclaration is false");
-							return false;
+							return null;
 						}
 					}
 					Feed1.add(tokens.remove(0)); //The function declaration up to closed parenthesis E.G. int main()
@@ -66,9 +78,10 @@ public class Grammar {
 							System.out.println("Missing Closing Curly Brace");
 							System.out.println("funDeclaration is false");
 							System.out.println("False");
-							return false;
+							return null;
 						}
 					}
+					
 					Feed2.add(tokens.remove(0)); //The statement for { to }
 				}
 			}
@@ -85,12 +98,19 @@ public class Grammar {
 						if(Feed1.isEmpty()) {
 							System.out.println("Missing Closed Parenthisis");
 							System.out.println("funDeclaration is false");
-							return false;
+							return null;
 						}
 					}
 					params.add(Feed1.remove(0));
 				}
-				return typeSpecifier(typeSpec) && IDfunc(ID) && params(params) && statement(Feed2);
+				//return typeSpecifier(typeSpec) && IDfunc(ID) && params(params) && statement(Feed2);
+				
+				tree.setType("funDeclaration");
+				tree.addChild(typeSpecifier(typeSpec));
+				tree.addChild(IDfunc(ID));
+				tree.addChild(params(params));
+				tree.addChild(statement(Feed2));
+				return tree;
 			} else {
 				ID.add(Feed1.remove(0));
 				if(Feed1.get(0).getType() == Token.type_enum.openParenthesis) {
@@ -99,41 +119,52 @@ public class Grammar {
 						if(Feed1.isEmpty()) {
 							System.out.println("Missing Closed Parenthisis");
 							System.out.println("funDeclaration is false");
-							return false;
+							return null;
 						}
 					}
 					params.add(Feed1.remove(0));
 				}
-				return IDfunc(ID) && params(params) && statement(Feed2);
+				//return IDfunc(ID) && params(params) && statement(Feed2);
+				tree.setType("funDeclaration");
+				tree.addChild(IDfunc(ID));
+				tree.addChild(params(params));
+				tree.addChild(statement(Feed2));
+				return tree;
 			}
 		}
 		
 		System.out.println("funDeclaration is false");
-		return false; 
+		return null; 
 	}
 	
-	private boolean statement(List<Token> tokens) {
+	private PTree statement(List<Token> tokens) {
 		System.out.println("statement");
 		List<Token> Feed = new ArrayList<Token>();
+		PTree leaf = new PTree("statement");
+		
 		if(tokens.get(0).getType() == Token.type_enum.openCurlyBracket) {
 			while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
 				if(tokens.isEmpty()) {
 					System.out.println("Missing Closed curly bracket");
 					System.out.println("statement is false");
-					return false;
+					return null;
 				}
 				Feed.add(tokens.remove(0));
 			}
 			Feed.add(tokens.remove(0));
-			return compoundStmt(Feed);
+			//return compoundStmt(Feed);
+			leaf.addChild(compoundStmt(Feed));
+			return leaf;
 		}
 		
 		System.out.println("statement is false");
-		return false;
+		return null;
 	}
 	
-	private boolean compoundStmt(List<Token> tokens) { // Checks for rtn statement
+	private PTree compoundStmt(List<Token> tokens) { // Checks for rtn statement
 		System.out.println("compoundStmt");
+		PTree leaf = new PTree("compoundStmt");
+		
 		//for(Token tok : tokens) {
 	//		System.out.println(tok.getToken());
 		//}
@@ -147,7 +178,7 @@ public class Grammar {
 			if(tokens.isEmpty()) {
 				System.out.println("Expected semicolon at end of return statement");
 				System.out.println("compoundStmt is false");
-				return false;
+				return null;
 			}
 			rtnStmt.add(tokens.remove(i));
 		}
@@ -164,15 +195,21 @@ public class Grammar {
 			tokens.remove(0);
 		}
 		
-		return localDeclarations(tokens) && returnStmt(rtnStmt);
+		leaf.addChild(localDeclarations(tokens));
+		leaf.addChild(returnStmt(rtnStmt));
+		//return localDeclarations(tokens) && returnStmt(rtnStmt);
+		return leaf;
+		
 	}
 	
-	private boolean localDeclarations(List<Token> tokens) { 
+	private PTree localDeclarations(List<Token> tokens) { 
 		System.out.println("localDeclarations");
+		PTree leaf = new PTree("localDeclarations");
+		
 		//I'm about to just handle this for the basic program only, so this is gonna need further work
 		if(tokens.size() == 3) {
 			if(tokens.get(0).getType() == Token.type_enum.keyword && tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.semicolon) {
-				return true;
+				return leaf;
 			}
 		} else if(tokens.size() > 3) {
 			if(tokens.get(0).getType() == Token.type_enum.keyword && tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.semicolon) {
@@ -183,206 +220,215 @@ public class Grammar {
 			}
 		}
 		System.out.println("localDeclarations is false");
-		return false;
+		return null;
 	}
 	
-	private boolean returnStmt(List<Token> tokens) {
+	private PTree returnStmt(List<Token> tokens) {
 		System.out.println("returnStmt");
+		PTree leaf = new PTree("returnStmt");
+		
 		if(tokens.size() == 2) {
 			if(tokens.get(0).getToken().contentEquals("return") && tokens.get(1).getType() == Token.type_enum.semicolon) {
-				return true;
+				//return true;
+				return leaf;
 			}
 		}
 		if(tokens.size() == 3) {
 			if(tokens.get(0).getToken().contentEquals("return") && tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.semicolon) {
-				return true; // This actually needs to check the expression which would be the middle token
+				return leaf; // This actually needs to check the expression which would be the middle token
 			}
 		}
 		System.out.println("returnStmt is false");
-		return false;
+		return null;
 	}
 		
-	private boolean IDfunc(List<Token> tokens) {
+	private PTree IDfunc(List<Token> tokens) {
 		System.out.println("IDfunc");
+		PTree leaf = new PTree("IDfunc");
+		
 		if(tokens.size() == 1) {
 			if(tokens.get(0).getType() == Token.type_enum.identifier) {
-				return true;
+				return leaf;
 			} else {
 				System.out.println("IDfunc is false");
-				return false;
+				return null;
 			}
 		}
 		System.out.println("IDfunc is false");
-		return false;
+		return null;
 	}
 	
-	private boolean typeSpecifier(List<Token> tokens) {
+	private PTree typeSpecifier(List<Token> tokens) {
 		System.out.println("typeSpecifier");
+		PTree leaf = new PTree("typeSpecifier");
+		
+		
 		if(tokens.size() == 1) {
 			if(tokens.get(0).getToken().contentEquals("int") | tokens.get(0).getToken().contentEquals("bool") | tokens.get(0).getToken().contentEquals("char") | tokens.get(0).getToken().contentEquals("float")) {
-				return true;
+				return leaf;
 			}
 		}
 		System.out.println("typeSpecifier is false");
-		return false;
+		return null;
 	}
 	
-	private boolean params(List<Token> tokens) { // Only handles basic program right now
+	private PTree params(List<Token> tokens) { // Only handles basic program right now
 		System.out.println("params");
+		PTree leaf = new PTree("params");
 		//for( Token tok : tokens) {
 		//	System.out.println(tok.getToken());
 		//}
 		if(tokens.size() == 2) {
 			if(tokens.get(0).getType() == Token.type_enum.openParenthesis && tokens.get(1).getType() == Token.type_enum.closedParenthesis) {
-				return true;
+				return leaf;
 			}
 		}
 		System.out.println("params is false");
-		return false;
+		return null;
 	}
 	
-	private boolean recDeclaration() {
-		return false;
+	private PTree recDeclaration() {
+		return null;
 	}
 	
-	private boolean varDeclaration() {
-		return false;
+	private PTree varDeclaration() {
+		return null;
 	}
 	
-	private boolean scopedVarDeclaration() {
-		return false;
+	private PTree scopedVarDeclaration() {
+		return null;
 	}
 	
-	private boolean varDecList() {
-		return false;
+	private PTree varDecList() {
+		return null;
 	}
 	
-	private boolean varDecInitialize() {
-		return false;
+	private PTree varDecInitialize() {
+		return null;
 	}
 	
-	private boolean varDecId() {
-		return false;
+	private PTree varDecId() {
+		return null;
 	}
 	
-	private boolean scopedTypeSpecifier() {
-		return false;
+	private PTree scopedTypeSpecifier() {
+		return null;
 	}
 	
-	private boolean returnTypeSpecifier() {
-		return false;
+	private PTree returnTypeSpecifier() {
+		return null;
 	}
 	
-	private boolean paramList() {
-		return false;
+	private PTree paramList() {
+		return null;
 	}
 	
-	private boolean paramTypeList() {
-		return false;
+	private PTree paramTypeList() {
+		return null;
 	}
 	
-	private boolean paramIdList() {
-		return false;
+	private PTree paramIdList() {
+		return null;
 	}
 	
-	private boolean paramId() {
-		return false;
+	private PTree paramId() {
+		return null;
 	}
 	
-	private boolean statementList() {
-		return false;
+	private PTree statementList() {
+		return null;
 	}
 	
-	private boolean expressionStmt() {
-		return false;
+	private PTree expressionStmt() {
+		return null;
 	}
 	
-	private boolean selectionStmt() {
-		return false;
+	private PTree selectionStmt() {
+		return null;
 	}
 	
-	private boolean iterationStmt() {
-		return false;
+	private PTree iterationStmt() {
+		return null;
 	}
 	
-	private boolean breakStmt() {
-		return false;
+	private PTree breakStmt() {
+		return null;
 	}
 	
-	private boolean expression() {
-		return false;
+	private PTree expression() {
+		return null;
 	}
 	
-	private boolean simpleExpression() {
-		return false;
+	private PTree simpleExpression() {
+		return null;
 	}
 	
-	private boolean andExpression() {
-		return false;
+	private PTree andExpression() {
+		return null;
 	}
 	
-	private boolean unaryRelExpression() {
-		return false;
+	private PTree unaryRelExpression() {
+		return null;
 	}
 	
-	private boolean relExpression() {
-		return false;
+	private PTree relExpression() {
+		return null;
 	}
 	
-	private boolean relop() {
-		return false;
+	private PTree relop() {
+		return null;
 	}
 	
-	private boolean sumExpression() {
-		return false;
+	private PTree sumExpression() {
+		return null;
 	}
 	
-	private boolean sumop() {
-		return false;
+	private PTree sumop() {
+		return null;
 	}
 	
-	private boolean term() {
-		return false;
+	private PTree term() {
+		return null;
 	}
 	
-	private boolean mulop() {
-		return false;
+	private PTree mulop() {
+		return null;
 	}
 	
-	private boolean unaryExpression() {
-		return false;
+	private PTree unaryExpression() {
+		return null;
 	}
 	
-	private boolean unaryop() {
-		return false;
+	private PTree unaryop() {
+		return null;
 	}
 	
-	private boolean factor() {
-		return false;
+	private PTree factor() {
+		return null;
 	}
 	
-	private boolean mutable() {
-		return false;
+	private PTree mutable() {
+		return null;
 	}
 	
-	private boolean immutable() {
-		return false;
+	private PTree immutable() {
+		return null;
 	}
 	
-	private boolean call() {
-		return false;
+	private PTree call() {
+		return null;
 	}
 	
-	private boolean args() {
-		return false;
+	private PTree args() {
+		return null;
 	}
 	
-	private boolean argList() {
-		return false;
+	private PTree argList() {
+		return null;
 	}
 	
-	private boolean constant() {
-		return false;
+	private PTree constant() {
+		return null;
 	}
 	
 	public boolean getValid() {

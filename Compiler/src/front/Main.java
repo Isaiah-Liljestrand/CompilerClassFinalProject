@@ -12,7 +12,8 @@ import java.util.Scanner;
 public class Main {
 	public static void main(String[] args) {
 		boolean tokenize = false;
-		boolean abstractSyntaxTree = false;
+		boolean abstractSyntaxTree = true; //set true for testing
+		boolean PrintParse = true; //assuming true for testing
 		String filename = null;
 		Scan scanner;
 		//Check for command line arguments
@@ -50,6 +51,9 @@ public class Main {
 		
 		if (abstractSyntaxTree) {
 			grammar = new Grammar(scanner.GetTokens());
+		}
+		if (PrintParse){
+			
 		}
 	}
 
