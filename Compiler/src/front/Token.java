@@ -40,13 +40,42 @@ public class Token {
 		openParenthesis,
 		closedParenthesis,
 		semicolon,
+		comma,
+		epsilon,
 		
 		//identifiers and keywords
 		number,
 		identifier,
-		keyword
+		typeSpecifier,
+		
+		//keywords
+		k_break,
+		k_char,
+		k_else,
+		k_goto,
+		k_if,
+		k_int,
+		k_return,
+		k_void,
+		k_while,
+		
+		//Nodes of parse tree
+		program,
+		declarationList,
+		declaration,
+		functionDeclaration,
+		variableDeclaration,
+		variableDeclarationList,
+		variableDeclarationInitialize,
+		parameterList,
+		parameter,
+		statement
 	};
 	
+	
+	Token(type_enum type) {
+		this.type = type;
+	}
 	
 	Token(String token, int lineNumber){
 		this.token = token;
@@ -61,6 +90,9 @@ public class Token {
 		switch(t) {
 		case ';':
 			this.type = type_enum.semicolon;
+			break;
+		case ',':
+			this.type = type_enum.comma;
 			break;
 		case '(':
 			this.type = type_enum.openParenthesis;
@@ -145,17 +177,35 @@ public class Token {
 			return;
 		}
 		//list will be shortened at some point as many of these won't be used
-		String keywords[] = {"auto", "break", "case", "char", "const", "continue",
-				"default", "do", "double", "else", "enum", "extern", "float", "for",
-				"goto", "if", "int", "long", "register", "return", "short", "signed",
-				"sizeof", "static", "struct", "switch", "typedef", "union", "unsigned",
-				"void", "volatile", "while"};
-		for(String keyword : keywords) {
-			if(keyword.equals(this.token)) {
-				//intent to make enum of every keyword individually and account for it here
-				this.type = type_enum.keyword;
-				return;
-			}
+		//String keywords[] = {/*"auto",*/ "break", /*"case",*/ "char", /*"const", "continue",*/
+		//		/*"default", "do", "double",*/ "else", /*"enum", "extern", "float", "for",*/
+		//		"goto", "if", "int", /*"long", "register", */"return", /*"short", "signed",*/
+		//		/*"sizeof", "static", "struct", "switch", "typedef", "union", "unsigned",*/
+		//		"void", /*"volatile",*/ "while"};
+		switch(this.token) {
+		case "break":
+			this.type = type_enum.k_break;
+			break;
+		case "char":
+			this.type = type_enum.k_char;
+			break;
+		case "goto":
+			this.type = type_enum.k_goto;
+			break;
+		case "if":
+			this.type = type_enum.k_if;
+			break;
+		case "int":
+			this.type = type_enum.k_int;
+			break;
+		case "return":
+			this.type = type_enum.k_return;
+			break;
+		case "void":
+			this.type = type_enum.k_void;
+			break;
+		case "while":
+			this.type = type_enum.k_while;
 		}
 		//could be written better, temporary fix
 		if(this.token.charAt(0) >= '0' && this.token.charAt(0) <= '9') {

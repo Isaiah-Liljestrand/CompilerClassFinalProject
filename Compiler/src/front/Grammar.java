@@ -1,437 +1,472 @@
 package front;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import front.Token.type_enum;
+
 public class Grammar {
-	private PTree root;
+	private Ptree root;
 	private boolean valid;
 	
 	/**
-	 * Effectivly Main function of Grammar as a builder?
+	 * Effectively Main function of Grammar as a builder?
 	 * @param tokens
 	 */
-	Grammar(List<Token> tokens){ // Essentially the first few parts of the grammar
-		this.root = new PTree();
-		root.equals("root");
-		List<Token> Feed = new ArrayList<Token>();
-		
-		if(tokens.get(0).getType() == Token.type_enum.keyword) { //This block of ifs only checks for Int Main() at the moment
-			if(tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.openParenthesis) {				
-				if(tokens.get(3).getType() == Token.type_enum.closedParenthesis && tokens.get(4).getType() == Token.type_enum.openCurlyBracket) {
-					while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
-						Feed.add(tokens.remove(0));
-						if(tokens.isEmpty()) {
-							System.out.println("Missing Closing Curly Brace");
-						    System.out.println("False");
-							return;
-						}
-						
-					}
-					
-					Feed.add(tokens.remove(0));
-					//for( Token tok : Feed) {
-						//System.out.println(tok.getToken());
-					//}
-					
-					root.addChild(funDeclaration(Feed));
-					root.printTree();
-					if(valid == true) {
-						System.out.println("\n\nValid Grammar");
-					}else {
-						System.out.print(valid);
-					}
-				} else if(tokens.get(3).getType() != Token.type_enum.closedParenthesis) {
-					System.out.println("Missing closing Parenthesis");
-					System.out.println("False");
-					return;
-				}
-			}
+	Grammar(List<Token> tokens) { // Essentially the first few parts of the grammar
+		this.root = new Ptree(type_enum.program);
+		valid = true;
+		root.addChild(declarationList(tokens));
+		if(!root.verifyChildren(1)) {
+			valid = false;
 		}
+		//Potential to add funDeclarationList in order to support more than just main
 	}
 	
-	private PTree funDeclaration(List<Token> tokens) { 
-		List<Token> Feed1 = new ArrayList<Token>();
-		List<Token> Feed2 = new ArrayList<Token>();
-		List<Token> typeSpec = new ArrayList<Token>();
-		List<Token> ID = new ArrayList<Token>();
-		List<Token> params = new ArrayList<Token>();
-		PTree tree = new PTree("funDeclaration");
-		
-		System.out.println("funDeclaration");
-		
-		if(tokens.get(0).getType() == Token.type_enum.keyword) {
-			if(tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.openParenthesis) {
-				if(tokens.get(3).getType() == Token.type_enum.closedParenthesis && tokens.get(4).getType() == Token.type_enum.openCurlyBracket) {
-					while(tokens.get(0).getType() != Token.type_enum.closedParenthesis) {
-						Feed1.add(tokens.remove(0));
-						if(Feed1.isEmpty()) {
-							System.out.println("Missing Closed Parenthisis");
-							System.out.println("funDeclaration is false");
-							return null;
-						}
-					}
-					Feed1.add(tokens.remove(0)); //The function declaration up to closed parenthesis E.G. int main()
-					while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
-						Feed2.add(tokens.remove(0));
-						if(Feed2.isEmpty()) {
-							System.out.println("Missing Closing Curly Brace");
-							System.out.println("funDeclaration is false");
-							System.out.println("False");
-							return null;
-						}
-					}
-					
-					Feed2.add(tokens.remove(0)); //The statement for { to }
-				}
-			}
+	private Ptree declarationList(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.declarationList);
+		int i;
+		if(tokens.size() == 0) {
+			return null;
 		}
-		
-		if(!Feed1.isEmpty()) {
-			if(Feed1.get(0).getType() == Token.type_enum.keyword && Feed1.get(1).getType() == Token.type_enum.identifier && Feed1.get(2).getType() == Token.type_enum.openParenthesis) {
-				typeSpec.add(Feed1.remove(0));
-				ID.add(Feed1.remove(0));
-				//System.out.println(ID.get(0).getToken());
-				if(Feed1.get(0).getType() == Token.type_enum.openParenthesis) {
-					while(Feed1.get(0).getType() != Token.type_enum.closedParenthesis) {
-						params.add(Feed1.remove(0));
-						if(Feed1.isEmpty()) {
-							System.out.println("Missing Closed Parenthisis");
-							System.out.println("funDeclaration is false");
-							return null;
-						}
-					}
-					params.add(Feed1.remove(0));
-				}
-				//return typeSpecifier(typeSpec) && IDfunc(ID) && params(params) && statement(Feed2);
-				
-				tree.setType("funDeclaration");
-				tree.addChild(typeSpecifier(typeSpec));
-				tree.addChild(IDfunc(ID));
-				tree.addChild(params(params));
-				tree.addChild(statement(Feed2));
-				return tree;
-			} else {
-				ID.add(Feed1.remove(0));
-				if(Feed1.get(0).getType() == Token.type_enum.openParenthesis) {
-					while(Feed1.get(0).getType() != Token.type_enum.closedParenthesis) {
-						params.add(Feed1.remove(0));
-						if(Feed1.isEmpty()) {
-							System.out.println("Missing Closed Parenthisis");
-							System.out.println("funDeclaration is false");
-							return null;
-						}
-					}
-					params.add(Feed1.remove(0));
-				}
-				//return IDfunc(ID) && params(params) && statement(Feed2);
-				tree.setType("funDeclaration");
-				tree.addChild(IDfunc(ID));
-				tree.addChild(params(params));
-				tree.addChild(statement(Feed2));
+		if(declaration(tokens) != null) {
+			tree.addChild(declaration(tokens));
+			if(tree.verifyChildren(1)) {
 				return tree;
 			}
+			return null;
 		}
-		
-		System.out.println("funDeclaration is false");
-		return null; 
-	}
-	
-	private PTree statement(List<Token> tokens) {
-		System.out.println("statement");
-		List<Token> Feed = new ArrayList<Token>();
-		PTree leaf = new PTree("statement");
-		
-		if(tokens.get(0).getType() == Token.type_enum.openCurlyBracket) {
-			while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
-				if(tokens.isEmpty()) {
-					System.out.println("Missing Closed curly bracket");
-					System.out.println("statement is false");
+		if(tokens.get(tokens.size() - 1).type == type_enum.semicolon) {
+			i = tokens.size() - 2;
+			while(tokens.get(i).type != type_enum.semicolon && tokens.get(i).type != type_enum.closedCurlyBracket) {
+				i--;
+				if(i < 0) {
 					return null;
 				}
-				Feed.add(tokens.remove(0));
 			}
-			Feed.add(tokens.remove(0));
-			//return compoundStmt(Feed);
-			leaf.addChild(compoundStmt(Feed));
-			return leaf;
-		}
-		
-		System.out.println("statement is false");
-		return null;
-	}
-	
-	private PTree compoundStmt(List<Token> tokens) { // Checks for rtn statement
-		System.out.println("compoundStmt");
-		PTree leaf = new PTree("compoundStmt");
-		
-		//for(Token tok : tokens) {
-	//		System.out.println(tok.getToken());
-		//}
-		List<Token> rtnStmt = new ArrayList<Token>();
-		int i = 0;
-		
-		while(!tokens.get(i).getToken().contentEquals("return")) {
 			i++;
+			tree.addChild(declarationList(tokens.subList(0, i)));
+			tree.addChild(declaration(tokens.subList(i, tokens.size())));
+			if(tree.verifyChildren(2)) {
+				return tree;
+			}
+			return null;
+		} else if (tokens.get(tokens.size() - 1).type == type_enum.closedCurlyBracket) {
+			i = findMatchingBracket(tokens, tokens.size() - 1);
+			i--;
+			while (true) {
+				if(i < 0) {
+					return null;
+				}
+				if(tokens.get(i).type == type_enum.semicolon || tokens.get(i).type == type_enum.closedCurlyBracket) {
+					break;
+				}
+				i--;
+			}
+			i++;
+			tree.addChild(declarationList(tokens.subList(0, i)));
+			tree.addChild(declaration(tokens.subList(i, tokens.size())));
+			if(tree.verifyChildren(2)) {
+				return tree;
+			}
+			return null;
 		}
-		while(tokens.get(i).getType() != Token.type_enum.semicolon) {
-			if(tokens.isEmpty()) {
-				System.out.println("Expected semicolon at end of return statement");
-				System.out.println("compoundStmt is false");
+		return null;
+		
+	}
+	
+	private Ptree declaration(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.declaration);
+		tree.addChild(functionDeclaration(tokens));
+		if(tree.getChildren().get(0) != null) {
+			return tree;
+		}
+		tree.removeChild();
+		tree.addChild(variableDeclaration(tokens));
+		if(tree.getChildren().get(0) != null) {
+			return tree;
+		}
+		return null;
+	}
+	
+	
+	private Ptree variableDeclaration(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.variableDeclaration);
+		if(tokens.size() < 3) {
+			return null;
+		}
+		tree.addChild(typeSpecifier(tokens.get(0)));
+		tree.addChild(variableDeclarationList(tokens.subList(1, tokens.size() - 1)));
+		tree.addChild(semicolon(tokens.get(tokens.size() - 1)));
+		if(tree.verifyChildren(3)) {
+			return tree;
+		}
+		return null;
+	}
+	
+	
+	private Ptree variableDeclarationList(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.variableDeclarationList);
+		if(tokens.size() == 0) {
+			return null;
+		}
+		tree.addChild(variableDeclarationInitialize(tokens));
+		if(tree.getChildren().get(0) != null) {
+			return tree;
+		}
+		tree.removeChild();
+		if(tokens.size() < 3) {
+			return null;
+		}
+		int index = tokens.size() - 1;
+		while(tokens.get(index).getType() == type_enum.comma) {
+			index--;
+			if(index == 0) {
 				return null;
 			}
-			rtnStmt.add(tokens.remove(i));
 		}
-		
-		rtnStmt.add(tokens.remove(i));
-		
-		//This next part is bad because we are just removing curly brackets and assuming the remaining
-		//Tokens are local declarations
-		
-		if(tokens.get(i).getType() == Token.type_enum.closedCurlyBracket) {
-			tokens.remove(i);
+		tree.addChild(variableDeclarationList(tokens.subList(0, index)));
+		tree.addChild(comma(tokens.get(index)));
+		tree.addChild(variableDeclarationInitialize(tokens.subList(index + 1, tokens.size())));
+		if(tree.verifyChildren(3)) {
+			return tree;
 		}
-		if(tokens.get(0).getType() == Token.type_enum.openCurlyBracket) {
-			tokens.remove(0);
-		}
-		
-		leaf.addChild(localDeclarations(tokens));
-		leaf.addChild(returnStmt(rtnStmt));
-		//return localDeclarations(tokens) && returnStmt(rtnStmt);
-		return leaf;
-		
-	}
-	
-	private PTree localDeclarations(List<Token> tokens) { 
-		System.out.println("localDeclarations");
-		PTree leaf = new PTree("localDeclarations");
-		
-		//I'm about to just handle this for the basic program only, so this is gonna need further work
-		if(tokens.size() == 3) {
-			if(tokens.get(0).getType() == Token.type_enum.keyword && tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.semicolon) {
-				return leaf;
-			}
-		} else if(tokens.size() > 3) {
-			if(tokens.get(0).getType() == Token.type_enum.keyword && tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.semicolon) {
-				tokens.remove(0);
-				tokens.remove(0);
-				tokens.remove(0);
-				return localDeclarations(tokens);
-			}
-		}
-		System.out.println("localDeclarations is false");
 		return null;
 	}
 	
-	private PTree returnStmt(List<Token> tokens) {
-		System.out.println("returnStmt");
-		PTree leaf = new PTree("returnStmt");
+	
+	private Ptree variableDeclarationInitialize(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.variableDeclarationInitialize);
+		tree.addChild(variableDeclareID(tokens));
+		if(tree.getChildren().get(0) != null) {
+			return tree;
+		}
+		tree.removeChild();
 		
-		if(tokens.size() == 2) {
-			if(tokens.get(0).getToken().contentEquals("return") && tokens.get(1).getType() == Token.type_enum.semicolon) {
-				//return true;
-				return leaf;
-			}
+		if(tokens.size() < 3) {
+			return null;
 		}
-		if(tokens.size() == 3) {
-			if(tokens.get(0).getToken().contentEquals("return") && tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.semicolon) {
-				return leaf; // This actually needs to check the expression which would be the middle token
-			}
+		tree.addChild(variableDeclareID(tokens.subList(0, 1)));
+		tree.addChild(equals(tokens.get(1)));
+		tree.addChild(expression(tokens.subList(2, tokens.size())));
+		if(tree.verifyChildren(3)) {
+			return tree;
 		}
-		System.out.println("returnStmt is false");
 		return null;
 	}
+	
+	
+	private Ptree variableDeclareID(List<Token> tokens) {
+		if(tokens.size() != 1 || tokens.get(0).getType() != type_enum.identifier) {
+			return null;
+		}
+		return new Ptree(tokens.get(0));
+	}
+	
+	/**
+	 * Function Declaration covers main and other potential functions
+	 * @param tokens all tokens passed in from main
+	 * @return Ptree if the tree is valid and null if not
+	 */
+	private Ptree functionDeclaration(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.functionDeclaration);
+		int index, index2;
+		if(tokens.size() < 6) {
+			return null;
+		}
+		tree.addChild(typeSpecifier(tokens.get(0)));
+		tree.addChild(identifier(tokens.get(1)));
+		tree.addChild(openParenthesis(tokens.get(2)));
+		index = findMatchingBracket(tokens, 2);
+		if (index == -1) {
+			return null;
+		}
+		if(index > 3) {
+			tree.addChild(params(tokens.subList(3, index)));
+		}
+		tree.addChild(closedParenthesis(tokens.get(index)));
+		tree.addChild(openCurlyBracket(tokens.get(index + 1)));
+		index2 = findMatchingBracket(tokens, index + 1);
+		if (index2 == -1) {
+			return null;
+		}
+		if(index2 > (index + 2)) {
+			tree.addChild(statement(tokens.subList(index + 2, index2)));
+		}
+		tree.addChild(closedCurlyBracket(tokens.get(index2)));
+		if(tree.verifyChildren(6) || tree.verifyChildren(7) || tree.verifyChildren(8)) {
+			return tree;
+		}
+		return null;
+	}
+	
+	
+	private Ptree params(List<Token> tokens) {
+		if(tokens.size() == 0) {
+			return new Ptree(type_enum.epsilon);
+		}
+		return parameterList(tokens);
+	}
+	
+	
+	private Ptree parameterList(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.parameterList);
+		tree.addChild(parameter(tokens));
+		if(tree.verifyChildren(1)) {
+			return tree;
+		}
+		tree.removeChild();
 		
-	private PTree IDfunc(List<Token> tokens) {
-		System.out.println("IDfunc");
-		PTree leaf = new PTree("IDfunc");
-		
-		if(tokens.size() == 1) {
-			if(tokens.get(0).getType() == Token.type_enum.identifier) {
-				return leaf;
-			} else {
-				System.out.println("IDfunc is false");
+		int index = tokens.size() - 1;
+		while(tokens.get(index).getType() != type_enum.comma) {
+			index--;
+			if(index == 0) {
 				return null;
 			}
 		}
-		System.out.println("IDfunc is false");
-		return null;
-	}
-	
-	private PTree typeSpecifier(List<Token> tokens) {
-		System.out.println("typeSpecifier");
-		PTree leaf = new PTree("typeSpecifier");
-		
-		
-		if(tokens.size() == 1) {
-			if(tokens.get(0).getToken().contentEquals("int") | tokens.get(0).getToken().contentEquals("bool") | tokens.get(0).getToken().contentEquals("char") | tokens.get(0).getToken().contentEquals("float")) {
-				return leaf;
-			}
+		tree.addChild(parameterList(tokens.subList(0, index)));
+		tree.addChild(comma(tokens.get(index)));
+		tree.addChild(parameter(tokens.subList(index + 1, tokens.size())));
+		if(tree.verifyChildren(3)) {
+			return tree;
 		}
-		System.out.println("typeSpecifier is false");
 		return null;
 	}
 	
-	private PTree params(List<Token> tokens) { // Only handles basic program right now
-		System.out.println("params");
-		PTree leaf = new PTree("params");
-		//for( Token tok : tokens) {
-		//	System.out.println(tok.getToken());
-		//}
-		if(tokens.size() == 2) {
-			if(tokens.get(0).getType() == Token.type_enum.openParenthesis && tokens.get(1).getType() == Token.type_enum.closedParenthesis) {
-				return leaf;
-			}
+	
+	private Ptree parameter(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.parameter);
+		if(tokens.size() != 2) {
+			return null;
 		}
-		System.out.println("params is false");
+		tree.addChild(typeSpecifier(tokens.get(0)));
+		tree.addChild(identifier(tokens.get(1)));
+		if(tree.verifyChildren(2)) {
+			return tree;
+		}
 		return null;
 	}
 	
-	private PTree recDeclaration() {
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	private Ptree statement(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.statement);
+	}
+	
+
+	
+	
+	
+	private Ptree expression(List<Token> tokens) {
 		return null;
 	}
 	
-	private PTree varDeclaration() {
+	private Ptree simpleExpression() {
 		return null;
 	}
 	
-	private PTree scopedVarDeclaration() {
+	private Ptree andExpression() {
 		return null;
 	}
 	
-	private PTree varDecList() {
+	private Ptree unaryRelExpression() {
 		return null;
 	}
 	
-	private PTree varDecInitialize() {
+	private Ptree relExpression() {
 		return null;
 	}
 	
-	private PTree varDecId() {
+	private Ptree relop() {
 		return null;
 	}
 	
-	private PTree scopedTypeSpecifier() {
+	private Ptree sumExpression() {
 		return null;
 	}
 	
-	private PTree returnTypeSpecifier() {
+	private Ptree sumop() {
 		return null;
 	}
 	
-	private PTree paramList() {
+	private Ptree term() {
 		return null;
 	}
 	
-	private PTree paramTypeList() {
+	private Ptree mulop() {
 		return null;
 	}
 	
-	private PTree paramIdList() {
+	private Ptree unaryExpression() {
 		return null;
 	}
 	
-	private PTree paramId() {
+	private Ptree unaryop() {
 		return null;
 	}
 	
-	private PTree statementList() {
+	private Ptree factor() {
 		return null;
 	}
 	
-	private PTree expressionStmt() {
+	private Ptree mutable() {
 		return null;
 	}
 	
-	private PTree selectionStmt() {
+	private Ptree immutable() {
 		return null;
 	}
 	
-	private PTree iterationStmt() {
+	private Ptree call() {
 		return null;
 	}
 	
-	private PTree breakStmt() {
+	private Ptree args() {
 		return null;
 	}
 	
-	private PTree expression() {
+	private Ptree argList() {
 		return null;
 	}
 	
-	private PTree simpleExpression() {
+	private Ptree constant() {
 		return null;
 	}
 	
-	private PTree andExpression() {
+	private Ptree typeSpecifier(Token token) {
+		switch (token.getType()) {
+		case assignmentOperator:
+		case additionAssignmentOperator:
+		case subtractionAssignmentOperator:
+		case multiplicationAssignmentOperator:
+		case divisionAssignmentOperator:
+			return new Ptree(token);
+		}
 		return null;
 	}
 	
-	private PTree unaryRelExpression() {
+	private Ptree identifier(Token token) {
+		if(token.type == type_enum.identifier) {
+			return new Ptree(token);
+		}
 		return null;
 	}
 	
-	private PTree relExpression() {
+	private Ptree openParenthesis(Token token) {
+		if(token.type == type_enum.openParenthesis) {
+			return new Ptree(token);
+		}
 		return null;
 	}
 	
-	private PTree relop() {
+	private Ptree closedParenthesis(Token token) {
+		if(token.type == type_enum.closedParenthesis) {
+			return new Ptree(token);
+		}
 		return null;
 	}
 	
-	private PTree sumExpression() {
+	private Ptree openCurlyBracket(Token token) {
+		if(token.type == type_enum.openCurlyBracket) {
+			return new Ptree(token);
+		}
 		return null;
 	}
 	
-	private PTree sumop() {
+	private Ptree closedCurlyBracket(Token token) {
+		if(token.type == type_enum.closedCurlyBracket) {
+			return new Ptree(token);
+		}
 		return null;
 	}
 	
-	private PTree term() {
+	private Ptree semicolon(Token token) {
+		if(token.type == type_enum.semicolon) {
+			return new Ptree(token);
+		}
 		return null;
 	}
 	
-	private PTree mulop() {
+	private Ptree comma(Token token) {
+		if(token.type == type_enum.comma) {
+			return new Ptree(token);
+		}
 		return null;
 	}
 	
-	private PTree unaryExpression() {
-		return null;
-	}
-	
-	private PTree unaryop() {
-		return null;
-	}
-	
-	private PTree factor() {
-		return null;
-	}
-	
-	private PTree mutable() {
-		return null;
-	}
-	
-	private PTree immutable() {
-		return null;
-	}
-	
-	private PTree call() {
-		return null;
-	}
-	
-	private PTree args() {
-		return null;
-	}
-	
-	private PTree argList() {
-		return null;
-	}
-	
-	private PTree constant() {
+	private Ptree equals(Token token) {
+		if(token.type == type_enum.assignmentOperator) {
+			return new Ptree(token);
+		}
 		return null;
 	}
 	
 	public boolean getValid() {
 		return this.valid;
+	}
+	
+	
+	private int findMatchingBracket(List<Token> tokens, int startindex) {
+		int numBrackets = 1, i = startindex + 1;
+		boolean t = true;
+		//Case of open curly brackets scans forward to find matching closed curly bracket returns index after matching bracket
+		if(tokens.get(startindex).type == type_enum.openCurlyBracket) {
+			for(Token tok: tokens.subList(startindex + 1, tokens.size())) {
+				if(tok.type == type_enum.openCurlyBracket) {
+					numBrackets++;
+				} else if(tok.type == type_enum.closedCurlyBracket) {
+					numBrackets--;
+					if(numBrackets == 0) {
+						return i;
+					}
+				}
+				i++;
+			}
+			//Case of closed parenthesis scans back and matches with an open curly bracket and returns index
+		} else if(tokens.get(startindex).type == type_enum.closedCurlyBracket) {
+			i = startindex - 1;
+			while(i > -1) {
+				if(tokens.get(i).type == type_enum.closedCurlyBracket) {
+					numBrackets++;
+				} else if (tokens.get(i).type == type_enum.openCurlyBracket) {
+					numBrackets--;
+					if(numBrackets == 0) {
+						return i;
+					}
+				}
+			}
+		} else if(tokens.get(startindex).type == type_enum.openParenthesis) {
+			for(Token tok: tokens.subList(startindex + 1, tokens.size())) {
+				if(tok.type == type_enum.openParenthesis) {
+					numBrackets++;
+				} else if(tok.type == type_enum.closedParenthesis) {
+					numBrackets--;
+					if(numBrackets == 0) {
+						return i;
+					}
+				}
+				i++;
+			}
+			//Case of closed parenthesis scans back and matches with an open parenthesis and returns index
+		} else if(tokens.get(startindex).type == type_enum.closedParenthesis) {
+			i = startindex - 1;
+			while(i > -1) {
+				if(tokens.get(i).type == type_enum.closedParenthesis) {
+					numBrackets++;
+				} else if (tokens.get(i).type == type_enum.openParenthesis) {
+					numBrackets--;
+					if(numBrackets == 0) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
 	}
 }
