@@ -94,7 +94,7 @@ public class Grammar {
 		if(tokens.size() < 3) {
 			return null;
 		}
-		tree.addChild(typeSpecifier(tokens.get(0)));
+		tree.addChild(variableTypeSpecifier(tokens.get(0)));
 		tree.addChild(variableDeclarationList(tokens.subList(1, tokens.size() - 1)));
 		tree.addChild(semicolon(tokens.get(tokens.size() - 1)));
 		if(tree.verifyChildren(3)) {
@@ -173,7 +173,7 @@ public class Grammar {
 		if(tokens.size() < 6) {
 			return null;
 		}
-		tree.addChild(typeSpecifier(tokens.get(0)));
+		tree.addChild(functionTypeSpecifier(tokens.get(0)));
 		tree.addChild(identifier(tokens.get(1)));
 		tree.addChild(openParenthesis(tokens.get(2)));
 		index = findMatchingBracket(tokens, 2);
@@ -330,13 +330,20 @@ public class Grammar {
 		return null;
 	}
 	
-	private Ptree typeSpecifier(Token token) {
+	private Ptree variableTypeSpecifier(Token token) {
 		switch (token.getType()) {
-		case assignmentOperator:
-		case additionAssignmentOperator:
-		case subtractionAssignmentOperator:
-		case multiplicationAssignmentOperator:
-		case divisionAssignmentOperator:
+		case k_int:
+		case k_char:
+			return new Ptree(token);
+		}
+		return null;
+	}
+	
+	private Ptree functionTypeSpecifier(Token token) {
+		switch (token.getType()) {
+		case k_int:
+		case k_char:
+		case k_void:
 			return new Ptree(token);
 		}
 		return null;
