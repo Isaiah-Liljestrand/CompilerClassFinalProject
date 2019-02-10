@@ -181,7 +181,7 @@ public class Grammar {
 			return null;
 		}
 		if(index > 3) {
-			tree.addChild(params(tokens.subList(3, index)));
+			tree.addChild(parameterList(tokens.subList(3, index)));
 		}
 		tree.addChild(closedParenthesis(tokens.get(index)));
 		tree.addChild(openCurlyBracket(tokens.get(index + 1)));
@@ -197,16 +197,7 @@ public class Grammar {
 			return tree;
 		}
 		return null;
-	}
-	
-	
-	private Ptree params(List<Token> tokens) {
-		if(tokens.size() == 0) {
-			return new Ptree(type_enum.epsilon);
-		}
-		return parameterList(tokens);
-	}
-	
+	}	
 	
 	private Ptree parameterList(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.parameterList);
@@ -238,7 +229,7 @@ public class Grammar {
 		if(tokens.size() != 2) {
 			return null;
 		}
-		tree.addChild(typeSpecifier(tokens.get(0)));
+		tree.addChild(variableTypeSpecifier(tokens.get(0)));
 		tree.addChild(identifier(tokens.get(1)));
 		if(tree.verifyChildren(2)) {
 			return tree;
