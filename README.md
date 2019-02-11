@@ -1,6 +1,23 @@
 # Fontes-Barry_Fowler_Iiljestrand_Marks_423
 
---Useage--
+--Usage--
+Open Eclipse Oracle
+Open the Following from the tool bar
+        file -> import
+        on the new window "import"
+                git -> projects from git -> clone URL
+                enter the URL "https://github.com/biopox/Fontes-Barry_Fowler_Liljestrand_Marks_423.git"
+                hit next
+                check mark only the master branch
+                next -> next -> wait for a little bit -> next -> Finish
+On the left tab open Compiler
+Open the Following from the tool bar
+        Run -> Run Configurations
+        Go to the  Arguments tab and click apply once you've added your arguments.
+        -t  -a "filepath"\Testfile.txt
+        -t for tokens. -a for abstract syntax tree.
+On the top tool bar, click the run main button (green right arrow)
+On the Console on the bottom screen, re-enter the filepath if prompted
 
 --C Tokens--
 auto
