@@ -25,7 +25,7 @@ public class Grammar {
 	/**
 	 * splits up all variable and function declarations at the top level of code
 	 * @param tokens all tokens passed down from either program of another declarationList
-	 * @return tree if all subtrees are successful
+	 * @return tree if all subtrees are successful otherwise null
 	 */
 	private Ptree declarationList(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.declarationList);
@@ -79,6 +79,11 @@ public class Grammar {
 		
 	}
 	
+	/**
+	 * Declaration either leads to a function or variable declaration
+	 * @param tokens all tokens associated with said declaration
+	 * @return declaration subtree if all subtrees are valid
+	 */
 	private Ptree declaration(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.declaration);
 		tree.addChild(functionDeclaration(tokens));
@@ -94,6 +99,11 @@ public class Grammar {
 	}
 	
 	
+	/**
+	 * Variable declaration
+	 * @param tokens all tokens associated with said declaration
+	 * @return variableDeclaration tree if all subtrees are valid
+	 */
 	private Ptree variableDeclaration(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.variableDeclaration);
 		if(tokens.size() < 3) {
@@ -108,7 +118,11 @@ public class Grammar {
 		return null;
 	}
 	
-	
+	/**
+	 * variableDeclarationList is the BNF element that splits up all declarations
+	 * @param tokens either a single declaration or multiple
+	 * @return variableDeclarationList subtree or null
+	 */
 	private Ptree variableDeclarationList(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.variableDeclarationList);
 		if(tokens.size() == 0) {
@@ -138,7 +152,11 @@ public class Grammar {
 		return null;
 	}
 	
-	
+	/**
+	 * Either a simple variable name declaration or a declaration and assignment 
+	 * @param tokens tokens passed down
+	 * @return subtree that represents a declared variable
+	 */
 	private Ptree variableDeclarationInitialize(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.variableDeclarationInitialize);
 		tree.addChild(variableDeclareID(tokens));
@@ -159,7 +177,11 @@ public class Grammar {
 		return null;
 	}
 	
-	
+	/**
+	 * simply tests that the variable declaration has a valid size and is an identifier
+	 * @param tokens should simply be one token that is a variable
+	 * @return leaf node that represents a variable or null
+	 */
 	private Ptree variableDeclareID(List<Token> tokens) {
 		if(tokens.size() != 1 || tokens.get(0).getType() != type_enum.identifier) {
 			return null;
@@ -168,8 +190,8 @@ public class Grammar {
 	}
 	
 	/**
-	 * Function Declaration covers main and other potential functions
-	 * @param tokens all tokens passed in from main
+	 * Function Declaration covers main or any other function
+	 * @param tokens all tokens in a function declaration
 	 * @return Ptree if the tree is valid and null if not
 	 */
 	private Ptree functionDeclaration(List<Token> tokens) {
@@ -204,6 +226,11 @@ public class Grammar {
 		return null;
 	}	
 	
+	/**
+	 * list of parameters to be passed in if a function is called
+	 * @param tokens tokens inside of parenthesis of a function
+	 * @return Ptree if all is valid otherwise null
+	 */
 	private Ptree parameterList(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.parameterList);
 		tree.addChild(parameter(tokens));
@@ -228,7 +255,11 @@ public class Grammar {
 		return null;
 	}
 	
-	
+	/**
+	 * Single parameter to be passed into a function
+	 * @param tokens should be simply a variable type specifier and 
+	 * @return subtree or null depending on validity
+	 */
 	private Ptree parameter(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.parameter);
 		if(tokens.size() != 2) {
@@ -244,13 +275,11 @@ public class Grammar {
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
+	/**
+	 * Separates out all the different kinds of statements
+	 * @param tokens either a few statements or one depending on where it is being called from
+	 * @return successful statement subtree if valid otherwise null
+	 */
 	private Ptree statement(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.statement);
 	}
@@ -335,6 +364,11 @@ public class Grammar {
 		return null;
 	}
 	
+	/**
+	 * Checks whether the token passed in is a valid variable type specifier
+	 * @param token should be either int or char
+	 * @return Ptree containing the token if the token was an int or char null otherwise
+	 */
 	private Ptree variableTypeSpecifier(Token token) {
 		switch (token.getType()) {
 		case k_int:
@@ -345,6 +379,11 @@ public class Grammar {
 		}
 	}
 	
+	/**
+	 * Checks whether the token passed in is a valid function type specifier
+	 * @param token should be either int char or void
+	 * @return Ptree containing the token if the token was an int, char, or void null otherwise
+	 */
 	private Ptree functionTypeSpecifier(Token token) {
 		switch (token.getType()) {
 		case k_int:
@@ -356,6 +395,11 @@ public class Grammar {
 		}
 	}
 	
+	/**
+	 * Simply checks if passed in token is an identifier
+	 * @param token should be identifier
+	 * @return Ptree identifier leaf node or null if not valid
+	 */
 	private Ptree identifier(Token token) {
 		if(token.type == type_enum.identifier) {
 			return new Ptree(token);
@@ -363,6 +407,11 @@ public class Grammar {
 		return null;
 	}
 	
+	/**
+	 * Simply checks if passed in token is an open parenthesis
+	 * @param token should be an open parenthesis
+	 * @return Ptree node with an open parenthesis or null
+	 */
 	private Ptree openParenthesis(Token token) {
 		if(token.type == type_enum.openParenthesis) {
 			return new Ptree(token);
@@ -370,6 +419,11 @@ public class Grammar {
 		return null;
 	}
 	
+	/**
+	 * Simply checks if passed in token is an closed parenthesis
+	 * @param token should be an closed parenthesis
+	 * @return Ptree node with an closed parenthesis or null
+	 */
 	private Ptree closedParenthesis(Token token) {
 		if(token.type == type_enum.closedParenthesis) {
 			return new Ptree(token);
@@ -377,6 +431,11 @@ public class Grammar {
 		return null;
 	}
 	
+	/**
+	 * Simply checks if passed in token is an open curly bracket
+	 * @param token should be an open curly bracket
+	 * @return Ptree leaf node or null depending on validity
+	 */
 	private Ptree openCurlyBracket(Token token) {
 		if(token.type == type_enum.openCurlyBracket) {
 			return new Ptree(token);
@@ -384,6 +443,11 @@ public class Grammar {
 		return null;
 	}
 	
+	/**
+	 * Simply checks if passed in token is a closed curly bracket
+	 * @param token should be an closed curly bracket
+	 * @return Ptree leaf node or null depending on validity
+	 */
 	private Ptree closedCurlyBracket(Token token) {
 		if(token.type == type_enum.closedCurlyBracket) {
 			return new Ptree(token);
@@ -391,6 +455,11 @@ public class Grammar {
 		return null;
 	}
 	
+	/**
+	 * Simply checks if passed in token is a semicolon
+	 * @param token should be a semicolon
+	 * @return Ptree leaf node with a semicolon or null depending on validity
+	 */
 	private Ptree semicolon(Token token) {
 		if(token.type == type_enum.semicolon) {
 			return new Ptree(token);
@@ -398,6 +467,11 @@ public class Grammar {
 		return null;
 	}
 	
+	/**
+	 * simply checks if passed in token is a comma
+	 * @param token should be a comma
+	 * @return Ptree leaf node with a semicolon or null depending on validity
+	 */
 	private Ptree comma(Token token) {
 		if(token.type == type_enum.comma) {
 			return new Ptree(token);
@@ -405,6 +479,11 @@ public class Grammar {
 		return null;
 	}
 	
+	/**
+	 * simply checks if passed in token is an equals sign
+	 * @param token should be an equals sign
+	 * @return Ptree leaf node with an equals sign depending on validity
+	 */
 	private Ptree equals(Token token) {
 		if(token.type == type_enum.assignmentOperator) {
 			return new Ptree(token);
@@ -412,16 +491,25 @@ public class Grammar {
 		return null;
 	}
 	
+	/**
+	 * Checks whether the grammar is valid or not
+	 * @return true if valid false if not
+	 */
 	public boolean getValid() {
 		return this.valid;
 	}
 	
-	
+	/**
+	 * Finds the matching curly bracket in a list of tokens
+	 * @param tokens list of tokens from an undefined source
+	 * @param startindex index of the curly bracket to be matched
+	 * @return the index of the bracket that matches the one passed in
+	 */
 	private int findMatchingBracket(List<Token> tokens, int startindex) {
 		int numBrackets = 1, i = startindex;
 		boolean forward = true;
 		type_enum matchingBracket = tokens.get(startindex).getType();
-		type_enum otherBracket;
+		type_enum otherBracket = null;
 		if(tokens.get(startindex).getType() == type_enum.openCurlyBracket) {
 			otherBracket = type_enum.closedCurlyBracket;
 			i++;
@@ -433,7 +521,7 @@ public class Grammar {
 		while(i < tokens.size() && i > -1) {
 			if(tokens.get(i).getType() == matchingBracket) {
 				numBrackets++;
-			} else if(tokens.get(i).getType() == otherBracket)) {
+			} else if(tokens.get(i).getType() == otherBracket) {
 				numBrackets--;
 				if(numBrackets == 0) {
 					return i;
@@ -445,58 +533,7 @@ public class Grammar {
 				i--;
 			}
 		}
-		//Case of open curly brackets scans forward to find matching closed curly bracket returns index after matching bracket
-		if(tokens.get(startindex).type == type_enum.openCurlyBracket) {
-			for(Token tok: tokens.subList(startindex + 1, tokens.size())) {
-				if(tok.type == type_enum.openCurlyBracket) {
-					numBrackets++;
-				} else if(tok.type == type_enum.closedCurlyBracket) {
-					numBrackets--;
-					if(numBrackets == 0) {
-						return i;
-					}
-				}
-				i++;
-			}
-			//Case of closed parenthesis scans back and matches with an open curly bracket and returns index
-		} else if(tokens.get(startindex).type == type_enum.closedCurlyBracket) {
-			i = startindex - 1;
-			while(i > -1) {
-				if(tokens.get(i).type == type_enum.closedCurlyBracket) {
-					numBrackets++;
-				} else if (tokens.get(i).type == type_enum.openCurlyBracket) {
-					numBrackets--;
-					if(numBrackets == 0) {
-						return i;
-					}
-				}
-			}
-		} else if(tokens.get(startindex).type == type_enum.openParenthesis) {
-			for(Token tok: tokens.subList(startindex + 1, tokens.size())) {
-				if(tok.type == type_enum.openParenthesis) {
-					numBrackets++;
-				} else if(tok.type == type_enum.closedParenthesis) {
-					numBrackets--;
-					if(numBrackets == 0) {
-						return i;
-					}
-				}
-				i++;
-			}
-			//Case of closed parenthesis scans back and matches with an open parenthesis and returns index
-		} else if(tokens.get(startindex).type == type_enum.closedParenthesis) {
-			i = startindex - 1;
-			while(i > -1) {
-				if(tokens.get(i).type == type_enum.closedParenthesis) {
-					numBrackets++;
-				} else if (tokens.get(i).type == type_enum.openParenthesis) {
-					numBrackets--;
-					if(numBrackets == 0) {
-						return i;
-					}
-				}
-			}
-		}
+
 		return -1;
 	}
 }
