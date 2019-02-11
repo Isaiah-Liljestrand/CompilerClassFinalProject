@@ -12,13 +12,6 @@ public class Grammar {
 	 * @param tokens
 	 */
 	Grammar(List<Token> tokens){ // Essentially the first few parts of the grammar
-		this.root = new PTree();
-		root.setType("root");
-		List<Token> Feed = new ArrayList<Token>();
-		
-		if(tokens.get(0).getType() == Token.type_enum.keyword) { //This block of ifs only checks for Int Main() at the moment
-			if(tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.openParenthesis) {				
-				if(tokens.get(3).getType() == Token.type_enum.closedParenthesis && tokens.get(4).getType() == Token.type_enum.openCurlyBracket) {
 					while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
 						Feed.add(tokens.remove(0));
 						if(tokens.isEmpty()) {
@@ -50,7 +43,6 @@ public class Grammar {
 		}
 	}
 	
-	private PTree funDeclaration(List<Token> tokens) { 
 		List<Token> Feed1 = new ArrayList<Token>();
 		List<Token> Feed2 = new ArrayList<Token>();
 		List<Token> typeSpec = new ArrayList<Token>();
@@ -73,7 +65,6 @@ public class Grammar {
 					}
 					Feed1.add(tokens.remove(0)); //The function declaration up to closed parenthesis E.G. int main()
 					while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
-						Feed2.add(tokens.remove(0));
 						if(Feed2.isEmpty()) {
 							System.out.println("Missing Closing Curly Brace");
 							System.out.println("funDeclaration is false");
@@ -84,6 +75,7 @@ public class Grammar {
 					
 					Feed2.add(tokens.remove(0)); //The statement for { to }
 				}
+	 */
 			}
 		}
 		
@@ -97,18 +89,12 @@ public class Grammar {
 						params.add(Feed1.remove(0));
 						if(Feed1.isEmpty()) {
 							System.out.println("Missing Closed Parenthisis");
-							System.out.println("funDeclaration is false");
-							return null;
 						}
-					}
 					params.add(Feed1.remove(0));
+		if(tokens.get(tokens.size() - 1).type == type_enum.semicolon) {
+				i--;
+				if(i < 0) {
 				}
-				//return typeSpecifier(typeSpec) && IDfunc(ID) && params(params) && statement(Feed2);
-				
-				tree.setType("funDeclaration");
-				tree.addChild(typeSpecifier(typeSpec));
-				tree.addChild(IDfunc(ID));
-				tree.addChild(params(params));
 				tree.addChild(statement(Feed2));
 				return tree;
 			} else {
@@ -121,12 +107,14 @@ public class Grammar {
 							System.out.println("funDeclaration is false");
 							return null;
 						}
-					}
 					params.add(Feed1.remove(0));
+			return null;
+		} else if (tokens.get(tokens.size() - 1).type == type_enum.closedCurlyBracket) {
+			i = findMatchingBracket(tokens, tokens.size() - 1);
+			while (true) {
+				if(i < 0) {
+					return null;
 				}
-				//return IDfunc(ID) && params(params) && statement(Feed2);
-				tree.setType("funDeclaration");
-				tree.addChild(IDfunc(ID));
 				tree.addChild(params(params));
 				tree.addChild(statement(Feed2));
 				return tree;
@@ -145,25 +133,20 @@ public class Grammar {
 		if(tokens.get(0).getType() == Token.type_enum.openCurlyBracket) {
 			while(tokens.get(0).getType() != Token.type_enum.closedCurlyBracket) {
 				if(tokens.isEmpty()) {
-					System.out.println("Missing Closed curly bracket");
-					System.out.println("statement is false");
 					return null;
-				}
 				Feed.add(tokens.remove(0));
 			}
 			Feed.add(tokens.remove(0));
 			//return compoundStmt(Feed);
 			leaf.addChild(compoundStmt(Feed));
 			return leaf;
+		if(tokens.size() < 3) {
 		}
 		
 		System.out.println("statement is false");
 		return null;
 	}
 	
-	private PTree compoundStmt(List<Token> tokens) { // Checks for rtn statement
-		//System.out.println("compoundStmt");
-		PTree leaf = new PTree("compoundStmt");
 		
 		//for(Token tok : tokens) {
 	//		System.out.println(tok.getToken());
@@ -173,6 +156,7 @@ public class Grammar {
 		
 		while(!tokens.get(i).getToken().contentEquals("return")) {
 			i++;
+	private Ptree variableDeclarationList(List<Token> tokens) {
 		}
 		while(tokens.get(i).getType() != Token.type_enum.semicolon) {
 			if(tokens.isEmpty()) {
@@ -180,23 +164,13 @@ public class Grammar {
 				System.out.println("compoundStmt is false");
 				return null;
 			}
-			rtnStmt.add(tokens.remove(i));
-		}
-		
 		rtnStmt.add(tokens.remove(i));
-		
-		//This next part is bad because we are just removing curly brackets and assuming the remaining
-		//Tokens are local declarations
-		
-		if(tokens.get(i).getType() == Token.type_enum.closedCurlyBracket) {
-			tokens.remove(i);
 		}
 		if(tokens.get(0).getType() == Token.type_enum.openCurlyBracket) {
 			tokens.remove(0);
 		}
 		
 		leaf.addChild(localDeclarations(tokens));
-		leaf.addChild(returnStmt(rtnStmt));
 		//return localDeclarations(tokens) && returnStmt(rtnStmt);
 		return leaf;
 		
@@ -219,15 +193,9 @@ public class Grammar {
 				return localDeclarations(tokens);
 			}
 		}
-		System.out.println("localDeclarations is false");
 		return null;
 	}
 	
-	private PTree returnStmt(List<Token> tokens) {
-		//System.out.println("returnStmt");
-		PTree leaf = new PTree("returnStmt");
-		
-		if(tokens.size() == 2) {
 			if(tokens.get(0).getToken().contentEquals("return") && tokens.get(1).getType() == Token.type_enum.semicolon) {
 				//return true;
 				return leaf;
@@ -235,16 +203,37 @@ public class Grammar {
 		}
 		if(tokens.size() == 3) {
 			if(tokens.get(0).getToken().contentEquals("return") && tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.semicolon) {
-				return leaf; // This actually needs to check the expression which would be the middle token
 			}
+	private Ptree functionDeclaration(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.functionDeclaration);
+		int index, index2;
+		if (index == -1) {
+			return null;
+		}
+			tree.addChild(parameterList(tokens.subList(3, index)));
+		}
+		tree.addChild(closedParenthesis(tokens.get(index)));
+		tree.addChild(openCurlyBracket(tokens.get(index + 1)));
+		index2 = findMatchingBracket(tokens, index + 1);
+		if (index2 == -1) {
+			return null;
 		}
 		System.out.println("returnStmt is false");
 		return null;
 	}
 		
 	private PTree IDfunc(List<Token> tokens) {
-		//System.out.println("IDfunc");
 		PTree leaf = new PTree("IDfunc");
+	}	
+	
+	/**
+	 * @param tokens tokens inside of parenthesis of a function
+	 * @return Ptree if all is valid otherwise null
+	 */
+	private Ptree parameterList(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.parameterList);
+		tree.addChild(parameter(tokens));
+		if(tree.verifyChildren(1)) {
 		
 		if(tokens.size() == 1) {
 			if(tokens.get(0).getType() == Token.type_enum.identifier) {
@@ -265,9 +254,9 @@ public class Grammar {
 		
 		if(tokens.size() == 1) {
 			if(tokens.get(0).getToken().contentEquals("int") | tokens.get(0).getToken().contentEquals("bool") | tokens.get(0).getToken().contentEquals("char") | tokens.get(0).getToken().contentEquals("float")) {
-				//System.out.println(leaf.getType());
 				return leaf;
-			}
+	/**
+	 * Single parameter to be passed into a function
 		}
 		System.out.println("typeSpecifier is false");
 		return null;
@@ -284,31 +273,56 @@ public class Grammar {
 				return leaf;
 			}
 		}
+		if(tree.verifyChildren(1)) {
+			return tree;
+		}
 		System.out.println("params is false");
 		return null;
 	}
 	
 	private PTree recDeclaration() {
+		if(statement(tokens) != null) {
+			tree.addChild(statement(tokens));
+			if(tree.verifyChildren(1)) {
+			while (true) {
+				if(i < 0) {
+					return null;
+			tree.addChild(statementList(tokens.subList(0, i)));
+			tree.addChild(statement(tokens.subList(i, tokens.size())));
+			if(tree.verifyChildren(2)) {
 		return null;
 	}
 	
-	private PTree varDeclaration() {
+	/**
+	 * A goto statement.
+		}
+		if (tokens.get(1).getType() == type_enum.identifier) {
+			tree.addChildFromToken(tokens.get(1));
 		return null;
 	}
 	
-	private PTree scopedVarDeclaration() {
+	/**
+	 * A return statement.
+			tree.addChildFromToken(tokens.get(1));
+			if(tree.verifyChildren(2)) {
+				return tree;
 		return null;
 	}
 	
 	private PTree varDecList() {
+	 */
+	private Ptree breakStmt(List<Token> tokens) {
 		return null;
 	}
 	
 	private PTree varDecInitialize() {
+	 */
+	private Ptree whileStmt(List<Token> tokens) {
 		return null;
 	}
 	
 	private PTree varDecId() {
+	private Ptree ifStmt(List<Token> tokens) {
 		return null;
 	}
 	
@@ -316,47 +330,69 @@ public class Grammar {
 		return null;
 	}
 	
-	private PTree returnTypeSpecifier() {
 		return null;
 	}
 	
-	private PTree paramList() {
+	 * @param tokens Should be a single identifier followed by a colon
+	 * @return A gotoJumpPlace subtree if valid, null if invalid
+	 */
+		}
+		if(tree.verifyChildren(2)) {
+			return tree;
 		return null;
 	}
 	
 	private PTree paramTypeList() {
+	 * @param tokens
+	 * @return
+	 */
 		return null;
 	}
 	
 	private PTree paramIdList() {
+		Ptree tree = new Ptree(type_enum.expression);
+		tree.addChild(simpleExpression(tokens));
+		if(tree.verifyChildren(1)) {
 		return null;
 	}
 	
 	private PTree paramId() {
+	private Ptree simpleExpression(List<Token> tokens) {
+		//Very incorrect. Only used temporarily for testing.
+		Ptree tree = new Ptree(type_enum.expression);
 		return null;
 	}
 	
-	private PTree statementList() {
+	/**
+	 * Placeholder function. Will complete in future.
 		return null;
 	}
 	
-	private PTree expressionStmt() {
+	private Ptree unaryRelExpression(List<Token> tokens) {
 		return null;
 	}
 	
 	private PTree selectionStmt() {
+	 */
+	private Ptree relExpression(List<Token> tokens) {
 		return null;
 	}
 	
 	private PTree iterationStmt() {
+	 */
+	private Ptree compareOp(List<Token> tokens) {
 		return null;
 	}
 	
 	private PTree breakStmt() {
+	 */
+	private Ptree sumExpression(List<Token> tokens) {
 		return null;
 	}
 	
 	private PTree expression() {
+	 */
+	private Ptree sumop(List<Token> tokens) {
 		return null;
 	}
 	
@@ -365,6 +401,7 @@ public class Grammar {
 	}
 	
 	private PTree andExpression() {
+	 * @param tokens
 		return null;
 	}
 	
@@ -372,7 +409,6 @@ public class Grammar {
 		return null;
 	}
 	
-	private PTree relExpression() {
 		return null;
 	}
 	
@@ -380,39 +416,52 @@ public class Grammar {
 		return null;
 	}
 	
-	private PTree sumExpression() {
 		return null;
 	}
 	
 	private PTree sumop() {
+	private Ptree constant(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.constant);
+		if (tokens.get(0).getType() == type_enum.number) {
 		return null;
 	}
 	
 	private PTree term() {
 		return null;
-	}
 	
-	private PTree mulop() {
 		return null;
+			return new Ptree(token);
+		default:
+			return null;
 	}
 	
 	private PTree unaryExpression() {
 		return null;
+	private Ptree functionTypeSpecifier(Token token) {
+		switch (token.getType()) {
+		case k_int:
 	}
 	
-	private PTree unaryop() {
+	/**
+	 * Simply checks if passed in token is an identifier
 		return null;
 	}
 	
-	private PTree factor() {
+	/**
+	 * Simply checks if passed in token is an open parenthesis
 		return null;
 	}
 	
-	private PTree mutable() {
+	/**
+	 * Simply checks if passed in token is an closed parenthesis
 		return null;
 	}
 	
-	private PTree immutable() {
+	/**
+	 * Simply checks if passed in token is an open curly bracket
+		if(token.type == type_enum.openCurlyBracket) {
+			return new Ptree(token);
+		}
 		return null;
 	}
 	
@@ -434,5 +483,67 @@ public class Grammar {
 	
 	public boolean getValid() {
 		return this.valid;
+	}
+		}
+		while(i < tokens.size() && i > -1) {
+			if(tokens.get(i).getType() == matchingBracket) {
+				numBrackets++;
+			} else if(tokens.get(i).getType() == otherBracket) {
+				numBrackets--;
+				if(numBrackets == 0) {
+					return i;
+				}
+			}
+			if(forward) {
+				i++;
+			} else {
+				i--;
+			}
+		}
+
+		return -1;
+	}
+	
+	/**
+	 * Finds the matching curly bracket in a list of tokens
+	 * @param tokens list of tokens from an undefined source
+	 * @param startindex index of the curly bracket to be matched
+	 * @return the index of the bracket that matches the one passed in
+	 */
+	private int findMatchingBracket(List<Token> tokens, int startindex) {
+		int numBrackets = 1, i = startindex;
+		boolean forward = true;
+		type_enum matchingBracket = tokens.get(startindex).getType();
+		type_enum otherBracket = null;
+		if(tokens.get(startindex).getType() == type_enum.openCurlyBracket) {
+			otherBracket = type_enum.closedCurlyBracket;
+			//i++;
+		} else if (tokens.get(startindex).getType() == type_enum.closedCurlyBracket) {
+			forward = false;
+			otherBracket = type_enum.openCurlyBracket;
+			//i--;
+		}
+		while(i < tokens.size() && i > -1) {
+			if(forward) {
+				i++;
+			} else {
+				i--;
+			}
+			if(tokens.get(i).getType() == matchingBracket) {
+				numBrackets++;
+			} else if(tokens.get(i).getType() == otherBracket) {
+				numBrackets--;
+				if(numBrackets == 0) {
+					return i;
+				}
+			}
+			/*if(forward) {
+				i++;
+			} else {
+				i--;
+			}*/
+		}
+
+		return -1;
 	}
 }
