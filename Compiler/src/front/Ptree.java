@@ -80,22 +80,25 @@ public class Ptree {
 	/**
 	 * Prints the leaf value
 	 * Recursively calls self on all children
-	 * Formats as described in class 2/8/2019
 	 * @param i the depth of the current child
 	 */
 	private void PT(int i){
 		if(!children.isEmpty()){
-			int j = 0;
-			for(j = 0; j < i; j++){
+			System.out.println();
+			for(int j = 0; j < i; j++){
 				System.out.print("  ");
 			}
-			System.out.print("[" + this.token.type);
+			System.out.print(this.token.type);
 	
-			for(j = 0; j < this.children.size(); j++){
-				System.out.println();
-				children.get(j).PT(i+1);
+			for(Ptree child : children){
+				//System.out.println();
+				child.PT(i+1);
 			}
-			System.out.print("]");
+			//System.out.println();
+			//for(int j = 0; j < i; j++){
+			//	System.out.print("  ");
+			//}
+			//System.out.print("]");
 		}
 	}
 
@@ -137,6 +140,10 @@ public class Ptree {
 	 */
 	protected void addChild(Ptree treein) {
 		children.add(treein);
+	}
+	
+	protected void addChildFromToken(Token token) {
+		children.add(new Ptree(token));
 	}
 	
 	/**

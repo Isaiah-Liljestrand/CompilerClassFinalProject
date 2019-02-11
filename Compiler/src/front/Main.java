@@ -43,7 +43,7 @@ public class Main {
 		
 		List<String> lines = readFile(filename);
 		scanner = new Scan(lines);
-		Grammar grammar;
+		Grammar grammar = null;
 		
 		if (tokenize) {
 			scanner.PrintTokens();
@@ -52,8 +52,8 @@ public class Main {
 		if (abstractSyntaxTree) {
 			grammar = new Grammar(scanner.GetTokens());
 		}
-		if (PrintParse){
-			
+		if (PrintParse && grammar != null){
+			grammar.printTree();
 		}
 	}
 

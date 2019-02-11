@@ -69,7 +69,30 @@ public class Token {
 		variableDeclarationInitialize,
 		parameterList,
 		parameter,
-		statement
+		statement,
+		statementList,
+		gotoJumpPlace,
+		ifStmt,
+		breakStmt,
+		returnStmt,
+		whileStmt,
+		gotoStmt,
+		expressionStmt,
+		expression,
+		simpleExpression,
+		andExpression,
+		unaryRelExpression,
+		relExpression,
+		compareOp,
+		sumExpression,
+		sumop,
+		term,
+		mulOp,
+		factor,
+		call,
+		args,
+		argList,
+		constant
 	};
 	
 	
@@ -217,8 +240,10 @@ public class Token {
 			}
 			return;
 		}
-		//function or variable
-		this.type = type_enum.identifier;
+		if (this.type == null) {
+			//function or variable
+			this.type = type_enum.identifier;
+		}
 	}
 	
 	
