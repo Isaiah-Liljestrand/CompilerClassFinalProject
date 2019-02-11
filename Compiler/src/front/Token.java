@@ -40,6 +40,7 @@ public class Token {
 		openParenthesis,
 		closedParenthesis,
 		semicolon,
+		colon,
 		comma,
 		epsilon,
 		
@@ -91,6 +92,8 @@ public class Token {
 		case ';':
 			this.type = type_enum.semicolon;
 			break;
+		case ':':
+			this.type = type_enum.colon;
 		case ',':
 			this.type = type_enum.comma;
 			break;

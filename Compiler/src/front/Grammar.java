@@ -9,8 +9,8 @@ public class Grammar {
 	private boolean valid;
 	
 	/**
-	 * Effectively Main function of Grammar as a builder?
-	 * @param tokens
+	 * Effectively Main function of Grammar starts the program tree
+	 * @param tokens All tokens in the program
 	 */
 	Grammar(List<Token> tokens) { // Essentially the first few parts of the grammar
 		this.root = new Ptree(type_enum.program);
@@ -22,6 +22,11 @@ public class Grammar {
 		//Potential to add funDeclarationList in order to support more than just main
 	}
 	
+	/**
+	 * splits up all variable and function declarations at the top level of code
+	 * @param tokens all tokens passed down from either program of another declarationList
+	 * @return tree if all subtrees are successful
+	 */
 	private Ptree declarationList(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.declarationList);
 		int i;
@@ -238,7 +243,7 @@ public class Grammar {
 		if(tokens.size() != 2) {
 			return null;
 		}
-		tree.addChild(typeSpecifier(tokens.get(0)));
+		tree.addChild(variableTypeSpecifier(tokens.get(0)));
 		tree.addChild(identifier(tokens.get(1)));
 		if(tree.verifyChildren(2)) {
 			return tree;
@@ -344,8 +349,9 @@ public class Grammar {
 		case k_int:
 		case k_char:
 			return new Ptree(token);
+		default:
+			return null;
 		}
-		return null;
 	}
 	
 	private Ptree functionTypeSpecifier(Token token) {
@@ -354,8 +360,9 @@ public class Grammar {
 		case k_char:
 		case k_void:
 			return new Ptree(token);
+		default:
+			return null;
 		}
-		return null;
 	}
 	
 	private Ptree identifier(Token token) {
@@ -420,8 +427,33 @@ public class Grammar {
 	
 	
 	private int findMatchingBracket(List<Token> tokens, int startindex) {
-		int numBrackets = 1, i = startindex + 1;
-		boolean t = true;
+		int numBrackets = 1, i = startindex;
+		boolean forward = true;
+		type_enum matchingBracket = tokens.get(startindex).getType();
+		type_enum otherBracket;
+		if(tokens.get(startindex).getType() == type_enum.openCurlyBracket) {
+			otherBracket = type_enum.closedCurlyBracket;
+			i++;
+		} else if (tokens.get(startindex).getType() == type_enum.closedCurlyBracket) {
+			forward = false;
+			otherBracket = type_enum.openCurlyBracket;
+			i--;
+		}
+		while(i < tokens.size() && i > -1) {
+			if(tokens.get(i).getType() == matchingBracket) {
+				numBrackets++;
+			} else if(tokens.get(i).getType() == otherBracket)) {
+				numBrackets--;
+				if(numBrackets == 0) {
+					return i;
+				}
+			}
+			if(forward) {
+				i++;
+			} else {
+				i--;
+			}
+		}
 		//Case of open curly brackets scans forward to find matching closed curly bracket returns index after matching bracket
 		if(tokens.get(startindex).type == type_enum.openCurlyBracket) {
 			for(Token tok: tokens.subList(startindex + 1, tokens.size())) {
