@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Parse Tree Class.
+ * Parse Tree Class
  * Keeps track of the hierarchy order of the parsing
+ * Idea described by Isaiah and Jacob
  * @author Ben
  *
  */
