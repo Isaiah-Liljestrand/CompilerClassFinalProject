@@ -46,6 +46,7 @@ public class Main {
 		Grammar grammar;
 		
 		if (tokenize) {
+			System.out.println("Scanner:");
 			scanner.PrintTokens();
 		}
 		

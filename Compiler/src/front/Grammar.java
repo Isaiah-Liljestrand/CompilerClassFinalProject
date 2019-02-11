@@ -13,7 +13,7 @@ public class Grammar {
 	 */
 	Grammar(List<Token> tokens){ // Essentially the first few parts of the grammar
 		this.root = new PTree();
-		root.equals("root");
+		root.setType("root");
 		List<Token> Feed = new ArrayList<Token>();
 		
 		if(tokens.get(0).getType() == Token.type_enum.keyword) { //This block of ifs only checks for Int Main() at the moment
@@ -23,7 +23,7 @@ public class Grammar {
 						Feed.add(tokens.remove(0));
 						if(tokens.isEmpty()) {
 							System.out.println("Missing Closing Curly Brace");
-						    System.out.println("False");
+						    //System.out.println("False");
 							return;
 						}
 						
@@ -36,14 +36,14 @@ public class Grammar {
 					
 					root.addChild(funDeclaration(Feed));
 					root.printTree();
-					if(valid == true) {
-						System.out.println("\n\nValid Grammar");
-					}else {
-						System.out.print(valid);
-					}
+						/**if(valid == true) {
+							System.out.println("\n\nValid Grammar");
+						}else {
+							System.out.print(valid);
+						}*/
 				} else if(tokens.get(3).getType() != Token.type_enum.closedParenthesis) {
 					System.out.println("Missing closing Parenthesis");
-					System.out.println("False");
+					//System.out.println("False");
 					return;
 				}
 			}
@@ -58,7 +58,7 @@ public class Grammar {
 		List<Token> params = new ArrayList<Token>();
 		PTree tree = new PTree("funDeclaration");
 		
-		System.out.println("funDeclaration");
+		//System.out.println("funDeclaration");
 		
 		if(tokens.get(0).getType() == Token.type_enum.keyword) {
 			if(tokens.get(1).getType() == Token.type_enum.identifier && tokens.get(2).getType() == Token.type_enum.openParenthesis) {
@@ -77,7 +77,7 @@ public class Grammar {
 						if(Feed2.isEmpty()) {
 							System.out.println("Missing Closing Curly Brace");
 							System.out.println("funDeclaration is false");
-							System.out.println("False");
+							//System.out.println("False");
 							return null;
 						}
 					}
@@ -138,7 +138,7 @@ public class Grammar {
 	}
 	
 	private PTree statement(List<Token> tokens) {
-		System.out.println("statement");
+		//System.out.println("statement");
 		List<Token> Feed = new ArrayList<Token>();
 		PTree leaf = new PTree("statement");
 		
@@ -162,7 +162,7 @@ public class Grammar {
 	}
 	
 	private PTree compoundStmt(List<Token> tokens) { // Checks for rtn statement
-		System.out.println("compoundStmt");
+		//System.out.println("compoundStmt");
 		PTree leaf = new PTree("compoundStmt");
 		
 		//for(Token tok : tokens) {
@@ -203,7 +203,7 @@ public class Grammar {
 	}
 	
 	private PTree localDeclarations(List<Token> tokens) { 
-		System.out.println("localDeclarations");
+		//System.out.println("localDeclarations");
 		PTree leaf = new PTree("localDeclarations");
 		
 		//I'm about to just handle this for the basic program only, so this is gonna need further work
@@ -224,7 +224,7 @@ public class Grammar {
 	}
 	
 	private PTree returnStmt(List<Token> tokens) {
-		System.out.println("returnStmt");
+		//System.out.println("returnStmt");
 		PTree leaf = new PTree("returnStmt");
 		
 		if(tokens.size() == 2) {
@@ -243,7 +243,7 @@ public class Grammar {
 	}
 		
 	private PTree IDfunc(List<Token> tokens) {
-		System.out.println("IDfunc");
+		//System.out.println("IDfunc");
 		PTree leaf = new PTree("IDfunc");
 		
 		if(tokens.size() == 1) {
@@ -259,12 +259,13 @@ public class Grammar {
 	}
 	
 	private PTree typeSpecifier(List<Token> tokens) {
-		System.out.println("typeSpecifier");
+		//System.out.println("typeSpecifier");
 		PTree leaf = new PTree("typeSpecifier");
 		
 		
 		if(tokens.size() == 1) {
 			if(tokens.get(0).getToken().contentEquals("int") | tokens.get(0).getToken().contentEquals("bool") | tokens.get(0).getToken().contentEquals("char") | tokens.get(0).getToken().contentEquals("float")) {
+				//System.out.println(leaf.getType());
 				return leaf;
 			}
 		}
@@ -273,7 +274,7 @@ public class Grammar {
 	}
 	
 	private PTree params(List<Token> tokens) { // Only handles basic program right now
-		System.out.println("params");
+		//System.out.println("params");
 		PTree leaf = new PTree("params");
 		//for( Token tok : tokens) {
 		//	System.out.println(tok.getToken());
