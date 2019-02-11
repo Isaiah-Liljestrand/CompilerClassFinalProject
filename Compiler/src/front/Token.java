@@ -42,7 +42,6 @@ public class Token {
 		semicolon,
 		colon,
 		comma,
-		epsilon,
 		
 		//identifiers and keywords
 		number,

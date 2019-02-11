@@ -117,15 +117,18 @@ public class Ptree {
 	}
 	
 	protected boolean verifyChildren(int num) {
-		int i;
+		//int i;
 		if(this.children.size() != num) {
 			return false;
 		}
-		for(i = 0; i < num; i++) {
+		if (this.children.contains(null)) {
+			return false;
+		}
+		/*for(i = 0; i < num; i++) {
 			if(this.children.get(i) == null) {
 				return false;
 			}
-		}
+		}*/
 		return true;
 	}
 	
