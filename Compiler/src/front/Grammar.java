@@ -16,7 +16,7 @@ public class Grammar {
 		this.root = new Ptree(type_enum.program);
 		valid = true;
 		root.addChild(declarationList(tokens));
-		if(!root.verifyChildren(1)) {
+		if(!root.verifyChildren()) {
 			valid = false;
 		}
 	}
@@ -42,7 +42,7 @@ public class Grammar {
 			return null;
 		}
 		tree.addChild(declaration(tokens));
-		if(tree.verifyChildren(1)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		tree.removeChild();
@@ -58,7 +58,7 @@ public class Grammar {
 			i++;
 			tree.addChild(declarationList(tokens.subList(0, i)));
 			tree.addChild(declaration(tokens.subList(i, tokens.size())));
-			if(tree.verifyChildren(2)) {
+			if(tree.verifyChildren()) {
 				return tree;
 			}
 			return null;
@@ -77,7 +77,7 @@ public class Grammar {
 			i++;
 			tree.addChild(declarationList(tokens.subList(0, i)));
 			tree.addChild(declaration(tokens.subList(i, tokens.size())));
-			if(tree.verifyChildren(2)) {
+			if(tree.verifyChildren()) {
 				return tree;
 			}
 			return null;
@@ -94,13 +94,13 @@ public class Grammar {
 	private Ptree declaration(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.declaration);
 		tree.addChild(functionDeclaration(tokens));
-		if(tree.verifyChildren(1)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		tree.removeChild();
 		
 		tree.addChild(variableDeclaration(tokens));
-		if(tree.verifyChildren(1)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		return null;
@@ -119,7 +119,7 @@ public class Grammar {
 		tree.addChild(variableTypeSpecifier(tokens.get(0)));
 		tree.addChild(variableDeclarationList(tokens.subList(1, tokens.size() - 1)));
 		tree.addChild(semicolon(tokens.get(tokens.size() - 1)));
-		if(tree.verifyChildren(3)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		return null;
@@ -153,7 +153,7 @@ public class Grammar {
 		tree.addChild(variableDeclarationList(tokens.subList(0, index)));
 		tree.addChild(comma(tokens.get(index)));
 		tree.addChild(variableDeclarationInitialize(tokens.subList(index + 1, tokens.size())));
-		if(tree.verifyChildren(3)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		return null;
@@ -167,7 +167,7 @@ public class Grammar {
 	private Ptree variableDeclarationInitialize(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.variableDeclarationInitialize);
 		tree.addChild(variableDeclareID(tokens));
-		if(tree.verifyChildren(1)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		tree.removeChild();
@@ -178,7 +178,7 @@ public class Grammar {
 		tree.addChild(variableDeclareID(tokens.subList(0, 1)));
 		tree.addChild(equals(tokens.get(1)));
 		tree.addChild(simpleExpression(tokens.subList(2, tokens.size())));
-		if(tree.verifyChildren(3)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		return null;
@@ -228,7 +228,7 @@ public class Grammar {
 			tree.addChild(statementList(tokens.subList(index + 2, index2)));
 		}
 		tree.addChild(closedCurlyBracket(tokens.get(index2)));
-		if(tree.verifyChildren(6) || tree.verifyChildren(7) || tree.verifyChildren(8)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		return null;
@@ -242,7 +242,7 @@ public class Grammar {
 	private Ptree parameterList(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.parameterList);
 		tree.addChild(parameter(tokens));
-		if(tree.verifyChildren(1)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		tree.removeChild();
@@ -257,7 +257,7 @@ public class Grammar {
 		tree.addChild(parameterList(tokens.subList(0, index)));
 		tree.addChild(comma(tokens.get(index)));
 		tree.addChild(parameter(tokens.subList(index + 1, tokens.size())));
-		if(tree.verifyChildren(3)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		return null;
@@ -275,7 +275,7 @@ public class Grammar {
 		}
 		tree.addChild(variableTypeSpecifier(tokens.get(0)));
 		tree.addChild(identifier(tokens.get(1)));
-		if(tree.verifyChildren(2)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		return null;
@@ -294,7 +294,7 @@ public class Grammar {
 		}
 		
 		tree.addChild(statement(tokens));
-		if(tree.verifyChildren(1)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		tree.removeChild();
@@ -310,7 +310,7 @@ public class Grammar {
 			i++;
 			tree.addChild(statementList(tokens.subList(0, i)));
 			tree.addChild(statement(tokens.subList(i, tokens.size())));
-			if(tree.verifyChildren(2)) {
+			if(tree.verifyChildren()) {
 				return tree;
 			}
 			return null;
@@ -330,7 +330,7 @@ public class Grammar {
 					i++;
 					tree.addChild(statementList(tokens.subList(0, i)));
 					tree.addChild(statement(tokens.subList(i, tokens.size())));
-					if(tree.verifyChildren(2)) {
+					if(tree.verifyChildren()) {
 						return tree;
 					}
 					return null;
@@ -345,7 +345,7 @@ public class Grammar {
 			i++;
 			tree.addChild(statementList(tokens.subList(0, i)));
 			tree.addChild(statement(tokens.subList(i, tokens.size())));
-			if(tree.verifyChildren(2)) {
+			if(tree.verifyChildren()) {
 				return tree;
 			}
 			return null;
@@ -362,56 +362,56 @@ public class Grammar {
 		Ptree tree = new Ptree(type_enum.statement);
 		//goto statement
 		tree.addChild(gotoStmt(tokens));
-		if(tree.verifyChildren(1)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		tree.removeChild();
 		
 		//return statement
 		tree.addChild(returnStmt(tokens));
-		if(tree.verifyChildren(1)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		tree.removeChild();
 
 		//while statement
 		tree.addChild(whileStmt(tokens));
-		if(tree.verifyChildren(1)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		tree.removeChild();
 		
 		//break statement
 		tree.addChild(breakStmt(tokens));
-		if(tree.verifyChildren(1)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		tree.removeChild();
 		
 		//if statement
 		tree.addChild(ifStmt(tokens));
-		if(tree.verifyChildren(1)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		tree.removeChild();
 		
 		//variable declaration statement
 		tree.addChild(variableDeclaration(tokens));
-		if(tree.verifyChildren(1)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		tree.removeChild();
 
 		//goto jump location statement
 		tree.addChild(gotoJumpPlace(tokens));
-		if(tree.verifyChildren(1)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		tree.removeChild();
 
 		//expression statement
 		tree.addChild(expressionStmt(tokens));
-		if(tree.verifyChildren(1)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		tree.removeChild();
@@ -434,7 +434,7 @@ public class Grammar {
 		tree.addChild(gotoFunction(tokens.get(0)));
 		tree.addChild(identifier(tokens.get(1)));
 		tree.addChild(semicolon(tokens.get(2)));
-		if(tree.verifyChildren(3)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		return null;
@@ -447,19 +447,10 @@ public class Grammar {
 	 */
 	private Ptree returnStmt(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.returnStmt);
-		if (tokens.get(0).type == type_enum.k_return && tokens.get(1).type == type_enum.semicolon) {
-			tree.addChildFromToken(tokens.get(0));
-			tree.addChildFromToken(tokens.get(1));
-			if(tree.verifyChildren(2)) {
-				return tree;
-			}
-		} else if (tokens.get(0).type == type_enum.k_return && tokens.get(tokens.size() - 1).type == type_enum.semicolon) {
-			tree.addChildFromToken(tokens.get(0));
-			tree.addChild(expression(tokens.subList(1, tokens.size() - 1)));
-			tree.addChildFromToken(tokens.get(tokens.size() - 1));
-			if(tree.verifyChildren(3)) {
-				return tree;
-			}
+		tree.addChild(returnFunction(tokens.get(0)));
+		tree.addChild(expressionStmt(tokens.subList(1, tokens.size())));
+		if(tree.verifyChildren()) {
+			return tree;
 		}
 		return null;
 	}
@@ -470,15 +461,50 @@ public class Grammar {
 	 * @return
 	 */
 	private Ptree breakStmt(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.breakStmt);
+		if(tokens.size() != 2) {
+			return null;
+		}
+		tree.addChild(breakFunction(tokens.get(0)));
+		tree.addChild(semicolon(tokens.get(1)));
+		if(tree.verifyChildren()) {
+			return tree;
+		}
 		return null;
 	}
 	
 	/**
-	 * Placeholder function. Will complete in future.
-	 * @param tokens
-	 * @return
+	 * While function call
+	 * @param tokens tokens that should represent a while statement
+	 * @return Ptree while statement or null
 	 */
 	private Ptree whileStmt(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.whileStmt);
+		if(tokens.size() < 6) {
+			return null;
+		}
+		tree.addChild(whileFunction(tokens.get(0)));
+		tree.addChild(openParenthesis(tokens.get(1)));
+		int index = findMatchingParenthesis(tokens, 1);
+		if(index == -1 || index > tokens.size() - 3) {
+			return null;
+		}
+		if(index > 2) {
+			tree.addChild(simpleExpression(tokens.subList(2, index)));
+		}
+		tree.addChild(closedParenthesis(tokens.get(index)));
+		tree.addChild(openCurlyBracket(tokens.get(index + 1)));
+		int index2 = findMatchingBracket(tokens, index + 1);
+		if(index2 == -1 || index2 != tokens.size() - 1) {
+			return null;
+		}
+		if(index2 > index + 2) {
+			tree.addChild(statementList(tokens.subList(index + 2, index2)));
+		}
+		tree.addChild(closedCurlyBracket(tokens.get(index2)));
+		if(tree.verifyChildren()) {
+			return tree;
+		}
 		return null;
 	}
 	
@@ -488,6 +514,49 @@ public class Grammar {
 	 * @return
 	 */
 	private Ptree ifStmt(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.ifStmt);
+		if(tokens.size() < 5) {
+			return null;
+		}
+		tree.addChild(ifFunction(tokens.get(0)));
+		tree.addChild(openParenthesis(tokens.get(1)));
+		int index = findMatchingParenthesis(tokens, 1);
+		if(index == -1 || index + 1 < tokens.size()) {
+			return null;
+		}
+		tree.addChild(simpleExpression(tokens.subList(2, index)));
+		tree.addChild(closedParenthesis(tokens.get(index)));
+		tree.addChild(openCurlyBracket(tokens.get(index + 1)));
+		int index2 = findMatchingBracket(tokens, index + 1);
+		if(index2 == -1) {
+			return null;
+		}
+		if(index + 2 != index2) {
+			tree.addChild(statementList(tokens.subList(index + 2, index2)));
+		}
+		tree.addChild(closedCurlyBracket(tokens.get(index2)));
+		if(tokens.size() == index2 + 1) {
+			if(tree.verifyChildren()) {
+				return tree;
+			}
+			return null;
+		}
+		if(index2 + 3 >= tokens.size()) {
+			return null;
+		}
+		tree.addChild(elseFunction(tokens.get(index2 + 1)));
+		tree.addChild(openCurlyBracket(tokens.get(index2 + 2)));
+		index = findMatchingBracket(tokens, index2 + 2);
+		if(index > index2 + 3) {
+			tree.addChild(statementList(tokens.subList(index2 + 3, index)));
+		}
+		tree.addChild(closedCurlyBracket(tokens.get(index)));
+		if(index + 1 != tokens.size()) {
+			return null;
+		}
+		if(tree.verifyChildren()) {
+			return tree;
+		}
 		return null;
 	}
 
@@ -499,13 +568,12 @@ public class Grammar {
 	 */
 	private Ptree gotoJumpPlace(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.gotoJumpPlace);
-		if (tokens.get(0).type == type_enum.identifier) {
-			tree.addChildFromToken(tokens.get(0));
+		if(tokens.size() != 2) {
+			return null;
 		}
-		if (tokens.get(1).type == type_enum.colon) {
-			tree.addChildFromToken(tokens.get(1));
-		}
-		if(tree.verifyChildren(2)) {
+		tree.addChild(identifier(tokens.get(0)));
+		tree.addChild(colon(tokens.get(1)));
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		return null;
@@ -524,7 +592,7 @@ public class Grammar {
 		//Not accounting for anything but simpleExpression yet
 		Ptree tree = new Ptree(type_enum.expression);
 		tree.addChild(simpleExpression(tokens));
-		if(tree.verifyChildren(1)) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		return null;
@@ -533,8 +601,8 @@ public class Grammar {
 	private Ptree simpleExpression(List<Token> tokens) {
 		//Very incorrect. Only used temporarily for testing.
 		Ptree tree = new Ptree(type_enum.expression);
-		tree.addChild(constant(tokens));
-		if(tree.verifyChildren(1)) {
+		tree.addChild(constant(tokens.get(0)));
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		return null;
@@ -643,6 +711,11 @@ public class Grammar {
 		return null;
 	}
 	
+	/**
+	 * Tests that the passed in token is a goto keyword
+	 * @param token should be goto
+	 * @return tree node or null
+	 */
 	private Ptree gotoFunction(Token token) {
 		if(token.type == type_enum.k_goto) {
 			return new Ptree(token);
@@ -650,13 +723,50 @@ public class Grammar {
 		return null;
 	}
 	
-	private Ptree constant(List<Token> tokens) {
-		Ptree tree = new Ptree(type_enum.constant);
-		if (tokens.get(0).type == type_enum.number) {
-			tree.addChildFromToken(tokens.get(0));
+	/**
+	 * tests if the token passed in is an if keyword
+	 * @param token should be if
+	 * @return either a tree node or null
+	 */
+	private Ptree ifFunction(Token token) {
+		if(token.type == type_enum.k_if) {
+			return new Ptree(token);
 		}
-		if(tree.verifyChildren(1)) {
-			return tree;
+		return null;
+	}
+	
+	/**
+	 * checks if the token passed in is the else keyword
+	 * @param token should be else
+	 * @return Ptree with else token or null
+	 */
+	private Ptree elseFunction(Token token) {
+		if(token.type == type_enum.k_else) {
+			return new Ptree(token);
+		}
+		return null;
+	}
+	
+	/**
+	 * Checks if the token passed in is a while function keyword
+	 * @param token should be the while keyword
+	 * @return Ptree node containing the keyword or null
+	 */
+	private Ptree whileFunction(Token token) {
+		if(token.type == type_enum.k_while) {
+			return new Ptree(token);
+		}
+		return null;
+	}
+	
+	/**
+	 * Checks if the token is a constant
+	 * @param token should be either a char constant or an int constant
+	 * @return Ptree node if the statment evaluates to true
+	 */
+	private Ptree constant(Token token) {
+		if (token.type == type_enum.number) {
+			return new Ptree(token);
 		}
 		return null;
 	}
@@ -676,6 +786,36 @@ public class Grammar {
 			return null;
 		}
 	}
+	
+	
+	/**
+	 * Checks that the passed in token is a return call
+	 * @param token should be a return statement
+	 * @return Ptree containing return statement or null
+	 */
+	private Ptree returnFunction(Token token) {
+		if(token.type == type_enum.k_return) {
+			return new Ptree(token);
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * Tests if the token passed in is a break keyword
+	 * @param token should be break
+	 * @return new node or null
+	 */
+	private Ptree breakFunction(Token token) {
+		if(token.type == type_enum.k_break) {
+			return new Ptree(token);
+		}
+		return null;
+	}
+	
+	
+	
+	
 	
 	/**
 	 * Checks whether the token passed in is a valid function type specifier
@@ -780,7 +920,19 @@ public class Grammar {
 	}
 	
 	/**
-	 * simply checks if passed in token is an equals sign
+	 * Simply checks if passed in token is a colon
+	 * @param token should be colon
+	 * @return Ptree node containing Ptree or null
+	 */
+	private Ptree colon(Token token) {
+		if(token.type == type_enum.colon) {
+			return new Ptree(token);
+		}
+		return null;
+	}
+	
+	/**
+	 * Checks if passed in token is an equals sign
 	 * @param token should be an equals sign
 	 * @return Ptree leaf node with an equals sign depending on validity
 	 */

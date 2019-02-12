@@ -14,12 +14,17 @@ public class Scan {
 	private List<Token> tokens;
 	
 	/**
-	 * Constructor with file name as an argument
+	 * Main and only constructor for the scan class
+	 * @param file filename to be passed in
 	 */
 	Scan(List<String> file) {
 		tokens = tokenize(file);
 	}
 	
+	/**
+	 * Getter for the token of a specific
+	 * @return the list of tokens
+	 */
 	public List<Token> GetTokens() {
 		return tokens;
 	}
@@ -95,7 +100,7 @@ public class Scan {
 	}
 	
 	/**
-	 * Checks if any unsupported charcters are in the string
+	 * Checks if any unsupported characters are in the string
 	 * @param character character in code
 	 * @return true if character is supported. False if not
 	 */
@@ -147,10 +152,6 @@ public class Scan {
 		string = string + "\\+\\=";  				// +=
 		string = string + "\\*\\="; 				// *=
 		string = string + "\\/\\=";  				// /=
-		//string = string + "\\&\\=";					// &=
-		//string = string + "\\|\\=";					// |=
-		//string = string + "\\%\\=";					// %=
-		//string = string + "\\^\\=";					// ^=
 		string = string + "\\!\\=";					// !=
 		string = string + "\\=\\=";					// ==
 		string = string + "\\&\\&";					// &&
