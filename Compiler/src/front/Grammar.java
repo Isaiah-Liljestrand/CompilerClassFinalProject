@@ -580,14 +580,29 @@ public class Grammar {
 	}
 	
 	/**
-	 * Placeholder function. Will complete in future.
+	 * An expression that should theoretically stand by itself00000000
 	 * @param tokens
 	 * @return
 	 */
 	private Ptree expressionStmt(List<Token> tokens) {
+		if(tokens.size() == 0) {
+			return null;
+		}
+		if(tokens.size() == 1) {
+			tree.addChild(semicolon(tokens.get(0)));
+			if(tree.verifyChildren()) {
+				return tree;
+			}
+			return null;
+		}
 		return null;
 	}
 	
+	/**
+	 * Expression simple expression such as an assignment
+	 * @param tokens make up an expression
+	 * @return returns a Ptree that contains an expression
+	 */
 	private Ptree expression(List<Token> tokens) {
 		//Not accounting for anything but simpleExpression yet
 		Ptree tree = new Ptree(type_enum.expression);
