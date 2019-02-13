@@ -48,22 +48,18 @@ public class Ptree {
 	 * @param i the depth of the current child
 	 */
 	private void PT(int i){
-		if(!children.isEmpty()){
-			System.out.println();
-			for(int j = 0; j < i; j++){
-				System.out.print("  ");
-			}
-			System.out.print(this.token.type);
-	
-			for(Ptree child : children){
-				//System.out.println();
-				child.PT(i+1);
-			}
+		System.out.println();
+		for(int j = 0; j < i; j++){
+			System.out.print("  ");
+		}
+		System.out.print(this.token.type);
+		if (this.token.token != null) {
+			System.out.print(" | " + this.token.token);
+		}
+		//System.out.print(b);
+		for(Ptree child : children){
 			//System.out.println();
-			//for(int j = 0; j < i; j++){
-			//	System.out.print("  ");
-			//}
-			//System.out.print("]");
+			child.PT(i+1);
 		}
 	}
 
