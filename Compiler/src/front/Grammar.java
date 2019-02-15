@@ -37,7 +37,7 @@ public class Grammar {
 	 */
 	private Ptree declarationList(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.declarationList);
-		int i;
+		int index;
 		if(tokens.size() == 0) {
 			return null;
 		}
@@ -48,35 +48,29 @@ public class Grammar {
 		tree.removeChild();
 		
 		if(tokens.get(tokens.size() - 1).type == type_enum.semicolon) {
-			i = tokens.size() - 2;
-			while(tokens.get(i).type != type_enum.semicolon && tokens.get(i).type != type_enum.closedCurlyBracket) {
-				i--;
-				if(i < 0) {
-					return null;
-				}
+			index = findObject(tokens.subList(0, tokens.size() - 1), type_enum.semicolon, type_enum.closedCurlyBracket);
+			if(index < 1) {
+				return null;
 			}
-			i++;
-			tree.addChild(declarationList(tokens.subList(0, i)));
-			tree.addChild(declaration(tokens.subList(i, tokens.size())));
+			index++;
+			tree.addChild(declarationList(tokens.subList(0, index)));
+			tree.addChild(declaration(tokens.subList(index, tokens.size())));
 			if(tree.verifyChildren()) {
 				return tree;
 			}
 			return null;
 		} else if (tokens.get(tokens.size() - 1).type == type_enum.closedCurlyBracket) {
-			i = findMatchingBracket(tokens, tokens.size() - 1);
-			i--;
-			while (true) {
-				if(i < 0) {
-					return null;
-				}
-				if(tokens.get(i).type == type_enum.semicolon || tokens.get(i).type == type_enum.closedCurlyBracket) {
-					break;
-				}
-				i--;
+			index = findMatchingBracket(tokens, tokens.size() - 1);
+			if(index < 3) {
+				return null;
 			}
-			i++;
-			tree.addChild(declarationList(tokens.subList(0, i)));
-			tree.addChild(declaration(tokens.subList(i, tokens.size())));
+			index = findObject(tokens.subList(0, index), type_enum.semicolon, type_enum.closedCurlyBracket);
+			if(index < 1) {
+				return null;
+			}
+			index++;
+			tree.addChild(declarationList(tokens.subList(0, index)));
+			tree.addChild(declaration(tokens.subList(index, tokens.size())));
 			if(tree.verifyChildren()) {
 				return tree;
 			}
@@ -136,19 +130,16 @@ public class Grammar {
 			return null;
 		}
 		tree.addChild(variableDeclarationInitialize(tokens));
-		if(tree.getChildren().get(0) != null) {
+		if(tree.verifyChildren()) {
 			return tree;
 		}
 		tree.removeChild();
 		if(tokens.size() < 3) {
 			return null;
 		}
-		int index = tokens.size() - 1;
-		while(tokens.get(index).type == type_enum.comma) {
-			index--;
-			if(index == 0) {
-				return null;
-			}
+		int index = findObject(tokens, type_enum.comma);
+		if(index < 1) {
+			return null;
 		}
 		tree.addChild(variableDeclarationList(tokens.subList(0, index)));
 		tree.addChild(comma(tokens.get(index)));
@@ -212,7 +203,7 @@ public class Grammar {
 		tree.addChild(identifier(tokens.get(1)));
 		tree.addChild(openParenthesis(tokens.get(2)));
 		index = findMatchingParenthesis(tokens, 2);
-		if (index == -1 || index + 1 >= tokens.size()) {
+		if (index == -1 || index > tokens.size() - 3) {
 			return null;
 		}
 		if(index > 3) {
@@ -221,7 +212,7 @@ public class Grammar {
 		tree.addChild(closedParenthesis(tokens.get(index)));
 		tree.addChild(openCurlyBracket(tokens.get(index + 1)));
 		index2 = findMatchingBracket(tokens, index + 1);
-		if (index2 == -1) {
+		if (index2 != tokens.size() - 1) {
 			return null;
 		}
 		if(index2 > (index + 2)) {
@@ -247,12 +238,9 @@ public class Grammar {
 		}
 		tree.removeChild();
 		
-		int index = tokens.size() - 1;
-		while(tokens.get(index).type != type_enum.comma) {
-			index--;
-			if(index == 0) {
-				return null;
-			}
+		int index = findObject(tokens, type_enum.comma);
+		if(index < 2) {
+			return null;
 		}
 		tree.addChild(parameterList(tokens.subList(0, index)));
 		tree.addChild(comma(tokens.get(index)));
@@ -288,7 +276,7 @@ public class Grammar {
 	 */
 	private Ptree statementList(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.statementList);
-		int i;
+		int index;
 		if(tokens.size() == 0) {
 			return null;
 		}
@@ -300,51 +288,42 @@ public class Grammar {
 		tree.removeChild();
 		
 		if(tokens.get(tokens.size() - 1).type == type_enum.semicolon) {
-			i = tokens.size() - 2;
-			while(tokens.get(i).type != type_enum.semicolon && tokens.get(i).type != type_enum.closedCurlyBracket) {
-				i--;
-				if(i < 0) {
-					return null;
-				}
+			index = findObject(tokens.subList(0, tokens.size() - 1), type_enum.semicolon, type_enum.closedCurlyBracket);
+			if(index == -1) {
+				return null;
 			}
-			i++;
-			tree.addChild(statementList(tokens.subList(0, i)));
-			tree.addChild(statement(tokens.subList(i, tokens.size())));
+			index++;
+			tree.addChild(statementList(tokens.subList(0, index)));
+			tree.addChild(statement(tokens.subList(index, tokens.size())));
 			if(tree.verifyChildren()) {
 				return tree;
 			}
 			return null;
 		} else if (tokens.get(tokens.size() - 1).type == type_enum.closedCurlyBracket) {
-			i = findMatchingBracket(tokens, tokens.size() - 1);
-			i--;
-			if(tokens.get(i).type == type_enum.k_else) {
-				if(tokens.get(i - 1).type == type_enum.closedCurlyBracket) {
-					i = findMatchingBracket(tokens, i - 1);
-					i--;
-					while(tokens.get(i).type != type_enum.semicolon && tokens.get(i).type != type_enum.closedCurlyBracket) {
-						i--;
-						if(i < 0) {
-							return null;
-						}
-					}
-					i++;
-					tree.addChild(statementList(tokens.subList(0, i)));
-					tree.addChild(statement(tokens.subList(i, tokens.size())));
-					if(tree.verifyChildren()) {
-						return tree;
-					}
+			index = findMatchingBracket(tokens, tokens.size() - 1);
+			if(tokens.get(index - 1).type == type_enum.k_else && tokens.get(index - 2).type == type_enum.closedCurlyBracket) {
+				index = findMatchingBracket(tokens, index - 2);
+				if(index == -1) {
 					return null;
 				}
-			}
-			while(tokens.get(i).type != type_enum.semicolon && tokens.get(i).type != type_enum.closedCurlyBracket) {
-				i--;
-				if(i < 0) {
+				index = findObject(tokens.subList(0, index), type_enum.k_if);
+				if(index == -1) {
 					return null;
 				}
+				tree.addChild(statementList(tokens.subList(0, index)));
+				tree.addChild(statement(tokens.subList(index, tokens.size())));
+				if(tree.verifyChildren()) {
+					return tree;
+				}
+				return null;
 			}
-			i++;
-			tree.addChild(statementList(tokens.subList(0, i)));
-			tree.addChild(statement(tokens.subList(i, tokens.size())));
+			index = findObject(tokens.subList(0, index), type_enum.closedCurlyBracket, type_enum.semicolon);
+			if(index == -1) {
+				return null;
+			}
+			index++;
+			tree.addChild(statementList(tokens.subList(0, index)));
+			tree.addChild(statement(tokens.subList(index, tokens.size())));
 			if(tree.verifyChildren()) {
 				return tree;
 			}
@@ -415,7 +394,7 @@ public class Grammar {
 			return tree;
 		}
 		tree.removeChild();
-
+		
 		return null;
 	}
 	
@@ -495,7 +474,7 @@ public class Grammar {
 		tree.addChild(closedParenthesis(tokens.get(index)));
 		tree.addChild(openCurlyBracket(tokens.get(index + 1)));
 		int index2 = findMatchingBracket(tokens, index + 1);
-		if(index2 == -1 || index2 != tokens.size() - 1) {
+		if(index2 != tokens.size() - 1) {
 			return null;
 		}
 		if(index2 > index + 2) {
@@ -580,11 +559,12 @@ public class Grammar {
 	}
 	
 	/**
-	 * An expression that should theoretically stand by itself00000000
-	 * @param tokens
-	 * @return
+	 * An expression that should theoretically stand by itself
+	 * @param tokens all the tokens that should go into the expression statement
+	 * @return Ptree containing the expression statement
 	 */
 	private Ptree expressionStmt(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.expressionStmt);
 		if(tokens.size() == 0) {
 			return null;
 		}
@@ -1036,5 +1016,40 @@ public class Grammar {
 		}
 
 		return -1;
+	}
+	
+	/**
+	 * Finds a token scans from back to front
+	 * @param tokens tokens to be scanned through
+	 * @param type enumeration that describes what this tree is
+	 * @return index of element or -1 if failed
+	 */
+	private int findObject(List<Token> tokens, type_enum type) {
+		int index = tokens.size() - 1;
+		while(tokens.get(index).type != type) {
+			index--;
+			if(index < 0) {
+				return -1;
+			}
+		}
+		return index;
+	}
+	
+	/**
+	 * Finds either of two specified tokens scans from front to back
+	 * @param tokens tokens to be scanned through
+	 * @param type token type to find
+	 * @param type2 other token type to find
+	 * @return index of token found or -1 if failed
+	 */
+	private int findObject(List<Token> tokens, type_enum type, type_enum type2) {
+		int index = tokens.size() - 1;
+		while(tokens.get(index).type != type && tokens.get(index).type != type2) {
+			index--;
+			if(index < 0) {
+				return -1;
+			}
+		}
+		return index;
 	}
 }
