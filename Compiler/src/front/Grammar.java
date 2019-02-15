@@ -6,6 +6,7 @@ import front.Token.type_enum;
 
 public class Grammar {
 	private Ptree root;
+	private SymbolTable symbolTableRoot;
 	private boolean valid;
 	
 	/**
