@@ -27,6 +27,7 @@ public class Grammar {
 	 */
 	public void printTree() {
 		if (valid) {
+			System.out.println("sanity check");
 			root.printTree();
 		}
 	}

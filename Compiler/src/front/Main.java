@@ -40,6 +40,7 @@ public class Main {
 			fname.close();
 			tokenize = true;
 		}
+
 		
 		List<String> lines = readFile(filename);
 		scanner = new Scan(lines);
@@ -52,6 +53,7 @@ public class Main {
 		
 		if (abstractSyntaxTree) {
 			grammar = new Grammar(scanner.GetTokens());
+			
 		}
 		if (PrintParse && grammar != null){
 			grammar.printTree();
