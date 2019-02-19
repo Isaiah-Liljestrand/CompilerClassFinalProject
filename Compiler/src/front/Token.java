@@ -6,14 +6,14 @@ public class Token {
 	int lineNumber;
 	enum type_enum {
 		
-		//basic arithmatic
+		//basic arithmetic
 		additionOperator,
 		subtractionOperator,
 		divisionOperator,
 		multiplicationOperator,
 		modulusOperator,
 
-		//assignment arithmatic
+		//assignment arithmetic
 		assignmentOperator,
 		incrementOperator,
 		decrementOperator,
