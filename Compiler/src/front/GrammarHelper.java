@@ -171,6 +171,31 @@ public class GrammarHelper {
 	}
 	
 	/**
+	 * Checks if the token passed in is a logical and operator
+	 * @param token to be checked
+	 * @return Ptree containing and token or null if input token is invalid
+	 */
+	public static Ptree logicAnd(Token token) {
+		if(token.type == type_enum.andLogicOperator) {
+			return new Ptree(token);
+		}
+		return null;
+	}
+	
+	/**
+	 * Checks if the passed in token is a not operator
+	 * @param token to be checked
+	 * @return 
+	 */
+	public static Ptree notToken(Token token) {
+		if(token.type == type_enum.notOperator) {
+			return new Ptree(token);
+		}
+		return null;
+	}
+	
+	
+	/**
 	 * Simply checks if passed in token is an open parenthesis
 	 * @param token should be an open parenthesis
 	 * @return Ptree node with an open parenthesis or null

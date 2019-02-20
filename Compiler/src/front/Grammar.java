@@ -59,7 +59,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 		
 		if(tokens.get(tokens.size() - 1).type == type_enum.semicolon) {
 			index = GrammarHelper.findObject(tokens.subList(0, tokens.size() - 1), type_enum.semicolon, type_enum.closedCurlyBracket);
@@ -105,7 +105,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 		
 		tree.addChild(variableDeclaration(tokens));
 		if(tree.verifyChildren()) {
@@ -147,7 +147,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 		if(tokens.size() < 3) {
 			return null;
 		}
@@ -175,7 +175,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 		
 		if(tokens.size() < 3) {
 			return null;
@@ -250,7 +250,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 		
 		int index = GrammarHelper.findObject(tokens, type_enum.comma);
 		if(index < 2) {
@@ -299,7 +299,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 		
 		if(tokens.get(tokens.size() - 1).type == type_enum.semicolon) {
 			index = GrammarHelper.findObject(tokens.subList(0, tokens.size() - 1), type_enum.semicolon, type_enum.closedCurlyBracket);
@@ -358,56 +358,56 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 		
 		//return statement
 		tree.addChild(returnStmt(tokens));
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 
 		//while statement
 		tree.addChild(whileStmt(tokens));
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 		
 		//break statement
 		tree.addChild(breakStmt(tokens));
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 		
 		//if statement
 		tree.addChild(ifStmt(tokens));
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 		
 		//variable declaration statement
 		tree.addChild(variableDeclaration(tokens));
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 
 		//goto jump location statement
 		tree.addChild(gotoJumpPlace(tokens));
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 
 		//expression statement
 		tree.addChild(expressionStmt(tokens));
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 		
 		return null;
 	}
@@ -608,7 +608,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 		
 		if(tokens.size() < 2) {
 			return null;
@@ -627,8 +627,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
-		tree.removeChild();
+		tree.removeChildren();
 		
 		tree.addChild(GrammarHelper.identifier(tokens.get(0)));
 		tree.addChild(GrammarHelper.decrement(tokens.get(1)));
@@ -638,13 +637,21 @@ public class Grammar {
 		return null;
 	}
 
+	/**
+	 * Checks whether the or operator is present
+	 * @param tokens tokens to be split and analyzed
+	 * @return Ptree containing the correct subtrees or null if invalid
+	 */
 	private Ptree simpleExpression(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.simpleExpression);
+		if(tokens.size() == 0) {
+			return null;
+		}
 		tree.addChild(andExpression(tokens));
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		tree.removeChild();
+		tree.removeChildren();
 		
 		int index = GrammarHelper.findObject(tokens, type_enum.orLogicOperator);
 		if(index < 0) {
@@ -665,10 +672,47 @@ public class Grammar {
 	 * @return
 	 */
 	private Ptree andExpression(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.andExpression);
+		if(tokens.size() == 0) { 
+			return null;
+		}
+		tree.addChild(unaryRelExpression(tokens));
+		if(tree.verifyChildren()) {
+			return tree;
+		}
+		tree.removeChildren();
+		
+		int index = GrammarHelper.findObject(tokens, type_enum.andLogicOperator);
+		if(index < 0) {
+			return tree;
+		}
+		tree.addChild(andExpression(tokens.subList(0, index)));
+		tree.addChild(GrammarHelper.logicAnd(tokens.get(index)));
+		tree.addChild(unaryRelExpression(tokens.subList(index + 1, tokens.size())));
 		return null;
 	}
 	
+	/**
+	 * Checks if the not operator is part of the current expression being evaluated
+	 * @param tokens to be checked for unary expression not
+	 * @return Ptree containing an expression or null if invalid
+	 */
 	private Ptree unaryRelExpression(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.unaryRelExpression);
+		if(tokens.size() == 0) {
+			return null;
+		}
+		tree.addChild(GrammarHelper.notToken(tokens.get(0)));
+		tree.addChild(relExpression(tokens.subList(1, tokens.size())));
+		if(tree.verifyChildren()) {
+			return tree;
+		}
+		tree.removeChildren();
+		
+		tree.addChild(relExpression(tokens));
+		if(tree.verifyChildren()) {
+			return tree;
+		}
 		return null;
 	}
 	
@@ -678,6 +722,20 @@ public class Grammar {
 	 * @return
 	 */
 	private Ptree relExpression(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.relExpression);
+		tree.addChild(sumExpression(tokens));
+		if(tree.verifyChildren()) {
+			return tree;
+		}
+		tree.removeChildren();
+		
+		int index = GrammarHelper.findObject(tokens, type_enum.equalsOperator, type_enum.notEqualOperator);
+		if(index < 0) {
+			return null;
+		}
+		tree.addChild(sumExpression(tokens.subList(0, index)));
+		tree.addChild(compareOperator(tokens.get(index)));
+		tree.addChild(,treein);
 		return null;
 	}
 	
@@ -686,8 +744,9 @@ public class Grammar {
 	 * @param tokens
 	 * @return
 	 */
-	private Ptree compareOp(List<Token> tokens) {
-		return null;
+	private Ptree compareOperator(Token token) {
+		Ptree tree = new Ptree(type_enum.compareOperator);
+		if(a)
 	}
 	
 	/**

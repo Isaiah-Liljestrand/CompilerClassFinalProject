@@ -83,7 +83,7 @@ public class Token {
 		andExpression,
 		unaryRelExpression,
 		relExpression,
-		compareOp,
+		compareOperator,
 		sumExpression,
 		sumop,
 		term,

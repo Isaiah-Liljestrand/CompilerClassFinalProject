@@ -106,8 +106,8 @@ public class Ptree {
 	 * kills the first born (removes the first child in the list)
 	 * does nothing if there are no children nodes
 	 */
-	protected void removeChild() {
-		if(!this.children.isEmpty()){
+	protected void removeChildren() {
+		while(!this.children.isEmpty()) {
 			this.children.remove(0);
 		}
 	}
