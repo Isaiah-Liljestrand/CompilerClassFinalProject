@@ -12,7 +12,7 @@ public class Grammar {
 	private boolean valid;
 	
 	/**
-	 * Program BNF starts at the top
+	 * Program -> declarationList
 	 * @param tokens All tokens in the program
 	 */
 	Grammar(List<Token> tokens) { // Essentially the first few parts of the grammar
@@ -45,7 +45,7 @@ public class Grammar {
 	}
 	
 	/**
-	 * splits up all variable and function declarations at the top level of code
+	 * declarationList -> declarationList declaration | declaration
 	 * @param tokens all tokens passed down from either program of another declarationList
 	 * @return tree if all subtrees are successful otherwise null
 	 */
@@ -95,7 +95,7 @@ public class Grammar {
 	}
 
 	/**
-	 * Declaration either leads to a function or variable declaration
+	 * declaration -> variableDeclaration | functionDeclaration
 	 * @param tokens all tokens associated with said declaration
 	 * @return declaration subtree if all subtrees are valid
 	 */
@@ -115,7 +115,7 @@ public class Grammar {
 	}
 	
 	/**
-	 * Variable declaration
+	 * variableDeclaration -> variableTypeSpecifier variableDeclarationList ;
 	 * @param tokens all tokens associated with said declaration
 	 * @return variableDeclaration tree if all subtrees are valid
 	 */
