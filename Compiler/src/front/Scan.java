@@ -25,11 +25,11 @@ public class Scan {
 	 * Getter for the token of a specific
 	 * @return the list of tokens
 	 */
-	public List<Token> GetTokens() {
+	public List<Token> getTokens() {
 		return tokens;
 	}
 	
-	public void PrintTokens(){
+	public void printTokens(){
 		for (Token tok : this.tokens) {
 			System.out.println(tok.token + "\t" + tok.type.toString());
 		}

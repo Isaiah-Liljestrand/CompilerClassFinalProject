@@ -7,8 +7,8 @@ import front.GrammarHelper;
 import front.Token.type_enum;
 
 public class Grammar {
-	private Ptree root;
-	private boolean valid;
+	public Ptree root;
+	public boolean valid;
 	
 	/**
 	 * Program → declarationList

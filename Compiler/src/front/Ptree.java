@@ -129,6 +129,31 @@ public class Ptree {
 	}
 	
 	/**
+	 * Checks if all goto calls have a matching goto jump location
+	 * @param tree root of the parse tree
+	 * @return true if all goto statements match up
+	 */
+	public static boolean gotoChecker(Ptree tree) {
+		List<Ptree> gotoJumpPlace = new ArrayList<Ptree>();
+		gotoJumpPlace = findTrees(tree, gotoJumpPlace, type_enum.gotoJumpPlace);
+		List<Ptree> gotoCalls = new ArrayList<Ptree>();
+		gotoCalls = findTrees(tree, gotoCalls, type_enum.gotoStatement);
+		boolean b;
+		for(Ptree tcall : gotoCalls) {
+			b = false;
+			for(Ptree tjump : gotoJumpPlace) {
+				if(tcall.getChildren().get(1).token.token.equals(tjump.getChildren().get(0).token.token)) {
+					b = true;
+				}
+			}
+			if(!b) {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
 	 * finds all of one type of Ptree recursively
 	 * @param token to be found
 	 * @param trees must be initialized to a new arraylist before call
