@@ -127,4 +127,21 @@ public class Ptree {
 	public void setToken(Token token){
 		this.token = token;
 	}
+	
+	/**
+	 * finds all of one type of Ptree recursively
+	 * @param token to be found
+	 * @param trees must be initialized to a new arraylist before call
+	 * @return List of Ptrees containing specified token
+	 */
+	public static List<Ptree> findTrees(Ptree tree, List<Ptree> trees, type_enum type) {
+		if(tree.token.type == type) {
+			trees.add(tree);
+		}
+		
+		for(Ptree t: tree.getChildren()) {
+			trees = findTrees(t, trees, type);
+		}
+		return trees;
+	}
 }
