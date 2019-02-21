@@ -1,5 +1,6 @@
 package front;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SymbolTable {
@@ -16,5 +17,27 @@ public class SymbolTable {
 		childTable.parent = this;
 		SymbolTableEntry newEntry = new SymbolTableEntry(name, value, childTable);
 		entries.add(newEntry);
+	}
+	
+	public List<SymbolTable> GetChildTables() {
+		List<SymbolTable> childTables = new ArrayList<SymbolTable>();
+		for(SymbolTableEntry entry : entries) {
+			if (entry.childTable != null) {
+				childTables.add(entry.childTable);
+			}
+		}
+		return childTables;
+	}
+	
+	public boolean IsNameInScope(String name) {
+		for(SymbolTableEntry entry : entries) {
+			if (entry.name.equals(name)) {
+				return true;
+			}
+		}
+		if (parent != null) {
+			return parent.IsNameInScope(name);
+		}
+		return false;
 	}
 }
