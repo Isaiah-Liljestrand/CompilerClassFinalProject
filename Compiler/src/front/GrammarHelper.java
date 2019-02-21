@@ -67,21 +67,6 @@ public class GrammarHelper {
 	}
 	
 	
-	/**
-	 * Checks whether the token passed in is a valid variable type specifier
-	 * @param token should be either int or char
-	 * @return Ptree containing the token if the token was an int or char null otherwise
-	 */
-	public static Ptree variableTypeSpecifier(Token token) {
-		switch (token.type) {
-		case k_int:
-		case k_char:
-			return new Ptree(token);
-		default:
-			return null;
-		}
-	}
-	
 	
 	/**
 	 * Checks that the passed in token is a return call
@@ -112,21 +97,7 @@ public class GrammarHelper {
 	
 	
 	
-	/**
-	 * Checks whether the token passed in is a valid function type specifier
-	 * @param token should be either int char or void
-	 * @return Ptree containing the token if the token was an int, char, or void null otherwise
-	 */
-	public static Ptree functionTypeSpecifier(Token token) {
-		switch (token.type) {
-		case k_int:
-		case k_char:
-		case k_void:
-			return new Ptree(token);
-		default:
-			return null;
-		}
-	}
+
 	
 	/**
 	 * Simply checks if passed in token is an identifier
@@ -177,6 +148,30 @@ public class GrammarHelper {
 	 */
 	public static Ptree logicAnd(Token token) {
 		if(token.type == type_enum.andLogicOperator) {
+			return new Ptree(token);
+		}
+		return null;
+	}
+	
+	/**
+	 * Checks if the token passed in is a bitwise or operator
+	 * @param token to be checked
+	 * @return Ptree containing or token or null if input token is invalid
+	 */
+	public static Ptree bitOr(Token token) {
+		if(token.type == type_enum.orOperator) {
+			return new Ptree(token);
+		}
+		return null;
+	}
+	
+	/**
+	 * Checks if the token passed in is a bitwise and operator
+	 * @param token to be checked
+	 * @return Ptree containing and token or null if input token is invalid
+	 */
+	public static Ptree bitAnd(Token token) {
+		if(token.type == type_enum.andOperator) {
 			return new Ptree(token);
 		}
 		return null;
@@ -332,6 +327,8 @@ public class GrammarHelper {
 		} else if (tokens.get(startindex).type == type_enum.closedParenthesis) {
 			forward = false;
 			otherBracket = type_enum.openParenthesis;
+		} else {
+			return -1;
 		}
 		while(i < tokens.size() && i > -1) {
 			if(forward) {
@@ -368,6 +365,8 @@ public class GrammarHelper {
 		} else if (tokens.get(startindex).type == type_enum.closedCurlyBracket) {
 			forward = false;
 			otherBracket = type_enum.openCurlyBracket;
+		} else {
+			return -1;
 		}
 		while(i < tokens.size() && i > -1) {
 			if(forward) {
@@ -406,7 +405,7 @@ public class GrammarHelper {
 	}
 	
 	/**
-	 * Finds either of two specified tokens scans from front to back
+	 * Finds either of two specified tokens scans from back to front
 	 * @param tokens tokens to be scanned through
 	 * @param type token type to find
 	 * @param type2 other token type to find
@@ -415,6 +414,25 @@ public class GrammarHelper {
 	public static int findObject(List<Token> tokens, type_enum type, type_enum type2) {
 		int index = tokens.size() - 1;
 		while(tokens.get(index).type != type && tokens.get(index).type != type2) {
+			index--;
+			if(index < 0) {
+				return -1;
+			}
+		}
+		return index;
+	}
+	
+	/**
+	 * Finds either of three specified tokens scans from back to front
+	 * @param tokens tokens to be scanned through
+	 * @param type token type to find
+	 * @param type2 other token type to find
+	 * @param type3 other token type to find
+	 * @return index of token found or -1 if failed
+	 */
+	public static int findObject(List<Token> tokens, type_enum type, type_enum type2, type_enum type3) {
+		int index = tokens.size() - 1;
+		while(tokens.get(index).type != type && tokens.get(index).type != type2 && tokens.get(index).type != type3) {
 			index--;
 			if(index < 0) {
 				return -1;

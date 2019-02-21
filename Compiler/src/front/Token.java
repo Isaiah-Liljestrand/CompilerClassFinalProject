@@ -24,7 +24,7 @@ public class Token {
 
 		//logic operators
 		notEqualOperator,
-		equalsOperator,
+		equalOperator,
 		orLogicOperator,
 		andLogicOperator,
 		
@@ -44,9 +44,9 @@ public class Token {
 		comma,
 		
 		//identifiers and keywords
+		character,
 		number,
 		identifier,
-		typeSpecifier,
 		
 		//keywords
 		k_break,
@@ -63,34 +63,40 @@ public class Token {
 		program,
 		declarationList,
 		declaration,
-		functionDeclaration,
 		variableDeclaration,
+		variableTypeSpecifier,
 		variableDeclarationList,
 		variableDeclarationInitialize,
+		variableDeclarationID,
+		functionDeclaration,
+		functionTypeSpecifier,
+		functionDeclarationID,
 		parameterList,
 		parameter,
-		statement,
 		statementList,
+		statement,
+		gotoStatement,
 		gotoJumpPlace,
-		ifStmt,
-		breakStmt,
-		returnStmt,
-		whileStmt,
-		gotoStmt,
-		expressionStmt,
+		returnStatement,
+		breakStatement,
+		whileStatement,
+		ifStatement,
+		expressionStatement,
 		expression,
 		simpleExpression,
 		andExpression,
-		unaryRelExpression,
-		relExpression,
+		bitOrExpression,
+		bitXorExpression,
+		bitAndExpression,
+		compareExpression,
 		compareOperator,
 		sumExpression,
-		sumop,
+		sumOperator,
 		term,
-		mulOp,
+		productOperator,
+		notExpression,
 		factor,
 		call,
-		args,
 		argList,
 		constant
 	};
@@ -168,7 +174,7 @@ public class Token {
 			break;
 		case '=':
 			if(this.token.equals("==")) {
-				this.type = type_enum.equalsOperator;
+				this.type = type_enum.equalOperator;
 			} else {
 				this.type = type_enum.assignmentOperator;
 			}
