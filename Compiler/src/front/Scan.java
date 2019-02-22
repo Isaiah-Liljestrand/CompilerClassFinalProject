@@ -136,6 +136,7 @@ public class Scan {
 		string = string + ";|\\=|";      			// ; and =
 		string = string + "\'[a-zA-Z]\'";			// 'character'
 		string = string + "0x[a-f0-9]+"; 			// Accepts hex input
+		string = string + "/\\*.\\*/";				// Accepts any comments of the form /*......*/
 		string = string + "//.";					// Accepts any comments or the form //......
 		string = string + "\\+\\+|"; 				// ++
 		string = string + "\\-\\-|"; 				// --
