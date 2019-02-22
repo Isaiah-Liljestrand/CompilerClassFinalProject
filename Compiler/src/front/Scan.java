@@ -81,7 +81,7 @@ public class Scan {
 	 * @param tokens all tokens parsed from the scannar
 	 */
 	private static void removeComments(List<Token> tokens) {
-		Pattern commentRegex = Pattern.compile("//.");
+		Pattern commentRegex = Pattern.compile("//.|/\\*.*\\*/");
 		for(Token tok : tokens) {
 			if(commentRegex.matcher(tok.token).matches()) {
 				tokens.remove(tok);
@@ -136,7 +136,7 @@ public class Scan {
 		string = string + ";|\\=|";      			// ; and =
 		string = string + "\'[a-zA-Z]\'";			// 'character'
 		string = string + "0x[a-f0-9]+"; 			// Accepts hex input
-		string = string + "/\\*.\\*/";				// Accepts any comments of the form /*......*/
+		string = string + "/\\*.*\\*/";				// Accepts any comments of the form /*......*/
 		string = string + "//.";					// Accepts any comments or the form //......
 		string = string + "\\+\\+|"; 				// ++
 		string = string + "\\-\\-|"; 				// --
