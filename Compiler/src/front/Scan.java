@@ -50,55 +50,44 @@ public class Scan {
 		//If the current token plus an additional character is still valid according to regular expressions, then the token is still valid.
 		//If the current token plus the new character is not valid, then the current token should be added to the list of valid tokens.
 		List<Token> tokens = new ArrayList<Token>(); //List to return
-		String currentToken = "";
-		String currentWithNewChar;
+		String tokenString;
+		char character;
+		int i, j;
 		int lineNumber = 0;
 		//Loop through every character in the string
 		for(String line : text) {
 			lineNumber++;
-			for (char character : line.toCharArray()) {
+			for (i = 0; i < line.length(); i++) {
+				character = line.charAt(i);
 				if(!isValidCharacter(character)) {
 					System.out.println("Error: '" + character + "' not recognized");
-					
-				}
-				currentWithNewChar = currentToken + character; //Testing current token with appended new character
-				if (stringMatchesToken(currentWithNewChar)) { //If any regular expression matches, then the current token has the new character appended
-					currentToken = currentWithNewChar;
-				} else {
-					//If no regular expression matches, then the current token is finished.
-					//If the current token is valid, add it to our list of tokens
-					if (stringMatchesToken(currentToken) && !isInvalidWord(currentToken)) {
-						tokens.add(new Token(currentToken, lineNumber));
-					} else if(isInvalidWord(currentToken)) {
-						System.out.println("Error: '" + currentToken + "' not recognized");
+				} else if(!(character == ' ')) {
+					for(j = line.length(); j > i; j--) {
+						tokenString = line.substring(i, j);
+						if(stringMatchesToken(tokenString)) {
+							i = j;
+							tokens.add(new Token(tokenString, lineNumber));
+						}
 					}
-					currentToken = String.valueOf(character);
 				}
-				//Reset current token to be the newest character
-				//currentToken = String.valueOf(character);
 			}
 		}
-		//At end of loop check if the current token is valid. If so, add it to our list of tokens.
-		if (stringMatchesToken(currentToken) && !isInvalidWord(currentToken)) {
-			tokens.add(new Token(currentToken, lineNumber));
-		} else if(isInvalidWord(currentToken)) {
-			System.out.println("Error: '" + currentToken + "' not recognized");
-		}
-		
+		removeComments(tokens);
 		return tokens;
 	}
 	
 	/**
-	 * Checks that all identifiers and digits are of the correct form.
-	 * @param value. string that is being checked
-	 * @return true or false depending on validity
+	 * Removes all comments from allocated tokens
+	 * @param tokens all tokens parsed from the scannar
 	 */
-	private static boolean isInvalidWord(String value) {
-		Pattern antiREGEX = Pattern.compile("//d//w*//[a-zA-Z]//w*");
-		Matcher test = antiREGEX.matcher(value);
-		return test.matches();
+	private static void removeComments(List<Token> tokens) {
+		Pattern commentRegex = Pattern.compile("//.");
+		for(Token tok : tokens) {
+			if(commentRegex.matcher(tok.token).matches()) {
+				tokens.remove(tok);
+			}
+		}
 	}
-	
 	/**
 	 * Checks if any unsupported characters are in the string
 	 * @param character character in code
@@ -138,14 +127,16 @@ public class Scan {
 	private static String buildRegularExpression() {
 		String string = "\\{|\\}|"; 				// { and }
 		string = string + "\\(|\\)|"; 				// ( and )
-		string = string + "\\w+|"; 					// accepts any expressions that only use letters and digits that start with a letter
+		string = string + "\\[a-zA-Z]w*|"; 			// accepts any expressions that only use letters and digits that start with a letter
 		string = string + "/|\\*|"; 				// / and *
 		string = string + "\\+|\\-|"; 				// + and -
 		string = string + "\\^|\\|"; 				// ^ and |
 		string = string + "&|%|"; 					// & and %
 		string = string + "\\!|"; 					// !
 		string = string + ";|\\=|";      			// ; and =
+		string = string + "\'[a-zA-Z]\'";			// 'character'
 		string = string + "0x[a-f0-9]+"; 			// Accepts hex input
+		string = string + "//.";					// Accepts any comments or the form //......
 		string = string + "\\+\\+|"; 				// ++
 		string = string + "\\-\\-|"; 				// --
 		string = string + "\\-\\=";  				// -=

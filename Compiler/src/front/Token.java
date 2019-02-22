@@ -238,18 +238,22 @@ public class Token {
 		case "while":
 			this.type = type_enum.k_while;
 		}
+		if(this.type != null) {
+			return;
+		}
 		//could be written better, temporary fix
 		if(this.token.charAt(0) >= '0' && this.token.charAt(0) <= '9') {
 			this.type = type_enum.number;
-			if(this.token.subSequence(0, 1).equals("0x")) {
+			if(this.token.substring(0, 2).equals("0x")) {
 				this.token = String.valueOf(Integer.parseInt(this.token, 16));
 			}
 			return;
 		}
-		if (this.type == null) {
-			//function or variable
-			this.type = type_enum.identifier;
+		if(this.token.length() == 3 && this.token.charAt(0) == '\'' && this.token.charAt(2) == '\'') {
+			this.type = type_enum.character;
+			return;
 		}
+		this.type = type_enum.identifier;
 	}
 	
 	
