@@ -8,6 +8,7 @@ import front.Token.type_enum;
 
 public class Grammar {
 	public Ptree root;
+	public SymbolTable symTable;
 	public boolean valid;
 	
 	/**
@@ -16,6 +17,7 @@ public class Grammar {
 	 */
 	Grammar(List<Token> tokens) { // Essentially the first few parts of the grammar
 		this.root = new Ptree(type_enum.program);
+		this.symTable = new SymbolTable();
 		valid = true;
 		root.addChild(declarationList(tokens));
 		if(!root.verifyChildren()) {
@@ -248,6 +250,7 @@ public class Grammar {
 			return null;
 		}
 		Ptree tree = new Ptree(type_enum.variableDeclarationID);
+		symTable.AddEntry(token.getToken(), token.getType().toString());
 		tree.addChild(new Ptree(token));
 		return tree;
 	}
@@ -287,11 +290,13 @@ public class Grammar {
 			return null;
 		}
 
+		
 		tree.addChild(statementList(tokens.subList(index + 2, index2)));
 		tree.addChild(GrammarHelper.closedCurlyBracket(tokens.get(index2)));
 		
 		//Verifies ligitimacy of the whole statement
 		if(tree.verifyChildren()) {
+			symTable.AddFunctionEntry(tokens.get(1).getToken(), tokens.get(0).getToken());
 			return tree;
 		}
 		return null;
