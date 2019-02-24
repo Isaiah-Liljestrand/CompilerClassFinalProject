@@ -59,7 +59,9 @@ public class Ptree {
 		//System.out.print(b);
 		for(Ptree child : children){
 			//System.out.println();
-			child.PT(i+1);
+			//if(child.verifyChildren()) {
+				child.PT(i+1);
+			//}
 		}
 	}
 

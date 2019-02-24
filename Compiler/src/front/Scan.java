@@ -130,7 +130,6 @@ public class Scan {
 	private static String buildRegularExpression() {
 		String string = "\\{|\\}|"; 				// { and }
 		string = string + "\\(|\\)|"; 				// ( and )
-		//string = string + "\\w+|";
 		string = string + "\\d+|";					//Accepts any digits
 		string = string + "[a-zA-Z]\\w*|"; 			// accepts any expressions that only use letters and digits that start with a letter
 		string = string + "/|\\*|"; 				// / and *

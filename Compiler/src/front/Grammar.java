@@ -21,6 +21,7 @@ public class Grammar {
 		valid = true;
 		root.addChild(declarationList(tokens));
 		if(!root.verifyChildren()) {
+			System.out.println("Grammar returned False");
 			valid = false;
 		}
 	}
@@ -102,7 +103,6 @@ public class Grammar {
 		
 		//Failed to satisfy any pre-existing constructs
 		return null;
-		
 	}
 
 	
@@ -117,6 +117,7 @@ public class Grammar {
 		//Checks if declaration is a function declaration
 		tree.addChild(functionDeclaration(tokens));
 		if(tree.verifyChildren()) {
+			System.out.println("check3");
 			return tree;
 		}
 		tree.removeChildren();
@@ -124,8 +125,10 @@ public class Grammar {
 		//Checks if the declaration is a function declaration
 		tree.addChild(variableDeclaration(tokens));
 		if(tree.verifyChildren()) {
+			System.out.println("check3");
 			return tree;
 		}
+		System.out.println("Declaration Did Nothing");
 		return null;
 	}
 	
@@ -267,6 +270,7 @@ public class Grammar {
 		
 		//Verifies there are at least the minimum possible tokens for a function declaration
 		if(tokens.size() < 6) {
+			System.out.println("FunctionDeclaration did nothing");
 			return null;
 		}
 		tree.addChild(functionTypeSpecifier(tokens.get(0)));
@@ -298,6 +302,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
+		System.out.println("functionDeclaration did nothing");
 		return null;
 	}
 	
@@ -316,6 +321,7 @@ public class Grammar {
 			tree.addChild(new Ptree(token));
 			return tree;
 		default:
+			System.out.println("FunctionTypeSpecifier did nothing");
 			return null;
 		}
 	}
