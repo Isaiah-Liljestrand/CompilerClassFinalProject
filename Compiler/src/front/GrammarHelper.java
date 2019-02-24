@@ -357,7 +357,7 @@ public class GrammarHelper {
 	 */
 	public static int findMatchingBracket(List<Token> tokens, int startindex) {
 		//System.out.println("Start index = " + startindex);
-		//System.out.println(tokens.get(0).getToken());
+		//System.out.println(tokens.get(startindex).getToken());
 		int numBrackets = 1, i = startindex;
 		boolean forward = true;
 		type_enum matchingBracket = tokens.get(startindex).type;
@@ -376,9 +376,9 @@ public class GrammarHelper {
 			} else {
 				i--;
 			}
-			if(tokens.get(i).type == matchingBracket) {
+			if(i >= 0 && tokens.get(i).type == matchingBracket) {
 				numBrackets++;
-			} else if(tokens.get(i).type == otherBracket) {
+			} else if(i >= 0 && tokens.get(i).type == otherBracket) {
 				numBrackets--;
 				if(numBrackets == 0) {
 					return i;

@@ -21,7 +21,7 @@ public class Grammar {
 		valid = true;
 		root.addChild(declarationList(tokens));
 		if(!root.verifyChildren()) {
-			System.out.println("Check3");
+			System.out.println("Grammar returned False");
 			valid = false;
 		}
 	}
@@ -82,10 +82,10 @@ public class Grammar {
 			tree.addChild(declarationList(tokens.subList(0, index)));
 			tree.addChild(declaration(tokens.subList(index, tokens.size())));
 			if(tree.verifyChildren()) {
-			//	System.out.println("Check2");
+				System.out.println("Check2");
 				return tree;
 			}
-			//System.out.println("Check2");
+			System.out.println("Check2");
 			return null;
 			
 		//Case where the lowest current declaration ends with a closed curly bracket, splits the input appropriately
@@ -96,7 +96,8 @@ public class Grammar {
 				return null;
 			}
 			System.out.println(index);
-			index = GrammarHelper.findObject(tokens.subList(0, index), type_enum.semicolon, type_enum.closedCurlyBracket);
+			//index = GrammarHelper.findObject(tokens.subList(0, index), type_enum.semicolon, type_enum.closedCurlyBracket);
+			index = GrammarHelper.findObject(tokens.subList(index, tokens.size()), type_enum.semicolon, type_enum.closedCurlyBracket);
 			if(index < 0) {
 				System.out.println(index);
 				return null;
@@ -104,15 +105,18 @@ public class Grammar {
 			index++;
 			tree.addChild(declarationList(tokens.subList(0, index)));
 			tree.addChild(declaration(tokens.subList(index, tokens.size())));
+			//tree.addChild(declaration(tokens.subList(0, index)));
+			//tree.addChild(declarationList(tokens.subList(index, tokens.size())));
 			if(tree.verifyChildren()) {
 				//System.out.println("Check2");
 				return tree;
 			}
+			System.out.println("DeclarationList returned Null");
 			return null;
 		}
 		
 		//Failed to satisfy any pre-existing constructs
-		//System.out.println("Check2");
+		System.out.println("DeclarationList did nothing");
 		return null;
 		
 	}
@@ -129,6 +133,7 @@ public class Grammar {
 		//Checks if declaration is a function declaration
 		tree.addChild(functionDeclaration(tokens));
 		if(tree.verifyChildren()) {
+			System.out.println("check3");
 			return tree;
 		}
 		tree.removeChildren();
@@ -136,8 +141,10 @@ public class Grammar {
 		//Checks if the declaration is a function declaration
 		tree.addChild(variableDeclaration(tokens));
 		if(tree.verifyChildren()) {
+			System.out.println("check3");
 			return tree;
 		}
+		System.out.println("Declaration Did Nothing");
 		return null;
 	}
 	
@@ -279,6 +286,7 @@ public class Grammar {
 		
 		//Verifies there are at least the minimum possible tokens for a function declaration
 		if(tokens.size() < 6) {
+			System.out.println("FunctionDeclaration did nothing");
 			return null;
 		}
 		tree.addChild(functionTypeSpecifier(tokens.get(0)));
@@ -286,6 +294,7 @@ public class Grammar {
 		tree.addChild(GrammarHelper.openParenthesis(tokens.get(2)));
 		index = GrammarHelper.findMatchingParenthesis(tokens, 2);
 		if (index == -1 || index > tokens.size() - 3) {
+			System.out.println("Check4");
 			return null;
 		}
 		
@@ -299,18 +308,20 @@ public class Grammar {
 		
 		//Verifies legitimacy of index2 values
 		if (index2 != tokens.size() - 1 || index2 < (index + 3)) {
+			System.out.println("Check4");
 			return null;
 		}
 
 		
 		tree.addChild(statementList(tokens.subList(index + 2, index2)));
 		tree.addChild(GrammarHelper.closedCurlyBracket(tokens.get(index2)));
-		
 		//Verifies ligitimacy of the whole statement
 		if(tree.verifyChildren()) {
 			symTable.AddFunctionEntry(tokens.get(1).getToken(), tokens.get(0).getToken());
+			System.out.println("Check4");
 			return tree;
 		}
+		System.out.println("functionDeclaration did nothing");
 		return null;
 	}
 	
@@ -329,6 +340,7 @@ public class Grammar {
 			tree.addChild(new Ptree(token));
 			return tree;
 		default:
+			System.out.println("FunctionTypeSpecifier did nothing");
 			return null;
 		}
 	}
