@@ -54,15 +54,16 @@ public class Main {
 		//This is a parse tree not an abstract syntax tree
 		grammar = new Grammar(scanner.getTokens());
 		
-		if(!Ptree.gotoChecker(grammar.root)) {
-			System.out.println("goto statements do not match up correctly");
-		}
+		//if(!Ptree.gotoChecker(grammar.root)) {
+		//	System.out.println("goto statements do not match up correctly");
+		//}
 		
 		if (abstractSyntaxTree) {
 			//grammar = new Grammar(scanner.getTokens());
 			
 		}
 		if (PrintParse && grammar != null){
+			System.out.print("check");
 			grammar.printTree();
 		}
 	}

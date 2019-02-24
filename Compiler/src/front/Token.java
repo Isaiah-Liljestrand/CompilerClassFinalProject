@@ -244,7 +244,8 @@ public class Token {
 		//could be written better, temporary fix
 		if(this.token.charAt(0) >= '0' && this.token.charAt(0) <= '9') {
 			this.type = type_enum.number;
-			if(this.token.substring(0, 2).equals("0x")) {
+			if(this.token.subSequence(0, 1).equals("0x")) {
+			//if(this.token.substring(0, 2).equals("0x")) {
 				this.token = String.valueOf(Integer.parseInt(this.token, 16));
 			}
 			return;
