@@ -64,10 +64,8 @@ public class Scan {
 				} else if(!(character == ' ') && !(character == '\t')) {
 					for(j = line.length(); j > i; j--) {
 						tokenString = line.substring(i, j);
-						System.out.println(tokenString);
 						if(stringMatchesToken(tokenString)) {
 							i = j;
-							//System.out.println("Matched" + tokenString);
 							tokens.add(new Token(tokenString, lineNumber));
 						}
 					}
