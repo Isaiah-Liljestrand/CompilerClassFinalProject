@@ -7,7 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+//import java.util.Scanner;
 
 public class Main {
 	public static void main(String[] args) {
@@ -33,14 +33,14 @@ public class Main {
 			}
 		}
 		
-		if (filename == null) {
-			Scanner fname = new Scanner(System.in);
-			System.out.print("Input name of file: ");
-			filename = fname.nextLine().trim();
-			fname.close();
-			tokenize = true;
-		}
-
+		//if (filename == null) {
+		//	Scanner fname = new Scanner(System.in);
+		//	System.out.print("Input name of file: ");
+		//	filename = fname.nextLine().trim();
+		//	fname.close();
+		//	tokenize = true;
+		//}
+		filename = "Testfile.txt";
 		
 		List<String> lines = readFile(filename);
 		scanner = new Scan(lines);
@@ -53,6 +53,7 @@ public class Main {
 		
 		//This is a parse tree not an abstract syntax tree
 		grammar = new Grammar(scanner.getTokens());
+		grammar.printTree();
 		
 		//if(!Ptree.gotoChecker(grammar.root)) {
 		//	System.out.println("goto statements do not match up correctly");

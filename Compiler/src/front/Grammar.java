@@ -21,7 +21,6 @@ public class Grammar {
 		valid = true;
 		root.addChild(declarationList(tokens));
 		if(!root.verifyChildren()) {
-			System.out.println("Check3");
 			valid = false;
 		}
 	}
@@ -40,7 +39,6 @@ public class Grammar {
 	 * If the tree root is valid, print the tree.
 	 */
 	public void printTree() {
-		//System.out.println("Check2");
 		if (valid) {
 			//System.out.println("sanity check");
 			root.printTree();
@@ -59,14 +57,12 @@ public class Grammar {
 		
 		//Invalid if the list size is 0
 		if(tokens.size() == 0) {
-			System.out.println("Error in Declaration List");
 			return null;
 		}
 		
 		//Checks if the passed in tokens represent a single declaration
 		tree.addChild(declaration(tokens));
 		if(tree.verifyChildren()) {
-		//	System.out.println("Check2");
 			return tree;
 		}
 		tree.removeChildren();
@@ -75,44 +71,36 @@ public class Grammar {
 		if(tokens.get(tokens.size() - 1).type == type_enum.semicolon) {
 			index = GrammarHelper.findObject(tokens.subList(0, tokens.size() - 1), type_enum.semicolon, type_enum.closedCurlyBracket);
 			if(index < 0) {
-			//	System.out.println("Check2");
 				return null;
 			}
 			index++;
 			tree.addChild(declarationList(tokens.subList(0, index)));
 			tree.addChild(declaration(tokens.subList(index, tokens.size())));
 			if(tree.verifyChildren()) {
-			//	System.out.println("Check2");
 				return tree;
 			}
-			//System.out.println("Check2");
 			return null;
 			
 		//Case where the lowest current declaration ends with a closed curly bracket, splits the input appropriately
 		} else if (tokens.get(tokens.size() - 1).type == type_enum.closedCurlyBracket) {
 			index = GrammarHelper.findMatchingBracket(tokens, tokens.size() - 1);
 			if(index < 0) {
-			//	System.out.println("Check2");
 				return null;
 			}
-			System.out.println(index);
 			index = GrammarHelper.findObject(tokens.subList(0, index), type_enum.semicolon, type_enum.closedCurlyBracket);
 			if(index < 0) {
-				System.out.println(index);
 				return null;
 			}
 			index++;
 			tree.addChild(declarationList(tokens.subList(0, index)));
 			tree.addChild(declaration(tokens.subList(index, tokens.size())));
 			if(tree.verifyChildren()) {
-				//System.out.println("Check2");
 				return tree;
 			}
 			return null;
 		}
 		
 		//Failed to satisfy any pre-existing constructs
-		//System.out.println("Check2");
 		return null;
 		
 	}
@@ -308,7 +296,6 @@ public class Grammar {
 		
 		//Verifies ligitimacy of the whole statement
 		if(tree.verifyChildren()) {
-			symTable.AddFunctionEntry(tokens.get(1).getToken(), tokens.get(0).getToken());
 			return tree;
 		}
 		return null;
@@ -575,16 +562,14 @@ public class Grammar {
 	 * @return returnStatement tree if valid, null if invalid
 	 */
 	private Ptree returnStatement(List<Token> tokens) {
-		//System.out.println("Check2");
 		Ptree tree = new Ptree(type_enum.returnStatement);
 		tree.addChild(GrammarHelper.returnFunction(tokens.get(0)));
 		if(!tree.verifyChildren()) {
-		//	System.out.println("Check2");
 			return null;
 		}
-		tree.addChild(expressionStatement(tokens.subList(1, tokens.size())));
+		tree.addChild(simpleExpression(tokens.subList(1, tokens.size() - 1)));
+		tree.addChild(GrammarHelper.semicolon(tokens.get(tokens.size() - 1)));
 		if(tree.verifyChildren()) {
-			//System.out.println("Check2");
 			return tree;
 		}
 		//TODO: add error reporting

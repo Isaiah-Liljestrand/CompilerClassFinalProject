@@ -61,17 +61,17 @@ public class Scan {
 				character = line.charAt(i);
 				if(!isValidCharacter(character)) {
 					System.out.println("Error: '" + character + "' not recognized");
-				} else if(!(character == ' ')) {
+				} else if(!(character == ' ') && !(character == '\t')) {
 					for(j = line.length(); j > i; j--) {
-					//for(j = i; j <= line.length(); j++) {
 						tokenString = line.substring(i, j);
-						//System.out.println(tokenString);
+						System.out.println(tokenString);
 						if(stringMatchesToken(tokenString)) {
-							i = j -1;
+							i = j;
 							//System.out.println("Matched" + tokenString);
 							tokens.add(new Token(tokenString, lineNumber));
 						}
 					}
+					i--;
 				}
 			}
 		}
@@ -130,8 +130,9 @@ public class Scan {
 	private static String buildRegularExpression() {
 		String string = "\\{|\\}|"; 				// { and }
 		string = string + "\\(|\\)|"; 				// ( and )
-		string = string + "\\w+|";					
-		//string = string + "\\[a-zA-Z]w*|"; 			// accepts any expressions that only use letters and digits that start with a letter
+		//string = string + "\\w+|";
+		string = string + "\\d+|";					//Accepts any digits
+		string = string + "[a-zA-Z]\\w*|"; 			// accepts any expressions that only use letters and digits that start with a letter
 		string = string + "/|\\*|"; 				// / and *
 		string = string + "\\+|\\-|"; 				// + and -
 		string = string + "\\^|\\|"; 				// ^ and |
