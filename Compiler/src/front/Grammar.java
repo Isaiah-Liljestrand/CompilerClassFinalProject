@@ -315,6 +315,7 @@ public class Grammar {
 		
 		tree.addChild(statementList(tokens.subList(index + 2, index2)));
 		tree.addChild(GrammarHelper.closedCurlyBracket(tokens.get(index2)));
+		//tree.printTree();
 		//Verifies ligitimacy of the whole statement
 		if(tree.verifyChildren()) {
 			symTable.AddFunctionEntry(tokens.get(1).getToken(), tokens.get(0).getToken());
