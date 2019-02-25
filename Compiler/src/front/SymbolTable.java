@@ -11,75 +11,75 @@ public class SymbolTable {
 	public List<SymbolTable> children;
 	public SymbolTable parent;
 	
+	/**
+	 * Constructor to be called from main to create the top level symbol table
+	 */
 	public SymbolTable() {
 		this.label = "program";
 		this.parent = null;
 		this.children = new ArrayList<SymbolTable>();
 		this.entries = new ArrayList<SymbolTableEntry>();
 	}
-	private SymbolTable(SymbolTable t, String label) {
+	
+	/**
+	 * Constructor to be called from inside the class to build sub-tables
+	 * @param t symbol table parent calling the constructor
+	 * @param label name of the function for use in calling later
+	 */
+	private SymbolTable(SymbolTable parent, String label) {
 		this.label = label;
-		this.parent = t;
+		this.parent = parent;
 		this.children = new ArrayList<SymbolTable>();
 		this.entries = new ArrayList<SymbolTableEntry>();
 	}
 	
+	
+	/**
+	 * Adds an entry to the symbol table
+	 * @param name entry variable name
+	 * @param value entry variable value
+	 */
 	public void AddEntry(String name, Ptree value)	{
 		SymbolTableEntry newEntry = new SymbolTableEntry(name, value);
 		entries.add(newEntry);
 	}
-	
-	/*public void AddFunctionEntry(String name, String value)	{
-		//SymbolTable childTable = new SymbolTable();
-		childTable.parent = this;
-		SymbolTableEntry newEntry = new SymbolTableEntry(name, value);
-		entries.add(newEntry);
-	}*/
-	
-	/*public List<SymbolTable> GetChildTables() {
-		for(SymbolTableEntry entry : entries) {
-			if (entry.childTable != null) {
-				childTables.add(entry.childTable);
-			}
-		}
-		return childTables;
-	}*/
+
 	
 	/**
 	 * Checks if a variable name is in scope only applicable to variable names not functions
 	 * @param name variable name to be checked
 	 * @return true if in scope, false if not
 	 */
-	public boolean IsNameInScope(String name) {
+	public boolean isVariableNameInScope(String name) {
 		for(SymbolTableEntry entry : entries) {
 			if (entry.name.equals(name)) {
 				return true;
 			}
 		}
 		if (parent != null) {
-			return parent.IsNameInScope(name);
+			return parent.isVariableNameInScope(name);
 		}
 		return false;
 	}
 	
-	/*public void buildSymbolTable(Ptree root) {
-		buildDeclarationTable(root, this);
-		return;
-		
-		tree = findTrees(root, tree, type_enum.functionDeclaration); // First find the function Declarations 
-		int i = 0;
-		
-		for(Ptree t: tree) { // Then find the symbols's in each of those functions
-			AddFunctionEntry(t.getToken().getToken(), t.getToken().getToken());
-			List<Ptree> Lists1 = new ArrayList<Ptree>();
-			List<Ptree> Lists2 = new ArrayList<Ptree>();
-			Lists1 = findTrees(t, Lists1, type_enum.variableTypeSpecifier);
-			Lists2 = findTrees(t, Lists2, type_enum.identifier);
-			for(Ptree tr: Lists1) {
-				AddEntry(Lists2.get(i).getToken().getToken(), tr.getToken().getToken());
+	/**
+	 * Checks if a function call name is in scope
+	 * @param name the name of the function being called
+	 * @return true if function name is in scope, false if not
+	 */
+	public boolean isFunctionNameInScope(String name) {
+		for(SymbolTable table : this.children) {
+			if(table.label == name) {
+				return true;
 			}
 		}
-	}*/
+		if(this.parent != null) {
+			return this.parent.isFunctionNameInScope(name);
+		} else {
+			return false;
+		}
+	}
+	
 	
 	/**
 	 * Builds the top level declaration table and recursively creates lower level ones
@@ -142,21 +142,4 @@ public class SymbolTable {
 			
 		}
 	}
-	
-	/*public static List<Ptree> findTrees(Ptree tree, List<Ptree> trees, type_enum type) {
-		if(tree.getToken().type == type) {
-		//	System.out.println("Found");
-			trees.add(tree);
-		}
-		if(tree.verifyChildren()) {
-			List<Ptree> tt = tree.getChildren();
-			for(Ptree t: tt) {
-				//	System.out.println("Test");
-				if(t.verifyChildren()) {
-					trees = findTrees(t, trees, type);
-				}
-			}
-		}
-		return trees;
-	}*/
 }
