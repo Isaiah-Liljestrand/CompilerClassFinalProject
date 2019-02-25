@@ -4,6 +4,11 @@ import java.util.List;
 
 import front.Token.type_enum;
 
+/**
+ * Small functions that aid in grammar operations
+ * Mostly verify tokens and then create Ptrees from them
+ * @author Isaiah-Liljestrand
+ */
 public class GrammarHelper {
 	
 	/**

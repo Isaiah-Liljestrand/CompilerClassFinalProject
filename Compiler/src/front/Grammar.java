@@ -6,6 +6,10 @@ import front.GrammarHelper;
 
 import front.Token.type_enum;
 
+/**
+ * Grammar class creates the Parse tree while checking that the input matches the provided grammar 
+ * @author Isaiah-Liljestrand with some help from Jacob
+ */
 public class Grammar {
 	public Ptree root;
 	//public SymbolTable symTable;
@@ -15,9 +19,8 @@ public class Grammar {
 	 * Program → declarationList
 	 * @param tokens All tokens in the program
 	 */
-	Grammar(List<Token> tokens) { // Essentially the first few parts of the grammar
+	Grammar(List<Token> tokens) {
 		this.root = new Ptree(type_enum.program);
-		//this.symTable = new SymbolTable();
 		valid = true;
 		root.addChild(declarationList(tokens));
 		if(!root.verifyChildren()) {
@@ -28,11 +31,19 @@ public class Grammar {
 	
 	
 	/**
-	 * Checks whether the grammar is valid or not
+	 * Returns whether the grammar is valid or not
 	 * @return true if valid false if not
 	 */
 	public boolean getValid() {
 		return this.valid;
+	}
+	
+	/**
+	 * Returns ptree at the root of the parse tree
+	 * @return program parse tree node
+	 */
+	public Ptree getPtree() {
+		return root;
 	}
 	
 	
@@ -1304,10 +1315,6 @@ public class Grammar {
 			return tree;
 		}
 		return null;
-	}
-	
-	public Ptree getPtree() {
-		return root;
 	}
 }
 	
