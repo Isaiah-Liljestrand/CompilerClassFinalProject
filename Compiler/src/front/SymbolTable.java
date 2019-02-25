@@ -3,6 +3,8 @@ package front;
 import java.util.ArrayList;
 import java.util.List;
 
+import front.Token.type_enum;
+
 public class SymbolTable {
 	public List<SymbolTableEntry> entries;
 	public SymbolTable parent;
@@ -39,5 +41,35 @@ public class SymbolTable {
 			return parent.IsNameInScope(name);
 		}
 		return false;
+	}
+	
+	public void BuildSymTable(Ptree root) {
+		List<Ptree> tree = new ArrayList<Ptree>();
+		tree = findTrees(root, tree, type_enum.functionDeclaration); // First find the function Declarations
+		int i = 0;
+		
+		for(Ptree t: tree) { // Then find the symbols's in each of those functions
+			List<Ptree> Lists1 = new ArrayList<Ptree>();
+			List<Ptree> Lists2 = new ArrayList<Ptree>();
+			Lists1 = findTrees(t, Lists1, type_enum.variableTypeSpecifier);
+			Lists2 = findTrees(t, Lists2, type_enum.identifier);
+			for(Ptree tr: Lists1) {
+				AddEntry(Lists2.get(i).getToken().getToken(), tr.getToken().getToken());
+			}
+		}
+		
+	}
+	
+	public static List<Ptree> findTrees(Ptree tree, List<Ptree> trees, type_enum type) {
+		if(tree.getToken().type == type) {
+		//	System.out.println("Found");
+			trees.add(tree);
+		}
+		
+		for(Ptree t: tree.getChildren()) {
+		//	System.out.println("Test");
+			trees = findTrees(t, trees, type);
+		}
+		return trees;
 	}
 }

@@ -38,7 +38,7 @@ public class Main {
 		//	System.out.print("Input name of file: ");
 		//	filename = fname.nextLine().trim();
 		//	fname.close();
-		//	tokenize = true;
+			tokenize = true;
 		//}
 		filename = "Testfile.txt";
 		
@@ -53,7 +53,7 @@ public class Main {
 		
 		//This is a parse tree not an abstract syntax tree
 		grammar = new Grammar(scanner.getTokens());
-		grammar.printTree();
+		//grammar.printTree();
 		
 		//if(!Ptree.gotoChecker(grammar.root)) {
 		//	System.out.println("goto statements do not match up correctly");
@@ -64,9 +64,12 @@ public class Main {
 			
 		}
 		if (PrintParse && grammar != null){
-			System.out.print("check");
+			//System.out.print("check");
 			grammar.printTree();
 		}
+		
+		SymbolTable symTable = new SymbolTable();
+		symTable.BuildSymTable(grammar.getPtree());
 	}
 
 	

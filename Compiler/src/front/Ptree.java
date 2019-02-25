@@ -100,6 +100,7 @@ public class Ptree {
 	 * @param treein a single child Ptree to add to this class' list
 	 */
 	protected void addChild(Ptree treein) {
+		//System.out.println("Added Child");
 		children.add(treein);
 	}
 	
