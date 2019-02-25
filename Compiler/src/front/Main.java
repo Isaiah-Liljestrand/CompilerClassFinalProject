@@ -69,7 +69,7 @@ public class Main {
 		}
 		
 		SymbolTable symTable = new SymbolTable();
-		symTable.BuildSymTable(grammar.getPtree());
+		symTable.buildSymbolTable(grammar.getPtree());
 	}
 
 	
