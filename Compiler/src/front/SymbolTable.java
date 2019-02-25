@@ -49,6 +49,7 @@ public class SymbolTable {
 		int i = 0;
 		
 		for(Ptree t: tree) { // Then find the symbols's in each of those functions
+			AddFunctionEntry(t.getToken().getToken(), t.getToken().getToken());
 			List<Ptree> Lists1 = new ArrayList<Ptree>();
 			List<Ptree> Lists2 = new ArrayList<Ptree>();
 			Lists1 = findTrees(t, Lists1, type_enum.variableTypeSpecifier);
@@ -65,10 +66,14 @@ public class SymbolTable {
 		//	System.out.println("Found");
 			trees.add(tree);
 		}
-		
-		for(Ptree t: tree.getChildren()) {
-		//	System.out.println("Test");
-			trees = findTrees(t, trees, type);
+		if(tree.verifyChildren()) {
+			List<Ptree> tt = tree.getChildren();
+			for(Ptree t: tt) {
+				//	System.out.println("Test");
+				if(t.verifyChildren()) {
+					trees = findTrees(t, trees, type);
+				}
+			}
 		}
 		return trees;
 	}
