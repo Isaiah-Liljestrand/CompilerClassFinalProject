@@ -784,7 +784,7 @@ public class Grammar {
 		
 		//variable reassignment
 		if(tokens.size() > 2) {
-			tree.addChild(GrammarHelper.identifier(tokens.get(0)));
+			tree.addChild(variable(tokens.get(0)));
 			tree.addChild(GrammarHelper.assignmentOperator(tokens.get(1)));
 			tree.addChild(simpleExpression(tokens.subList(2, tokens.size())));
 			if(tree.verifyChildren()) {
@@ -794,7 +794,7 @@ public class Grammar {
 		}
 		
 		//variable++
-		tree.addChild(GrammarHelper.identifier(tokens.get(0)));
+		tree.addChild(variable(tokens.get(0)));
 		tree.addChild(GrammarHelper.increment(tokens.get(1)));
 		if(tree.verifyChildren()) {
 			return tree;
@@ -802,7 +802,7 @@ public class Grammar {
 		tree.removeChildren();
 		
 		//variable--
-		tree.addChild(GrammarHelper.identifier(tokens.get(0)));
+		tree.addChild(variable(tokens.get(0)));
 		tree.addChild(GrammarHelper.decrement(tokens.get(1)));
 		if(tree.verifyChildren()) {
 			return tree;
@@ -1190,7 +1190,7 @@ public class Grammar {
 		
 		//Checks if the factor is an identifier
 		if(tokens.size() == 1) {
-			tree.addChild(GrammarHelper.identifier(tokens.get(0)));
+			tree.addChild(variable(tokens.get(0)));
 			if(tree.verifyChildren()) {
 				return tree;
 			}
@@ -1290,6 +1290,20 @@ public class Grammar {
 		default:
 			return null;
 		}
+	}
+	
+	/**
+	 * Variable call that has been defined elsewhere
+	 * @param token passed from parent should be a variable call
+	 * @return variable tree if valid, null if invalid
+	 */
+	private Ptree variable(Token token) {
+		Ptree tree = new Ptree(type_enum.variable);
+		tree.addChild(GrammarHelper.identifier(token));
+		if(tree.verifyChildren()) {
+			return tree;
+		}
+		return null;
 	}
 	
 	public Ptree getPtree() {

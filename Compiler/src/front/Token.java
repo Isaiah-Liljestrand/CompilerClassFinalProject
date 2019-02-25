@@ -47,6 +47,7 @@ public class Token {
 		character,
 		number,
 		identifier,
+		variable,
 		
 		//keywords
 		k_break,

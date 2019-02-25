@@ -24,7 +24,7 @@ public class SymbolTable {
 		this.entries = new ArrayList<SymbolTableEntry>();
 	}
 	
-	public void AddEntry(String name, String value)	{
+	public void AddEntry(String name, Ptree value)	{
 		SymbolTableEntry newEntry = new SymbolTableEntry(name, value);
 		entries.add(newEntry);
 	}
@@ -62,11 +62,11 @@ public class SymbolTable {
 		return false;
 	}
 	
-	public void buildSymbolTable(Ptree root) {
+	/*public void buildSymbolTable(Ptree root) {
 		buildDeclarationTable(root, this);
 		return;
 		
-		/*tree = findTrees(root, tree, type_enum.functionDeclaration); // First find the function Declarations 
+		tree = findTrees(root, tree, type_enum.functionDeclaration); // First find the function Declarations 
 		int i = 0;
 		
 		for(Ptree t: tree) { // Then find the symbols's in each of those functions
@@ -78,15 +78,15 @@ public class SymbolTable {
 			for(Ptree tr: Lists1) {
 				AddEntry(Lists2.get(i).getToken().getToken(), tr.getToken().getToken());
 			}
-		}*/
-	}
+		}
+	}*/
 	
 	/**
 	 * Builds the top level declaration table and recursively creates lower level ones
 	 * @param tree current Ptree being dealt with
 	 * @param table top level symbol table
 	 */
-	private static void buildDeclarationTable(Ptree tree, SymbolTable table) {
+	public static void buildDeclarationTable(Ptree tree, SymbolTable table) {
 		switch(tree.getToken().type) {
 		case functionDeclaration:
 			SymbolTable sTable = new SymbolTable(table, tree.getChildren().get(1).getToken().token);
@@ -124,8 +124,14 @@ public class SymbolTable {
 		case variableDeclaration:
 			//Read in new entry and check if already declared
 			return;
-		case expressionStatement:
-			//modify existing entry if applicable and check if it was declared for function calls and variable modifications
+		case expression:
+			//modify existing entry if applicable and check if it was declared for function calls and variable modifications also, keep calling down tree
+			return;
+		case call:
+			//verify that function call is in scope
+			return;
+		case variable:
+			//verify legitimacy and check that it is in scope
 			return;
 		default:
 			if(tree.getChildren() != null) {
