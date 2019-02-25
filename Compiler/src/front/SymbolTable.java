@@ -96,10 +96,8 @@ public class SymbolTable {
 			//read in variable to table
 			return;
 		default:
-			if(tree.getChildren() != null) {
-				for(Ptree t : tree.getChildren()) {
-					buildDeclarationTable(t, table);
-				}
+			for(Ptree t : tree.getChildren()) {
+				buildDeclarationTable(t, table);
 			}
 		}
 	}

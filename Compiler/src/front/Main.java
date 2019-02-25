@@ -55,9 +55,9 @@ public class Main {
 		grammar = new Grammar(scanner.getTokens());
 		//grammar.printTree();
 		
-		//if(!Ptree.gotoChecker(grammar.root)) {
-		//	System.out.println("goto statements do not match up correctly");
-		//}
+		if(!Ptree.gotoChecker(grammar.root)) {
+			System.out.println("goto statements do not match up correctly");
+		}
 		
 		if (abstractSyntaxTree) {
 			//grammar = new Grammar(scanner.getTokens());

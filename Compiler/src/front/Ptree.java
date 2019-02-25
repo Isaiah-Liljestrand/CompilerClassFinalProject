@@ -56,12 +56,8 @@ public class Ptree {
 		if (this.token.token != null) {
 			System.out.print(" | " + this.token.token);
 		}
-		//System.out.print(b);
 		for(Ptree child : children){
-			//System.out.println();
-			//if(child.verifyChildren()) {
-				child.PT(i+1);
-			//}
+			child.PT(i+1);
 		}
 	}
 
@@ -70,9 +66,6 @@ public class Ptree {
 	 * @return the children
 	 */
 	protected List<Ptree> getChildren() {
-		if(children.size() == 0) {
-			return null;
-		}
 		return children;
 	}
 
