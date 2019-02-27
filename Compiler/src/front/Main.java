@@ -33,13 +33,13 @@ public class Main {
 			}
 		}
 		
-		//if (filename == null) {
-		//	Scanner fname = new Scanner(System.in);
-		//	System.out.print("Input name of file: ");
-		//	filename = fname.nextLine().trim();
-		//	fname.close();
+		/**if (filename == null) {
+			Scanner fname = new Scanner(System.in);
+			System.out.print("Input name of file: ");
+			filename = fname.nextLine().trim();
+			fname.close();
 			tokenize = true;
-		//}
+		}*/
 		filename = "Testfile.txt";
 		
 		List<String> lines = readFile(filename);

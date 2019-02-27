@@ -6,10 +6,10 @@ import java.util.List;
 import front.Token.type_enum;
 
 public class SymbolTable {
-	public String label;
-	public List<SymbolTableEntry> entries;
-	public List<SymbolTable> children;
-	public SymbolTable parent;
+	protected String label;
+	protected List<SymbolTableEntry> entries;
+	protected List<SymbolTable> children;
+	protected SymbolTable parent;
 	
 	/**
 	 * Constructor to be called from main to create the top level symbol table
@@ -139,5 +139,61 @@ public class SymbolTable {
 			}
 			
 		}
+	}
+
+	/**
+	 * @return the label
+	 */
+	protected String getLabel() {
+		return label;
+	}
+
+	/**
+	 * @param label the label to set
+	 */
+	protected void setLabel(String label) {
+		this.label = label;
+	}
+
+	/**
+	 * @return the entries
+	 */
+	protected List<SymbolTableEntry> getEntries() {
+		return entries;
+	}
+
+	/**
+	 * @param entries the entries to set
+	 */
+	protected void setEntries(List<SymbolTableEntry> entries) {
+		this.entries = entries;
+	}
+
+	/**
+	 * @return the children
+	 */
+	protected List<SymbolTable> getChildren() {
+		return children;
+	}
+
+	/**
+	 * @param children the children to set
+	 */
+	protected void setChildren(List<SymbolTable> children) {
+		this.children = children;
+	}
+
+	/**
+	 * @return the parent
+	 */
+	protected SymbolTable getParent() {
+		return parent;
+	}
+
+	/**
+	 * @param parent the parent to set
+	 */
+	protected void setParent(SymbolTable parent) {
+		this.parent = parent;
 	}
 }
