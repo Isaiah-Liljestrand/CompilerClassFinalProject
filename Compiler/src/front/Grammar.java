@@ -11,9 +11,9 @@ import front.Token.type_enum;
  * @author Isaiah-Liljestrand with some help from Jacob
  */
 public class Grammar {
-	public Ptree root;
+	protected Ptree root;
 	//public SymbolTable symTable;
-	public boolean valid;
+	protected boolean valid;
 	
 	/**
 	 * Program → declarationList
@@ -1315,6 +1315,30 @@ public class Grammar {
 			return tree;
 		}
 		return null;
+	}
+
+
+	/**
+	 * @return the root
+	 */
+	protected Ptree getRoot() {
+		return root;
+	}
+
+
+	/**
+	 * @param root the root to set
+	 */
+	protected void setRoot(Ptree root) {
+		this.root = root;
+	}
+
+
+	/**
+	 * @param valid the valid to set
+	 */
+	protected void setValid(boolean valid) {
+		this.valid = valid;
 	}
 }
 	

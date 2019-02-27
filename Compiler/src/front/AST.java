@@ -1,25 +1,48 @@
 package front;
 
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Bacicly Ptree but squished
+ * @author Ben
+ *
+ */
 public class AST {
-	private Token token;
-	private List<AST> children;
+	private List<Token> children;
 	
 	public AST() {
-
+		children = new ArrayList<Token>();
 	}
 	
 	public AST(Ptree input) {
+		children = new ArrayList<Token>();
 		interperet(input);
+	}
+	
+	public AST(Grammar input) {
+		children = new ArrayList<Token>();
+		interperet(input.getRoot());
+	}
+	
+	public void populate(Ptree input) {
+		interperet(input);
+	}
+	
+	public void populate(Grammar input) {
+		interperet(input.getRoot());
 	}
 	
 	/**
 	 * takes a Ptree tree as input and converts it to an AST with the called AST as the root
+	 * 					~~~Assumes DFS is desired~~~
 	 * @param input
 	 */
 	protected void interperet(Ptree input){
-		
+		for(int i = 0;i < input.getChildren().size(); i++){
+			interperet(input.getChildren().get(i));
+		}
+		children.add(input.getToken());
 	}
 	
 	/**
@@ -30,13 +53,6 @@ public class AST {
 		
 	}
 
-	/**
-	 * gets current AST token
-	 * @return
-	 */
-	public Token getToken() {
-		return token;
-	}
 	
 	/**
 	 * gets child i's token
@@ -45,15 +61,7 @@ public class AST {
 	 * @return
 	 */
 	public Token getToken(int i) {
-		return children.get(i).getToken();
-	}
-
-	/**
-	 * sets current AST's Token
-	 * @param token
-	 */
-	public void setToken(Token token) {
-		this.token = token;
+		return children.get(i);
 	}
 	
 	/**
@@ -62,15 +70,15 @@ public class AST {
 	 * @param token
 	 * @param i the child token off of root
 	 */
-	public void setToken(Token token, int i) {
-		children.get(i).setToken(token);
-	}
+	/**public void setToken(Token token, int i) {
+		children.get(i(token);
+	}*/
 
 	/**
 	 * 
 	 * @return the current AST's children
 	 */
-	public List<AST> getChildren() {
+	public List<Token> getChildren() {
 		return children;
 	}
 
@@ -78,7 +86,7 @@ public class AST {
 	 * sets current AST children list to input
 	 * @param children
 	 */
-	public void setChildren(List<AST> children) {
+	public void setChildren(List<Token> children) {
 		this.children = children;
 	}
 	
@@ -86,7 +94,7 @@ public class AST {
 	 * adds AST child to the current AST children list
 	 * @param child
 	 */
-	public void addChild(AST child) {
+	public void addChild(Token child) {
 		this.children.add(child);
 	}
 
