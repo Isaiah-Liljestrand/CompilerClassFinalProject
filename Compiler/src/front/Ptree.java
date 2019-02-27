@@ -15,7 +15,6 @@ import front.Token.type_enum;
 public class Ptree {
 	private Token token;
 	private List<Ptree> children;
-	int childNum = 0;
 	
 	/**
 	 * Constructs Ptree from a token. Used to add a token to the tree
@@ -95,7 +94,6 @@ public class Ptree {
 	 */
 	protected void addChild(Ptree treein) {
 		//System.out.println("Added Child");
-		childNum++;
 		children.add(treein);
 	}
 	
@@ -126,13 +124,6 @@ public class Ptree {
 		this.token = token;
 	}
 	
-	public int getChildNum(){
-		return childNum;
-	}
-	
-	public void setChildNum(int in){
-		childNum = in;
-	}
 	
 	/**
 	 * Checks if all goto calls have a matching goto jump location
