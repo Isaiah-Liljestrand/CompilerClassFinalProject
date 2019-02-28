@@ -1,9 +1,9 @@
 package front;
 
 public class Token {
-	String token;
-	type_enum type;
-	int lineNumber;
+	protected String token;
+	protected type_enum type;
+	protected int lineNumber;
 	enum type_enum {
 		
 		//basic arithmetic
@@ -258,17 +258,4 @@ public class Token {
 		this.type = type_enum.identifier;
 	}
 	
-	
-	public String getToken() {
-		return token;
-	}
-	public void setToken(String token) {
-		this.token = token;
-	}
-	public type_enum getType() {
-		return type;
-	}
-	public void setType(type_enum type) {
-		this.type = type;
-	}
 }

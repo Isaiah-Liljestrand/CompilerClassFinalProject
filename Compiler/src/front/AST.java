@@ -22,7 +22,7 @@ public class AST {
 	
 	public AST(Grammar input) {
 		children = new ArrayList<Token>();
-		interperet(input.getRoot());
+		interperet(input.root);
 	}
 	
 	public void populate(Ptree input) {
@@ -30,7 +30,7 @@ public class AST {
 	}
 	
 	public void populate(Grammar input) {
-		interperet(input.getRoot());
+		interperet(input.root);
 	}
 	
 	/**
@@ -39,10 +39,10 @@ public class AST {
 	 * @param input
 	 */
 	protected void interperet(Ptree input){
-		for(int i = 0;i < input.getChildren().size(); i++){
-			interperet(input.getChildren().get(i));
+		for(int i = 0;i < input.children.size(); i++){
+			interperet(input.children.get(i));
 		}
-		children.add(input.getToken());
+		children.add(input.token);
 	}
 	
 	/**
@@ -60,34 +60,8 @@ public class AST {
 	 * @param i the child token off of root
 	 * @return
 	 */
-	public Token getToken(int i) {
+	public Token getTokenAt(int i) {
 		return children.get(i);
-	}
-	
-	/**
-	 * sets child i's token
-	 * for ease of handling latter
-	 * @param token
-	 * @param i the child token off of root
-	 */
-	/**public void setToken(Token token, int i) {
-		children.get(i(token);
-	}*/
-
-	/**
-	 * 
-	 * @return the current AST's children
-	 */
-	public List<Token> getChildren() {
-		return children;
-	}
-
-	/**
-	 * sets current AST children list to input
-	 * @param children
-	 */
-	public void setChildren(List<Token> children) {
-		this.children = children;
 	}
 	
 	/**
