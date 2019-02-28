@@ -37,7 +37,7 @@ public class SymbolTable {
 	 * @param name entry variable name
 	 * @param value entry variable value
 	 */
-	public void AddEntry(String name, Ptree value)	{
+	private void AddEntry(String name, Ptree value)	{
 		SymbolTableEntry newEntry = new SymbolTableEntry(name, value);
 		entries.add(newEntry);
 	}
@@ -48,7 +48,7 @@ public class SymbolTable {
 	 * @param name variable name to be checked
 	 * @return true if in scope, false if not
 	 */
-	public boolean isVariableNameInScope(String name) {
+	private boolean isVariableNameInScope(String name) {
 		for(SymbolTableEntry entry : entries) {
 			if (entry.name.equals(name)) {
 				return true;
@@ -65,15 +65,15 @@ public class SymbolTable {
 	 * @param name the name of the function being called
 	 * @return true if function name is in scope, false if not
 	 */
-	public boolean isFunctionNameInScope(String name) {
-		for(SymbolTable table : this.children) {
-			if(table.label == name) {
-				return true;
-			}
-		}
+	private boolean isFunctionNameInScope(String name) {
 		if(this.parent != null) {
 			return this.parent.isFunctionNameInScope(name);
 		} else {
+			for(SymbolTable table : this.children) {
+				if(name.equals(table.label)) {
+					return true;
+				}
+			}
 			return false;
 		}
 	}
@@ -121,7 +121,7 @@ public class SymbolTable {
 			//Read in new entry and check if already declared
 			return;
 		case expression:
-			//modify existing entry if applicable and check if it was declared for function calls and variable modifications also, keep calling down tree
+			//check variable validity and change value in table
 			return;
 		case call:
 			//verify that function call is in scope

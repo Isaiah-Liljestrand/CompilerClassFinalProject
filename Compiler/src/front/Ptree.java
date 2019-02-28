@@ -37,7 +37,7 @@ public class Ptree {
 	/**
 	 * Prints the tree using the the recursive PT function
 	 */
-	public void printTree(){
+	public void printTree() {
 		System.out.println("\nHash Tree:");
 		PT(0); //assumes the calling Ptree is root
 	}
@@ -47,7 +47,7 @@ public class Ptree {
 	 * Recursively calls self on all children
 	 * @param i the depth of the current child
 	 */
-	private void PT(int i){
+	private void PT(int i) {
 		System.out.println();
 		for(int j = 0; j < i; j++){
 			System.out.print("  ");
@@ -61,27 +61,12 @@ public class Ptree {
 		}
 	}
 
-	/**
-	 * Getter for children of a Ptree
-	 * @return the children
-	 *
-	protected List<Ptree> getChildren() {
-		return children;
-	}*/
-
-	/**
-	 * Setter for children of a Ptree
-	 * @param sets the entire children list to input
-	 */
-	protected void setChildren(List<Ptree> children) {
-		this.children = children;
-	}
 	
 	/**
 	 * Checks that the children are not null
 	 * @return true if no children are null
 	 */
-	protected boolean verifyChildren() {
+	public boolean verifyChildren() {
 		if (this.children.contains(null)) {
 			return false;
 		}
@@ -92,7 +77,7 @@ public class Ptree {
 	 * Adds a single tree to the child list
 	 * @param treein a single child Ptree to add to this class' list
 	 */
-	protected void addChild(Ptree treein) {
+	public void addChild(Ptree treein) {
 		//System.out.println("Added Child");
 		children.add(treein);
 	}
@@ -102,26 +87,10 @@ public class Ptree {
 	 * kills the first born (removes the first child in the list)
 	 * does nothing if there are no children nodes
 	 */
-	protected void removeChildren() {
+	public void removeChildren() {
 		while(!this.children.isEmpty()) {
 			this.children.remove(0);
 		}
-	}
-	
-	/**
-	 * Getter for token of a Ptree node
-	 * @return the Token in this Ptree node instance
-	 *
-	public Token getToken() {
-		return token;
-	}*/
-	
-	/**
-	 * Setter for token of a Ptree node
-	 * @param token to be set
-	 */
-	public void setToken(Token token){
-		this.token = token;
 	}
 	
 	

@@ -12,7 +12,6 @@ import front.Token.type_enum;
  */
 public class Grammar {
 	protected Ptree root;
-	//public SymbolTable symTable;
 	protected boolean valid;
 	
 	/**

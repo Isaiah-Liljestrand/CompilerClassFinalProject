@@ -22,7 +22,7 @@ public class Scan {
 	}
 	
 	
-	public void printTokens(){
+	public void printTokens() {
 		for (Token tok : this.tokens) {
 			System.out.println(tok.token + "\t" + tok.type.toString());
 		}
@@ -31,7 +31,7 @@ public class Scan {
 	/**
 	 * The Pattern List for this Scanner
 	 */
-	public static Pattern REGEX = Pattern.compile(buildRegularExpression());
+	private static Pattern REGEX = Pattern.compile(buildRegularExpression());
 
 	/**
 	 * Takes a string of text and splits it into tokens. Each possible token is defined using the global variable REGEX.
