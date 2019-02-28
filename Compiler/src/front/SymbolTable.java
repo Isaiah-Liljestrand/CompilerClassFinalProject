@@ -3,8 +3,6 @@ package front;
 import java.util.ArrayList;
 import java.util.List;
 
-import front.Token.type_enum;
-
 public class SymbolTable {
 	protected String label;
 	protected List<SymbolTableEntry> entries;
