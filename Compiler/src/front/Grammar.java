@@ -28,25 +28,7 @@ public class Grammar {
 			valid = false;
 		}
 	}
-	
-	
-	/**
-	 * Returns whether the grammar is valid or not
-	 * @return true if valid false if not
-	 */
-	public boolean getValid() {
-		return this.valid;
-	}
-	
-	/**
-	 * Returns ptree at the root of the parse tree
-	 * @return program parse tree node
-	 */
-	public Ptree getPtree() {
-		return root;
-	}
-	
-	
+		
 	/**
 	 * If the tree root is valid, print the tree.
 	 */
@@ -1315,30 +1297,6 @@ public class Grammar {
 			return tree;
 		}
 		return null;
-	}
-
-
-	/**
-	 * @return the root
-	 */
-	protected Ptree getRoot() {
-		return root;
-	}
-
-
-	/**
-	 * @param root the root to set
-	 */
-	protected void setRoot(Ptree root) {
-		this.root = root;
-	}
-
-
-	/**
-	 * @param valid the valid to set
-	 */
-	protected void setValid(boolean valid) {
-		this.valid = valid;
 	}
 }
 	

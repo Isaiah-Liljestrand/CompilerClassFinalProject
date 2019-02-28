@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  * Named Scan as Scanner already exists in java
  */
 public class Scan {
-	private List<Token> tokens;
+	protected List<Token> tokens;
 	
 	/**
 	 * Main and only constructor for the scan class
@@ -21,13 +21,6 @@ public class Scan {
 		tokens = tokenize(file);
 	}
 	
-	/**
-	 * Getter for the token of a specific
-	 * @return the list of tokens
-	 */
-	public List<Token> getTokens() {
-		return tokens;
-	}
 	
 	public void printTokens(){
 		for (Token tok : this.tokens) {

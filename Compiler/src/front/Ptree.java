@@ -13,8 +13,8 @@ import front.Token.type_enum;
  *
  */
 public class Ptree {
-	private Token token;
-	private List<Ptree> children;
+	protected Token token;
+	protected List<Ptree> children;
 	
 	/**
 	 * Constructs Ptree from a token. Used to add a token to the tree
@@ -64,10 +64,10 @@ public class Ptree {
 	/**
 	 * Getter for children of a Ptree
 	 * @return the children
-	 */
+	 *
 	protected List<Ptree> getChildren() {
 		return children;
-	}
+	}*/
 
 	/**
 	 * Setter for children of a Ptree
@@ -111,10 +111,10 @@ public class Ptree {
 	/**
 	 * Getter for token of a Ptree node
 	 * @return the Token in this Ptree node instance
-	 */
+	 *
 	public Token getToken() {
 		return token;
-	}
+	}*/
 	
 	/**
 	 * Setter for token of a Ptree node
@@ -139,7 +139,7 @@ public class Ptree {
 		for(Ptree tcall : gotoCalls) {
 			b = false;
 			for(Ptree tjump : gotoJumpPlace) {
-				if(tcall.getChildren().get(1).token.token.equals(tjump.getChildren().get(0).token.token)) {
+				if(tcall.children.get(1).token.token.equals(tjump.children.get(0).token.token)) {
 					b = true;
 				}
 			}
@@ -161,7 +161,7 @@ public class Ptree {
 			trees.add(tree);
 		}
 		
-		for(Ptree t: tree.getChildren()) {
+		for(Ptree t: tree.children) {
 			trees = findTrees(t, trees, type);
 		}
 		return trees;

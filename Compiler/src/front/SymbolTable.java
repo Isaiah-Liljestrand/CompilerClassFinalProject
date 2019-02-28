@@ -3,8 +3,6 @@ package front;
 import java.util.ArrayList;
 import java.util.List;
 
-import front.Token.type_enum;
-
 public class SymbolTable {
 	protected String label;
 	protected List<SymbolTableEntry> entries;
@@ -87,16 +85,16 @@ public class SymbolTable {
 	 * @param table top level symbol table
 	 */
 	public static void buildDeclarationTable(Ptree tree, SymbolTable table) {
-		switch(tree.getToken().type) {
+		switch(tree.token.type) {
 		case functionDeclaration:
-			SymbolTable sTable = new SymbolTable(table, tree.getChildren().get(1).getToken().token);
+			SymbolTable sTable = new SymbolTable(table, tree.children.get(1).token.token);
 			buildStatementTable(tree, sTable);
 			return;
 		case variableDeclaration:
 			//read in variable to table
 			return;
 		default:
-			for(Ptree t : tree.getChildren()) {
+			for(Ptree t : tree.children) {
 				buildDeclarationTable(t, table);
 			}
 		}
@@ -110,7 +108,7 @@ public class SymbolTable {
 	 */
 	private static void buildStatementTable(Ptree tree, SymbolTable table) {
 		SymbolTable sTable;
-		switch(tree.getToken().type) {
+		switch(tree.token.type) {
 		case ifStatement:
 			sTable = new SymbolTable(table, "if");
 			buildStatementTable(tree, sTable);
@@ -132,8 +130,8 @@ public class SymbolTable {
 			//verify legitimacy and check that it is in scope
 			return;
 		default:
-			if(tree.getChildren() != null) {
-				for(Ptree t : tree.getChildren()) {
+			if(tree.children != null) {
+				for(Ptree t : tree.children) {
 					buildDeclarationTable(t, table);
 				}
 			}
@@ -141,59 +139,4 @@ public class SymbolTable {
 		}
 	}
 
-	/**
-	 * @return the label
-	 */
-	protected String getLabel() {
-		return label;
-	}
-
-	/**
-	 * @param label the label to set
-	 */
-	protected void setLabel(String label) {
-		this.label = label;
-	}
-
-	/**
-	 * @return the entries
-	 */
-	protected List<SymbolTableEntry> getEntries() {
-		return entries;
-	}
-
-	/**
-	 * @param entries the entries to set
-	 */
-	protected void setEntries(List<SymbolTableEntry> entries) {
-		this.entries = entries;
-	}
-
-	/**
-	 * @return the children
-	 */
-	protected List<SymbolTable> getChildren() {
-		return children;
-	}
-
-	/**
-	 * @param children the children to set
-	 */
-	protected void setChildren(List<SymbolTable> children) {
-		this.children = children;
-	}
-
-	/**
-	 * @return the parent
-	 */
-	protected SymbolTable getParent() {
-		return parent;
-	}
-
-	/**
-	 * @param parent the parent to set
-	 */
-	protected void setParent(SymbolTable parent) {
-		this.parent = parent;
-	}
 }

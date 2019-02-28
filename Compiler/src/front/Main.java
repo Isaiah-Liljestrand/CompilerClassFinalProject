@@ -52,7 +52,7 @@ public class Main {
 		}
 		
 		//This is a parse tree not an abstract syntax tree
-		grammar = new Grammar(scanner.getTokens());
+		grammar = new Grammar(scanner.tokens);
 		//grammar.printTree();
 		
 		if(!Ptree.gotoChecker(grammar.root)) {
@@ -69,7 +69,7 @@ public class Main {
 		}
 		
 		SymbolTable symTable = new SymbolTable();
-		SymbolTable.buildDeclarationTable(grammar.getPtree(), symTable);
+		SymbolTable.buildDeclarationTable(grammar.root, symTable);
 	}
 
 	
