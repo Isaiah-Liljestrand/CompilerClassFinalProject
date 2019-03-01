@@ -1198,7 +1198,7 @@ public class Grammar {
 		}
 		//Checks if factor is expression inside parenthesis
 		tree.addChild(GrammarHelper.openParenthesis(tokens.get(0)));
-		tree.addChild(expression(tokens.subList(1, tokens.size() - 1)));
+		tree.addChild(simpleExpression(tokens.subList(1, tokens.size() - 1)));
 		tree.addChild(GrammarHelper.closedParenthesis(tokens.get(tokens.size() - 1)));
 		if(tree.verifyChildren()) {
 			return tree;
