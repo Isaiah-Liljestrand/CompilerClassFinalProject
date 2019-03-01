@@ -91,7 +91,8 @@ public class SymbolTable {
 			buildStatementTable(tree, sTable);
 			return;
 		case variableDeclaration:
-			//read in variable to table
+			SymbolTable sTable1 = new SymbolTable(table, tree.children.get(1).token.token);
+			buildStatementTable(tree, sTable1);
 			return;
 		default:
 			for(Ptree t : tree.children) {
@@ -118,17 +119,36 @@ public class SymbolTable {
 			buildStatementTable(tree, sTable);
 			return;
 		case variableDeclaration:
-			//Read in new entry and check if already declared
+			if(!table.isVariableNameInScope(tree.token.token)) {
+				table.AddEntry(tree.token.token, tree);
+			}
 			return;
 		case expression:
 			//check variable validity and change value in table
+			if(!table.isVariableNameInScope(tree.token.token)) {
+				System.out.println("Warning: Variable " + tree.token.token + " Not defined in current scope");
+				return;
+			} else {
+				// Update variable, but I'm not sure what value we are updating
+			}
 			return;
 		case call:
 			//verify that function call is in scope
-			return;
+			if(table.isFunctionNameInScope(tree.token.token)){
+				return;
+			} else {
+				System.out.println("Warning: Function " + tree.token.token + " Not defined in current scope");
+				return;
+			}
 		case variable:
 			//verify legitimacy and check that it is in scope
-			return;
+			if(!table.isVariableNameInScope(tree.token.token)) {
+				table.AddEntry(tree.token.token, tree);
+				return;
+			} else {
+				System.out.println("Warning: Variable " + tree.token.token + " Not defined in current scope");
+				return;
+			}
 		default:
 			if(tree.children != null) {
 				for(Ptree t : tree.children) {
