@@ -208,7 +208,6 @@ public class Token {
 		if(this.type != null) {
 			return;
 		}
-		//list will be shortened at some point as many of these won't be used
 		//String keywords[] = {/*"auto",*/ "break", /*"case",*/ "char", /*"const", "continue",*/
 		//		/*"default", "do", "double",*/ "else", /*"enum", "extern", "float", "for",*/
 		//		"goto", "if", "int", /*"long", "register", */"return", /*"short", "signed",*/
@@ -245,9 +244,10 @@ public class Token {
 		//could be written better, temporary fix
 		if(this.token.charAt(0) >= '0' && this.token.charAt(0) <= '9') {
 			this.type = type_enum.number;
-			if(this.token.subSequence(0, 1).equals("0x")) {
-			//if(this.token.substring(0, 2).equals("0x")) {
-				this.token = String.valueOf(Integer.parseInt(this.token, 16));
+			if(token.length() >= 3) {
+				if(this.token.subSequence(0, 1).equals("0x")) {
+					this.token = String.valueOf(Integer.parseInt(this.token, 16));
+				}
 			}
 			return;
 		}

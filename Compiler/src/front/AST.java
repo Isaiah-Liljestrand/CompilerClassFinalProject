@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Bacicly Ptree but squished
+ * Basicaly Ptree but squished
  * @author Ben
- *
  */
 public class AST {
 	private List<Token> children;
@@ -38,7 +37,7 @@ public class AST {
 	 * 					~~~Assumes DFS is desired~~~
 	 * @param input
 	 */
-	protected void interperet(Ptree input){
+	public void interperet(Ptree input){
 		for(int i = 0;i < input.children.size(); i++){
 			interperet(input.children.get(i));
 		}
