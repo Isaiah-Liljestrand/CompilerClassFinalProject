@@ -8,7 +8,7 @@ import java.util.List;
  * @author Ben
  */
 public class AST {
-	private List<Token> children;
+	protected List<Token> children;
 	
 	public AST() {
 		children = new ArrayList<Token>();
