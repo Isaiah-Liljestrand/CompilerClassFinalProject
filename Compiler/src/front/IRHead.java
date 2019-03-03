@@ -20,4 +20,15 @@ public class IRHead {
 		opps = new ArrayList<IRent>();
 	}
 
+	/**
+	 * converts AST to IR
+	 * going to be a big AF function
+	 * @param in
+	 */
+	protected void interperet(AST in){
+		for(int i = 0;i < in.children.size(); i++){
+			interperet(in.children.get(i));
+		}
+		opps.add(IRent(in.token));
+	}
 }

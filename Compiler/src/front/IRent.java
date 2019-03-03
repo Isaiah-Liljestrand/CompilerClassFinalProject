@@ -1,23 +1,32 @@
 package front;
 
-import front.Token.type_enum;
-
 /**
  * IR entry
  * @author Ben
  *
  */
 public class IRent {
-	Element destination;
+	Element value;
+	/**Element destination;
 	Element in1;
 	Element in2;
-	Element opp;
+	Element opp;*/
+	int reg;
 	
 	IRent(){
 		
 	}
 	
-	IRent(Element target, Element src){
+	IRent(Element src){
+		value = src;
+	}
+	
+	IRent(Token src){
+		value = new Element(src);
+	}
+	
+	//Realized prob not exactly want we want for an entry. ent should basically be a register
+	/**IRent(Element target, Element src){
 		destination = target;
 		in1 = src;
 	}
@@ -99,6 +108,6 @@ public class IRent {
 			System.out.print(" " + in2.token);
 		}
 		System.out.println();
-	}
+	}*/
 
 }
