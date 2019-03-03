@@ -5,7 +5,7 @@ public class Element extends Token {
 	/**
 	 * incase the element has a value (num constant)
 	 */
-	protected int value;
+	protected Integer value;
 
 	Element(type_enum type, String token) {
 		super(type);
