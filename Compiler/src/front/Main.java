@@ -40,6 +40,7 @@ public class Main {
 			tokenize = true;
 		}*/
 		filename = "Testfile.txt";
+		tokenize = true;
 		
 		List<String> lines = readFile(filename);
 		scanner = new Scan(lines);

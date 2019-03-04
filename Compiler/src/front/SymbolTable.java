@@ -3,6 +3,8 @@ package front;
 import java.util.ArrayList;
 import java.util.List;
 
+import front.Token.type_enum;
+
 public class SymbolTable {
 	protected String label;
 	protected List<SymbolTableEntry> entries;
@@ -37,7 +39,7 @@ public class SymbolTable {
 	 * @param name entry variable name
 	 * @param value entry variable value
 	 */
-	private void AddEntry(String name, Ptree value)	{
+	private void AddEntry(String name, type_enum value)	{
 		SymbolTableEntry newEntry = new SymbolTableEntry(name, value);
 		entries.add(newEntry);
 	}
@@ -79,7 +81,7 @@ public class SymbolTable {
 	}
 	
 	public void printSymbolTable() {
-		System.out.println("TEST");
+	//	System.out.println("TEST");
 		for(SymbolTableEntry entry : this.entries) {
 			System.out.println(entry.name + " " + entry.value);
 		}
@@ -133,10 +135,14 @@ public class SymbolTable {
 			buildStatementTable(tree, sTable);
 			return;
 		case variableDeclaration:
-			System.out.println("Var");
+		//	System.out.println("Var");
 			if(!table.isVariableNameInScope(tree.token.token)) {
-				System.out.println(tree.token.token);
-				table.AddEntry(tree.token.token, tree);
+				List<Ptree> trees = new ArrayList<Ptree>();
+				List<Ptree> trees2 = new ArrayList<Ptree>();
+				Ptree.findTrees(tree, trees, type_enum.identifier);
+				Ptree.findTrees(tree, trees2, type_enum.k_int);
+				table.AddEntry(trees.get(0).token.token, trees2.get(0).token.type);
+				System.out.println(trees.get(0).token.token);
 			}
 			return;
 		//case expression:
@@ -161,7 +167,7 @@ public class SymbolTable {
 			//System.out.println("Variable");
 			//verify legitimacy and check that it is in scope
 			if(!table.isVariableNameInScope(tree.token.token)) {
-				table.AddEntry(tree.token.token, tree);
+				table.AddEntry(tree.token.token, tree.token.type);
 				return;
 			} else {
 				System.out.println("Warning: Variable " + tree.token.token + " Not defined in current scope");
