@@ -78,6 +78,18 @@ public class SymbolTable {
 		}
 	}
 	
+	public void printSymbolTable() {
+		System.out.println("TEST");
+		for(SymbolTableEntry entry : this.entries) {
+			System.out.println(entry.name + " " + entry.value);
+		}
+		for(SymbolTable table : this.children) {
+			for(SymbolTableEntry entry2 : table.entries) {
+				System.out.println(entry2.name + " " + entry2.value);
+			}
+		}
+	}
+	
 	
 	/**
 	 * Builds the top level declaration table and recursively creates lower level ones
@@ -111,15 +123,19 @@ public class SymbolTable {
 		SymbolTable sTable;
 		switch(tree.token.type) {
 		case ifStatement:
+			//System.out.println("IF");
 			sTable = new SymbolTable(table, "if");
 			buildStatementTable(tree, sTable);
 			return;
 		case whileStatement:
+			//System.out.println("While");
 			sTable = new SymbolTable(table, "while");
 			buildStatementTable(tree, sTable);
 			return;
 		case variableDeclaration:
+			System.out.println("Var");
 			if(!table.isVariableNameInScope(tree.token.token)) {
+				System.out.println(tree.token.token);
 				table.AddEntry(tree.token.token, tree);
 			}
 			return;
@@ -134,6 +150,7 @@ public class SymbolTable {
 		//	return;
 		case call:
 			//verify that function call is in scope
+			//System.out.println("Call");
 			if(table.isFunctionNameInScope(tree.token.token)){
 				return;
 			} else {
@@ -141,6 +158,7 @@ public class SymbolTable {
 				return;
 			}
 		case variable:
+			//System.out.println("Variable");
 			//verify legitimacy and check that it is in scope
 			if(!table.isVariableNameInScope(tree.token.token)) {
 				table.AddEntry(tree.token.token, tree);
@@ -150,6 +168,7 @@ public class SymbolTable {
 				return;
 			}
 		default:
+			//System.out.println("Default");
 			if(tree.children != null) {
 				for(Ptree t : tree.children) {
 					buildDeclarationTable(t, table);
