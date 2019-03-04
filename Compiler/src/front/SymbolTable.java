@@ -123,15 +123,15 @@ public class SymbolTable {
 				table.AddEntry(tree.token.token, tree);
 			}
 			return;
-		case expression:
+		//case expression:
 			//check variable validity and change value in table
-			if(!table.isVariableNameInScope(tree.token.token)) {
-				System.out.println("Warning: Variable " + tree.token.token + " Not defined in current scope");
-				return;
-			} else {
-				// Update variable, but I'm not sure what value we are updating
-			}
-			return;
+		//	if(!table.isVariableNameInScope(tree.token.token)) {
+		//		System.out.println("Warning: Variable " + tree.token.token + " Not defined in current scope");
+		//		return;
+		//	} else {
+		//		// Update variable, but I'm not sure what value we are updating
+		//	}
+		//	return;
 		case call:
 			//verify that function call is in scope
 			if(table.isFunctionNameInScope(tree.token.token)){
