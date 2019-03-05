@@ -39,7 +39,7 @@ public class SymbolTable {
 	 * @param name entry variable name
 	 * @param value entry variable value
 	 */
-	private void AddEntry(String name, type_enum value)	{
+	private void addEntry(String name, type_enum value)	{
 		SymbolTableEntry newEntry = new SymbolTableEntry(name, value);
 		entries.add(newEntry);
 	}
@@ -127,7 +127,7 @@ public class SymbolTable {
 		case variableDeclarationID:
 			String string = tree.children.get(0).token.token;
 			if(!table.isVariableNameInScope(string)) {
-				table.AddEntry(string, vType);
+				table.addEntry(string, vType);
 				return;
 			}
 			System.out.println("Error: Variable already declared");   // needs to be elaborated
@@ -148,6 +148,14 @@ public class SymbolTable {
 	private static void buildStatementTable(Ptree tree, SymbolTable table) {
 		SymbolTable sTable;
 		switch(tree.token.type) {
+		case parameter:
+			String string = tree.children.get(1).token.token;
+			type_enum type = tree.children.get(0).token.type;
+			if(!table.isVariableNameInScope(string)) {
+				table.addEntry(string,  type);
+			}
+			System.out.println("Error: parameter passed in through function is already declared");
+			return;
 		case ifStatement:
 			sTable = new SymbolTable(table, "if");
 			buildStatementTable(tree, sTable);
@@ -158,14 +166,6 @@ public class SymbolTable {
 			return;
 		case variableDeclaration:
 			variableDeclarationHelper(tree, tree.children.get(0).children.get(0).token.type, table);
-			//if(!table.isVariableNameInScope(tree.token.token)) {
-			//	List<Ptree> trees = new ArrayList<Ptree>();
-			//	List<Ptree> trees2 = new ArrayList<Ptree>();
-			//	Ptree.findTrees(tree, trees, type_enum.identifier);
-			//	Ptree.findTrees(tree, trees2, type_enum.k_int);
-			//	table.AddEntry(trees.get(0).token.token, trees2.get(0).token.type);
-			//	System.out.println(trees.get(0).token.token);
-			//}
 			return;
 		case call:
 			//verify that function call is in scope
