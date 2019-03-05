@@ -245,7 +245,6 @@ public class Grammar {
 			return null;
 		}
 		Ptree tree = new Ptree(type_enum.variableDeclarationID);
-		//symTable.AddEntry(token.getToken(), token.getType().toString());
 		tree.addChild(new Ptree(token));
 		return tree;
 	}
@@ -1198,7 +1197,7 @@ public class Grammar {
 		}
 		//Checks if factor is expression inside parenthesis
 		tree.addChild(GrammarHelper.openParenthesis(tokens.get(0)));
-		tree.addChild(expression(tokens.subList(1, tokens.size() - 1)));
+		tree.addChild(simpleExpression(tokens.subList(1, tokens.size() - 1)));
 		tree.addChild(GrammarHelper.closedParenthesis(tokens.get(tokens.size() - 1)));
 		if(tree.verifyChildren()) {
 			return tree;
@@ -1246,7 +1245,7 @@ public class Grammar {
 		Ptree tree = new Ptree(type_enum.argList);
 		
 		//Checks if there is one argument being passed in
-		tree.addChild(expression(tokens));
+		tree.addChild(simpleExpression(tokens));
 		if(tree.verifyChildren()) {
 			return tree;
 		}
@@ -1259,7 +1258,7 @@ public class Grammar {
 		}
 		tree.addChild(argList(tokens.subList(0, index)));
 		tree.addChild(GrammarHelper.comma(tokens.get(index)));
-		tree.addChild(expression(tokens.subList(index + 1, tokens.size())));
+		tree.addChild(simpleExpression(tokens.subList(index + 1, tokens.size())));
 		if(tree.verifyChildren()) {
 			return tree;
 		}
