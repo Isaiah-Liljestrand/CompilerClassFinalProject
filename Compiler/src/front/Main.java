@@ -42,7 +42,6 @@ public class Main {
 			tokenize = true;
 		}*/
 		filename = "Testfile.txt";
-		tokenize = true;
 		
 		List<String> lines = readFile(filename);
 		scanner = new Scan(lines);
@@ -77,7 +76,9 @@ public class Main {
 		
 		symTable = new SymbolTable();
 		SymbolTable.buildDeclarationTable(grammar.root, symTable);
-		symTable.printSymbolTable();
+		
+		AST testAST = new AST(grammar);
+		testAST.printTree();
 	}
 
 	
