@@ -69,6 +69,9 @@ public class Main {
 		
 		SymbolTable symTable = new SymbolTable();
 		SymbolTable.buildDeclarationTable(grammar.root, symTable);
+		
+		AST testAST = new AST(grammar);
+		testAST.printTree();
 	}
 
 	
