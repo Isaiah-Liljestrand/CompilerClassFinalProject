@@ -95,15 +95,27 @@ public class Ptree {
 	
 	
 	/**
+	 * Removes the last child added to the list
+	 */
+	public void removeChild() {
+		if(!(this.children.size() == 0)) {
+			children.remove(children.size() - 1);
+		}
+	}
+	
+	
+	/**
 	 * Checks if all goto calls have a matching goto jump location
 	 * @param tree root of the parse tree
 	 * @return true if all goto statements match up
 	 */
-	public static boolean gotoChecker(Ptree tree) {
+	public static void gotoChecker(Ptree tree) {
 		List<Ptree> gotoJumpPlace = new ArrayList<Ptree>();
 		gotoJumpPlace = findTrees(tree, gotoJumpPlace, type_enum.gotoJumpPlace);
+		
 		List<Ptree> gotoCalls = new ArrayList<Ptree>();
 		gotoCalls = findTrees(tree, gotoCalls, type_enum.gotoStatement);
+		
 		boolean b;
 		for(Ptree tcall : gotoCalls) {
 			b = false;
@@ -113,10 +125,10 @@ public class Ptree {
 				}
 			}
 			if(!b) {
-				return false;
+				ErrorHandler.addError("No goto jump place for goto call " + tcall.children.get(1).token.token + "at line " + tcall.children.get(1).token.lineNumber);
+				return;
 			}
 		}
-		return true;
 	}
 	
 	/**

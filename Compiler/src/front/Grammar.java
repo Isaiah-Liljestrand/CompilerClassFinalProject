@@ -469,6 +469,13 @@ public class Grammar {
 		}
 		tree.removeChildren();
 		
+		//for statement
+		tree.addChild(forStatement(tokens));
+		if(tree.verifyChildren()) {
+			return tree;
+		}
+		tree.removeChildren();
+		
 		//break statement
 		tree.addChild(breakStatement(tokens));
 		if(tree.verifyChildren()) {
@@ -612,7 +619,7 @@ public class Grammar {
 			return null;
 		}
 		tree.addChild(GrammarHelper.whileFunction(tokens.get(0)));
-		if(tree.verifyChildren()) {
+		if(!tree.verifyChildren()) {
 			return null;
 		}
 		tree.addChild(GrammarHelper.openParenthesis(tokens.get(1)));
@@ -647,6 +654,61 @@ public class Grammar {
 	}
 	
 	
+	private Ptree forStatement(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.forStatement);
+		
+		//Checks for minimum legitimate size
+		if(tokens.size() < 8) {
+			return null;
+		}
+		
+		tree.addChild(GrammarHelper.forFunction(tokens.get(0)));
+		if(!tree.verifyChildren()) {
+			return null;
+		}
+		
+		tree.addChild(GrammarHelper.openParenthesis(tokens.get(1)));
+		int index = GrammarHelper.findObjectForward(tokens, type_enum.semicolon);
+		if(index == -1 || index + 1 >= tokens.size()) {
+			//TODO: error handling
+			return null;
+		}
+		if(!(index == 2)) {
+			tree.addChild(variableDeclaration(tokens.subList(2, index + 1)));
+			if(!tree.verifyChildren()) {
+				tree.removeChild();
+				tree.addChild(expressionStatement(tokens.subList(2,  index + 1)));
+				if(!tree.verifyChildren()) {
+					//TODO: error handling
+					return null;
+				}
+			}
+		} else {
+			tree.addChild(GrammarHelper.semicolon(tokens.get(2)));
+		}
+		int index2 = GrammarHelper.findObjectForward(tokens.subList(index + 1, tokens.size()), type_enum.semicolon);
+		if(index2 == -1 || index2 + 1 >= tokens.size()) {
+			//TODO: error handling
+			return null;
+		}
+		tree.addChild(simpleExpression(tokens.subList(index + 1, index2)));
+		tree.addChild(GrammarHelper.semicolon(tokens.get(index2)));
+		index = GrammarHelper.findObjectForward(tokens.subList(index2, tokens.size()), type_enum.openCurlyBracket);
+		if(index == -1 || index + 1 >= tokens.size()) {
+			//TODO: error handling
+			return null;
+		}
+		tree.addChild(expression(tokens.subList(index2 + 1, index - 1)));
+		tree.addChild(GrammarHelper.closedParenthesis(tokens.get(index - 1)));
+		tree.addChild(GrammarHelper.openCurlyBracket(tokens.get(index)));
+		tree.addChild(statementList(tokens.subList(index + 1, tokens.size() - 1)));
+		tree.addChild(GrammarHelper.closedCurlyBracket(tokens.get(tokens.size() - 1)));
+		if(tree.verifyChildren()) {
+			return tree;
+		}
+		return null;
+		//TODO: error checking
+	}
 	/**
 	 * ifStmt → if ( simpleExpression ) { statementList } | if ( simpleExpression ) { statementList } else { statementList }
 	 * @param tokens passed from parent grammar should be if statement
@@ -660,7 +722,7 @@ public class Grammar {
 			return null;
 		}
 		tree.addChild(GrammarHelper.ifFunction(tokens.get(0)));
-		if(tree.verifyChildren()) {
+		if(!tree.verifyChildren()) {
 			return null;
 		}
 		tree.addChild(GrammarHelper.openParenthesis(tokens.get(1)));
@@ -731,16 +793,7 @@ public class Grammar {
 		if(tokens.size() == 0) {
 			return null;
 		}
-		
-		//Statment composed of one semicolon
-		if(tokens.size() == 1) {
-			tree.addChild(GrammarHelper.semicolon(tokens.get(0)));
-			if(tree.verifyChildren()) {
-				return tree;
-			}
-			return null;
-		}
-		
+
 		//Statement composed of an expression ending in a semicolon
 		tree.addChild(expression(tokens.subList(0, tokens.size() - 1)));
 		tree.addChild(GrammarHelper.semicolon(tokens.get(tokens.size() - 1)));

@@ -53,16 +53,21 @@ public class Scan {
 			for (i = 0; i < line.length(); i++) {
 				character = line.charAt(i);
 				if(!isValidCharacter(character)) {
+					ErrorHandler.addError("Chraracter " + character + " not recognized");
 					System.out.println("Error: '" + character + "' not recognized");
 				} else if(!(character == ' ') && !(character == '\t')) {
 					for(j = line.length(); j > i; j--) {
 						tokenString = line.substring(i, j);
 						if(stringMatchesToken(tokenString)) {
-							i = j;
 							tokens.add(new Token(tokenString, lineNumber));
+							break;
 						}
 					}
-					i--;
+					if(j == i) {
+						ErrorHandler.addError("Section " + line.substring(i, line.length()) + " not recognized");
+						break;
+					}
+					i = j - 1;
 				}
 			}
 		}
@@ -82,6 +87,7 @@ public class Scan {
 			}
 		}
 	}
+	
 	/**
 	 * Checks if any unsupported characters are in the string
 	 * @param character character in code
@@ -95,7 +101,6 @@ public class Scan {
 		case '[':
 		case ']':
 		case '\"':
-		case '\'':
 		case '.':
 		case '\\':
 			return false;

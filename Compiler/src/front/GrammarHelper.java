@@ -60,6 +60,18 @@ public class GrammarHelper {
 	}
 	
 	/**
+	 * Checks if the token passed in is a for function keyword
+	 * @param token should be the for keyword
+	 * @return Ptree node containing the keyword or null
+	 */
+	public static Ptree forFunction(Token token) {
+		if(token.type == type_enum.k_for) {
+			return new Ptree(token);
+		}
+		return null;
+	}
+	
+	/**
 	 * Checks if the token is a constant
 	 * @param token should be either a char constant or an int constant
 	 * @return Ptree node if the statment evaluates to true
@@ -70,8 +82,6 @@ public class GrammarHelper {
 		}
 		return null;
 	}
-	
-	
 	
 	/**
 	 * Checks that the passed in token is a return call
@@ -411,6 +421,22 @@ public class GrammarHelper {
 		return index;
 	}
 	
+	/**
+	 * Finds an object in a list of tokens by scanning from front to back
+	 * @param tokens tokens to be scanned through
+	 * @param type enumeration that describes what token to search for
+	 * @return index of element or -1 if failed
+	 */
+	public static int findObjectForward(List<Token> tokens, type_enum type) {
+		int index = 0;
+		while(tokens.get(index).type != type) {
+			index++;
+			if(index >= tokens.size()) {
+				return -1;
+			}
+		}
+		return index;
+	}
 	/**
 	 * Finds either of two specified tokens scans from back to front
 	 * @param tokens tokens to be scanned through

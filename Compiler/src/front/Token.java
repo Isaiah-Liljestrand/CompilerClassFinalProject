@@ -59,6 +59,7 @@ public class Token {
 		k_return,
 		k_void,
 		k_while,
+		k_for,
 		
 		//Nodes of parse tree
 		program,
@@ -81,6 +82,7 @@ public class Token {
 		returnStatement,
 		breakStatement,
 		whileStatement,
+		forStatement,
 		ifStatement,
 		expressionStatement,
 		expression,
@@ -237,6 +239,9 @@ public class Token {
 			break;
 		case "while":
 			this.type = type_enum.k_while;
+			break;
+		case "for":
+			this.type = type_enum.k_for;
 		}
 		if(this.type != null) {
 			return;
