@@ -654,6 +654,11 @@ public class Grammar {
 	}
 	
 	
+	/**
+	 * forStatement →  for ([expresssionStatement | variableDeclaration | ;] simpleExpression ; expression) { statementList }
+	 * @param tokens tokens that should take up the for loop and body
+	 * @return forStatement tree if valid, null if invalid
+	 */
 	private Ptree forStatement(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.forStatement);
 		
