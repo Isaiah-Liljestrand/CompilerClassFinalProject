@@ -181,6 +181,18 @@ public class GrammarHelper {
 	}
 	
 	/**
+	 * Checks if the token passed in is a bitwise xor operator
+	 * @param token to be checked
+	 * @return Ptree containing xor token or null if input token is invalid
+	 */
+	public static Ptree bitXor(Token token) {
+		if(token.type == type_enum.xorOperator) {
+			return new Ptree(token);
+		}
+		return null;
+	}
+	
+	/**
 	 * Checks if the token passed in is a bitwise and operator
 	 * @param token to be checked
 	 * @return Ptree containing and token or null if input token is invalid
@@ -411,14 +423,25 @@ public class GrammarHelper {
 	 * @return index of element or -1 if failed
 	 */
 	public static int findObject(List<Token> tokens, type_enum type) {
-		int index = tokens.size() - 1;
-		while(tokens.get(index).type != type) {
-			index--;
-			if(index < 0) {
-				return -1;
+		int index = tokens.size() - 1, pCount = 0;
+		while(index > -1) {
+			if(tokens.get(index).type == type) {
+				if(pCount == 0) {
+					return index;
+				}
 			}
+			switch(tokens.get(index).type) {
+			case openParenthesis:
+				pCount--;
+				break;
+			case closedParenthesis:
+				pCount++;
+				break;
+			default:	
+			}
+			index--;
 		}
-		return index;
+		return -1;
 	}
 	
 	/**
@@ -428,14 +451,25 @@ public class GrammarHelper {
 	 * @return index of element or -1 if failed
 	 */
 	public static int findObjectForward(List<Token> tokens, type_enum type) {
-		int index = 0;
-		while(tokens.get(index).type != type) {
-			index++;
-			if(index >= tokens.size()) {
-				return -1;
+		int index = 0, pCount = 0;
+		while(index < tokens.size()) {
+			if(tokens.get(index).type == type) {
+				if(pCount == 0) {
+					return index;
+				}
 			}
+			switch(tokens.get(index).type) {
+			case openParenthesis:
+				pCount++;
+				break;
+			case closedParenthesis:
+				pCount--;
+				break;
+			default:	
+			}
+			index++;
 		}
-		return index;
+		return -1;
 	}
 	/**
 	 * Finds either of two specified tokens scans from back to front
@@ -445,14 +479,25 @@ public class GrammarHelper {
 	 * @return index of token found or -1 if failed
 	 */
 	public static int findObject(List<Token> tokens, type_enum type, type_enum type2) {
-		int index = tokens.size() - 1;
-		while(tokens.get(index).type != type && tokens.get(index).type != type2) {
-			index--;
-			if(index < 0) {
-				return -1;
+		int index = tokens.size() - 1, pCount = 0;
+		while(index > -1) {
+			if(tokens.get(index).type == type || tokens.get(index).type == type2) {
+				if(pCount == 0) {
+					return index;
+				}
 			}
+			switch(tokens.get(index).type) {
+			case openParenthesis:
+				pCount--;
+				break;
+			case closedParenthesis:
+				pCount++;
+				break;
+			default:	
+			}
+			index--;
 		}
-		return index;
+		return -1;
 	}
 	
 	/**
@@ -464,13 +509,24 @@ public class GrammarHelper {
 	 * @return index of token found or -1 if failed
 	 */
 	public static int findObject(List<Token> tokens, type_enum type, type_enum type2, type_enum type3) {
-		int index = tokens.size() - 1;
-		while(tokens.get(index).type != type && tokens.get(index).type != type2 && tokens.get(index).type != type3) {
-			index--;
-			if(index < 0) {
-				return -1;
+		int index = tokens.size() - 1, pCount = 0;
+		while(index > -1) {
+			if(tokens.get(index).type == type || tokens.get(index).type == type2 || tokens.get(index).type == type3) {
+				if(pCount == 0) {
+					return index;
+				}
 			}
+			switch(tokens.get(index).type) {
+			case openParenthesis:
+				pCount--;
+				break;
+			case closedParenthesis:
+				pCount++;
+				break;
+			default:	
+			}
+			index--;
 		}
-		return index;
+		return -1;
 	}
 }

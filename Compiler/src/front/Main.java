@@ -11,7 +11,6 @@ import java.util.List;
 public class Main {
 	public static void main(String[] args) {
 		boolean tokenize = false;
-		boolean abstractSyntaxTree = true; //set true for testing
 		boolean PrintParse = true; //assuming true for testing
 		String filename = null;
 		Scan scanner;
@@ -21,10 +20,6 @@ public class Main {
 		for (String arg: args) {
 			if (arg.compareTo("-t") == 0) {
 				tokenize = true;
-			}
-			
-			if (arg.compareTo("-a") == 0) {
-				abstractSyntaxTree = true;
 			}
 			
 			if (arg == args[args.length - 1]) {
@@ -50,14 +45,12 @@ public class Main {
 			ErrorHandler.printStrings("Scanner");
 			return;
 		}
-		
 		if (tokenize) {
 			System.out.println("Scanner:");
 			scanner.printTokens();
 		}
 		
 		grammar = new Grammar(scanner.tokens);
-		
 		if(ErrorHandler.errorsExist()) {
 			ErrorHandler.printStrings("Parse Tree Creation");
 			return;
@@ -77,8 +70,8 @@ public class Main {
 		symTable = new SymbolTable();
 		SymbolTable.buildDeclarationTable(grammar.root, symTable);
 		
-		AST testAST = new AST(grammar);
-		testAST.printTree();
+		//AST testAST = new AST(grammar);
+		//testAST.printTree();
 	}
 
 	

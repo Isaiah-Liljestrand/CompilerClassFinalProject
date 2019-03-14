@@ -63,6 +63,8 @@ public class AST {
 			return null;
 		case semicolon:
 			return null;
+		default:
+			break;
 		}
 			
 		return tree;

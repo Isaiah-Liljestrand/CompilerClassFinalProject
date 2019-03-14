@@ -1,5 +1,12 @@
+
+int k;
+int r = 78;
+char mamabeans = 'b';
+
 int main() {
 	int y;
-	
-	return 5;
+	y = r;
+	r = ((mamabeans / 4) || 0x75) - (2 & 3);
+	int x = 5 + y, m = 2 * 5 + 7;
+	return r;
 }
