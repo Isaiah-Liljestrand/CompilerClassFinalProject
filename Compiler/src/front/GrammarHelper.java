@@ -60,6 +60,18 @@ public class GrammarHelper {
 	}
 	
 	/**
+	 * Checks if the token passed in is a for function keyword
+	 * @param token should be the for keyword
+	 * @return Ptree node containing the keyword or null
+	 */
+	public static Ptree forFunction(Token token) {
+		if(token.type == type_enum.k_for) {
+			return new Ptree(token);
+		}
+		return null;
+	}
+	
+	/**
 	 * Checks if the token is a constant
 	 * @param token should be either a char constant or an int constant
 	 * @return Ptree node if the statment evaluates to true
@@ -70,8 +82,6 @@ public class GrammarHelper {
 		}
 		return null;
 	}
-	
-	
 	
 	/**
 	 * Checks that the passed in token is a return call
@@ -165,6 +175,18 @@ public class GrammarHelper {
 	 */
 	public static Ptree bitOr(Token token) {
 		if(token.type == type_enum.orOperator) {
+			return new Ptree(token);
+		}
+		return null;
+	}
+	
+	/**
+	 * Checks if the token passed in is a bitwise xor operator
+	 * @param token to be checked
+	 * @return Ptree containing xor token or null if input token is invalid
+	 */
+	public static Ptree bitXor(Token token) {
+		if(token.type == type_enum.xorOperator) {
 			return new Ptree(token);
 		}
 		return null;
@@ -401,16 +423,54 @@ public class GrammarHelper {
 	 * @return index of element or -1 if failed
 	 */
 	public static int findObject(List<Token> tokens, type_enum type) {
-		int index = tokens.size() - 1;
-		while(tokens.get(index).type != type) {
-			index--;
-			if(index < 0) {
-				return -1;
+		int index = tokens.size() - 1, pCount = 0;
+		while(index > -1) {
+			if(tokens.get(index).type == type) {
+				if(pCount == 0) {
+					return index;
+				}
 			}
+			switch(tokens.get(index).type) {
+			case openParenthesis:
+				pCount--;
+				break;
+			case closedParenthesis:
+				pCount++;
+				break;
+			default:	
+			}
+			index--;
 		}
-		return index;
+		return -1;
 	}
 	
+	/**
+	 * Finds an object in a list of tokens by scanning from front to back
+	 * @param tokens tokens to be scanned through
+	 * @param type enumeration that describes what token to search for
+	 * @return index of element or -1 if failed
+	 */
+	public static int findObjectForward(List<Token> tokens, type_enum type) {
+		int index = 0, pCount = 0;
+		while(index < tokens.size()) {
+			if(tokens.get(index).type == type) {
+				if(pCount == 0) {
+					return index;
+				}
+			}
+			switch(tokens.get(index).type) {
+			case openParenthesis:
+				pCount++;
+				break;
+			case closedParenthesis:
+				pCount--;
+				break;
+			default:	
+			}
+			index++;
+		}
+		return -1;
+	}
 	/**
 	 * Finds either of two specified tokens scans from back to front
 	 * @param tokens tokens to be scanned through
@@ -419,14 +479,25 @@ public class GrammarHelper {
 	 * @return index of token found or -1 if failed
 	 */
 	public static int findObject(List<Token> tokens, type_enum type, type_enum type2) {
-		int index = tokens.size() - 1;
-		while(tokens.get(index).type != type && tokens.get(index).type != type2) {
-			index--;
-			if(index < 0) {
-				return -1;
+		int index = tokens.size() - 1, pCount = 0;
+		while(index > -1) {
+			if(tokens.get(index).type == type || tokens.get(index).type == type2) {
+				if(pCount == 0) {
+					return index;
+				}
 			}
+			switch(tokens.get(index).type) {
+			case openParenthesis:
+				pCount--;
+				break;
+			case closedParenthesis:
+				pCount++;
+				break;
+			default:	
+			}
+			index--;
 		}
-		return index;
+		return -1;
 	}
 	
 	/**
@@ -438,13 +509,24 @@ public class GrammarHelper {
 	 * @return index of token found or -1 if failed
 	 */
 	public static int findObject(List<Token> tokens, type_enum type, type_enum type2, type_enum type3) {
-		int index = tokens.size() - 1;
-		while(tokens.get(index).type != type && tokens.get(index).type != type2 && tokens.get(index).type != type3) {
-			index--;
-			if(index < 0) {
-				return -1;
+		int index = tokens.size() - 1, pCount = 0;
+		while(index > -1) {
+			if(tokens.get(index).type == type || tokens.get(index).type == type2 || tokens.get(index).type == type3) {
+				if(pCount == 0) {
+					return index;
+				}
 			}
+			switch(tokens.get(index).type) {
+			case openParenthesis:
+				pCount--;
+				break;
+			case closedParenthesis:
+				pCount++;
+				break;
+			default:	
+			}
+			index--;
 		}
-		return index;
+		return -1;
 	}
 }

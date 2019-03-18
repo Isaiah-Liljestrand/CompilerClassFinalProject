@@ -3,6 +3,8 @@ package front;
 import java.util.ArrayList;
 import java.util.List;
 
+import front.Token.type_enum;
+
 public class SymbolTable {
 	protected String label;
 	protected List<SymbolTableEntry> entries;
@@ -37,7 +39,7 @@ public class SymbolTable {
 	 * @param name entry variable name
 	 * @param value entry variable value
 	 */
-	private void AddEntry(String name, Ptree value)	{
+	private void addEntry(String name, type_enum value)	{
 		SymbolTableEntry newEntry = new SymbolTableEntry(name, value);
 		entries.add(newEntry);
 	}
@@ -78,6 +80,18 @@ public class SymbolTable {
 		}
 	}
 	
+	public void printSymbolTable() {
+	//	System.out.println("TEST");
+		for(SymbolTableEntry entry : this.entries) {
+			System.out.println(entry.name + " " + entry.value);
+		}
+		for(SymbolTable table : this.children) {
+			for(SymbolTableEntry entry2 : table.entries) {
+				System.out.println(entry2.name + " " + entry2.value);
+			}
+		}
+	}
+	
 	
 	/**
 	 * Builds the top level declaration table and recursively creates lower level ones
@@ -91,12 +105,36 @@ public class SymbolTable {
 			buildStatementTable(tree, sTable);
 			return;
 		case variableDeclaration:
-			SymbolTable sTable1 = new SymbolTable(table, tree.children.get(1).token.token);
-			buildStatementTable(tree, sTable1);
+			type_enum vType = tree.children.get(0).children.get(0).token.type;
+			variableDeclarationHelper(tree, vType, table);
 			return;
 		default:
 			for(Ptree t : tree.children) {
 				buildDeclarationTable(t, table);
+			}
+		}
+	}
+	
+	
+	/**
+	 * Adds variable declarations to a table and checks if they are in scope
+	 * @param tree subtree with variable declaration on top
+	 * @param vType int or char
+	 * @param table symbol table of the current scope
+	 */
+	public static void variableDeclarationHelper(Ptree tree, type_enum vType, SymbolTable table) {
+		switch(tree.token.type) {
+		case variableDeclarationID:
+			String string = tree.children.get(0).token.token;
+			if(!table.isVariableNameInScope(string)) {
+				table.addEntry(string, vType);
+				return;
+			}
+			System.out.println("Error: Variable already declared");   // needs to be elaborated
+			return;
+		default:
+			for(Ptree t : tree.children) {
+				variableDeclarationHelper(t, vType, table);
 			}
 		}
 	}
@@ -110,6 +148,14 @@ public class SymbolTable {
 	private static void buildStatementTable(Ptree tree, SymbolTable table) {
 		SymbolTable sTable;
 		switch(tree.token.type) {
+		case parameter:
+			String string = tree.children.get(1).token.token;
+			type_enum type = tree.children.get(0).token.type;
+			if(!table.isVariableNameInScope(string)) {
+				table.addEntry(string,  type);
+			}
+			System.out.println("Error: parameter passed in through function is already declared");
+			return;
 		case ifStatement:
 			sTable = new SymbolTable(table, "if");
 			buildStatementTable(tree, sTable);
@@ -119,37 +165,28 @@ public class SymbolTable {
 			buildStatementTable(tree, sTable);
 			return;
 		case variableDeclaration:
-			if(!table.isVariableNameInScope(tree.token.token)) {
-				table.AddEntry(tree.token.token, tree);
-			}
-			return;
-		case expression:
-			//check variable validity and change value in table
-			if(!table.isVariableNameInScope(tree.token.token)) {
-				System.out.println("Warning: Variable " + tree.token.token + " Not defined in current scope");
-				return;
-			} else {
-				// Update variable, but I'm not sure what value we are updating
-			}
+			variableDeclarationHelper(tree, tree.children.get(0).children.get(0).token.type, table);
 			return;
 		case call:
 			//verify that function call is in scope
-			if(table.isFunctionNameInScope(tree.token.token)){
+			//System.out.println("Call");
+			if(table.isFunctionNameInScope(tree.children.get(0).token.token)){
 				return;
 			} else {
 				System.out.println("Warning: Function " + tree.token.token + " Not defined in current scope");
 				return;
 			}
 		case variable:
+			//System.out.println("Variable");
 			//verify legitimacy and check that it is in scope
-			if(!table.isVariableNameInScope(tree.token.token)) {
-				table.AddEntry(tree.token.token, tree);
+			if(table.isVariableNameInScope(tree.children.get(0).token.token)) {
 				return;
 			} else {
 				System.out.println("Warning: Variable " + tree.token.token + " Not defined in current scope");
 				return;
 			}
 		default:
+			//System.out.println("Default");
 			if(tree.children != null) {
 				for(Ptree t : tree.children) {
 					buildDeclarationTable(t, table);

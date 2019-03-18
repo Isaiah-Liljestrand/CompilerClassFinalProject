@@ -1,6 +1,5 @@
 package front;
 
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,21 +7,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Main {
 	public static void main(String[] args) {
-		boolean tokenize = false;
-		boolean abstractSyntaxTree = true; //set true for testing
+		boolean tokenize = true;
 		boolean PrintParse = true; //assuming true for testing
 		String filename = null;
 		Scan scanner;
+		Grammar grammar;
+		SymbolTable symTable;
 		//Check for command line arguments
 		for (String arg: args) {
 			if (arg.compareTo("-t") == 0) {
 				tokenize = true;
-			}
-			
-			if (arg.compareTo("-a") == 0) {
-				abstractSyntaxTree = true;
 			}
 			
 			if (arg == args[args.length - 1]) {
@@ -43,31 +40,34 @@ public class Main {
 		
 		List<String> lines = readFile(filename);
 		scanner = new Scan(lines);
-		Grammar grammar = null;
 		
+		if(ErrorHandler.errorsExist()) {
+			ErrorHandler.printStrings("Scanner");
+			return;
+		}
 		if (tokenize) {
 			System.out.println("Scanner:");
 			scanner.printTokens();
 		}
 		
-		//This is a parse tree not an abstract syntax tree
 		grammar = new Grammar(scanner.tokens);
-		//grammar.printTree();
-		
-		if(!Ptree.gotoChecker(grammar.root)) {
-			System.out.println("goto statements do not match up correctly");
+		if(ErrorHandler.errorsExist()) {
+			ErrorHandler.printStrings("Parse Tree Creation");
+			return;
 		}
 		
-		if (abstractSyntaxTree) {
-			//grammar = new Grammar(scanner.getTokens());
-			
+		Ptree.gotoChecker(grammar.root);
+		if(ErrorHandler.errorsExist()) {
+			ErrorHandler.printStrings("Goto Checker");
+			return;
 		}
+		
 		if (PrintParse && grammar != null){
 			//System.out.print("check");
 			grammar.printTree();
 		}
 		
-		SymbolTable symTable = new SymbolTable();
+		symTable = new SymbolTable();
 		SymbolTable.buildDeclarationTable(grammar.root, symTable);
 	}
 

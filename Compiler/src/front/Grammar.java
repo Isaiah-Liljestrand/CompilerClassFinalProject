@@ -33,7 +33,6 @@ public class Grammar {
 	 */
 	public void printTree() {
 		if (valid) {
-			//System.out.println("sanity check");
 			root.printTree();
 		}
 	}
@@ -109,18 +108,15 @@ public class Grammar {
 		//Checks if declaration is a function declaration
 		tree.addChild(functionDeclaration(tokens));
 		if(tree.verifyChildren()) {
-		//	System.out.println("check3");
 			return tree;
 		}
 		tree.removeChildren();
 		
-		//Checks if the declaration is a function declaration
+		//Checks if the declaration is a variable declaration
 		tree.addChild(variableDeclaration(tokens));
 		if(tree.verifyChildren()) {
-		//	System.out.println("check3");
 			return tree;
 		}
-		System.out.println("Declaration Did Nothing");
 		return null;
 	}
 	
@@ -188,7 +184,7 @@ public class Grammar {
 		
 		//Splits input based on farthest right comma
 		int index = GrammarHelper.findObject(tokens, type_enum.comma);
-		if(index < 0) {
+		if(index < 0 || index < tokens.size() - 1) {
 			return null;
 		}
 		tree.addChild(variableDeclarationList(tokens.subList(0, index)));
@@ -245,7 +241,6 @@ public class Grammar {
 			return null;
 		}
 		Ptree tree = new Ptree(type_enum.variableDeclarationID);
-		//symTable.AddEntry(token.getToken(), token.getType().toString());
 		tree.addChild(new Ptree(token));
 		return tree;
 	}
@@ -262,7 +257,7 @@ public class Grammar {
 		
 		//Verifies there are at least the minimum possible tokens for a function declaration
 		if(tokens.size() < 6) {
-			System.out.println("FunctionDeclaration did nothing");
+			//System.out.println("FunctionDeclaration did nothing");
 			return null;
 		}
 		tree.addChild(functionTypeSpecifier(tokens.get(0)));
@@ -294,7 +289,6 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		System.out.println("functionDeclaration did nothing");
 		return null;
 	}
 	
@@ -313,7 +307,6 @@ public class Grammar {
 			tree.addChild(new Ptree(token));
 			return tree;
 		default:
-			System.out.println("FunctionTypeSpecifier did nothing");
 			return null;
 		}
 	}
@@ -470,6 +463,13 @@ public class Grammar {
 		}
 		tree.removeChildren();
 		
+		//for statement
+		tree.addChild(forStatement(tokens));
+		if(tree.verifyChildren()) {
+			return tree;
+		}
+		tree.removeChildren();
+		
 		//break statement
 		tree.addChild(breakStatement(tokens));
 		if(tree.verifyChildren()) {
@@ -613,14 +613,14 @@ public class Grammar {
 			return null;
 		}
 		tree.addChild(GrammarHelper.whileFunction(tokens.get(0)));
-		if(tree.verifyChildren()) {
+		if(!tree.verifyChildren()) {
 			return null;
 		}
 		tree.addChild(GrammarHelper.openParenthesis(tokens.get(1)));
 		int index = GrammarHelper.findMatchingParenthesis(tokens, 1);
 		
 		//Checks parenthesis location output
-		if(index < 0 || index > tokens.size() - 3 || !(index > 2)) {
+		if(index <= 2 || index > tokens.size() - 3) {
 			//TODO: error reporting
 			return null;
 		}
@@ -632,7 +632,7 @@ public class Grammar {
 		int index2 = GrammarHelper.findMatchingBracket(tokens, index + 1);
 		
 		//checks bracket location output
-		if(index2 != tokens.size() - 1 || !(index2 > index + 2)) {
+		if(index2 != tokens.size() - 1 || index2 <= index + 2) {
 			//TODO: error reporting
 			return null;
 		}
@@ -649,6 +649,66 @@ public class Grammar {
 	
 	
 	/**
+	 * forStatement →  for ([expresssionStatement | variableDeclaration | ;] simpleExpression ; expression) { statementList }
+	 * @param tokens tokens that should take up the for loop and body
+	 * @return forStatement tree if valid, null if invalid
+	 */
+	private Ptree forStatement(List<Token> tokens) {
+		Ptree tree = new Ptree(type_enum.forStatement);
+		
+		//Checks for minimum legitimate size
+		if(tokens.size() < 8) {
+			return null;
+		}
+		
+		tree.addChild(GrammarHelper.forFunction(tokens.get(0)));
+		if(!tree.verifyChildren()) {
+			return null;
+		}
+		
+		tree.addChild(GrammarHelper.openParenthesis(tokens.get(1)));
+		int index = GrammarHelper.findObjectForward(tokens.subList(2, tokens.size()), type_enum.semicolon);
+		if(index == -1 || index + 1 >= tokens.size()) {
+			//TODO: error handling
+			return null;
+		}
+		if(!(index == 2)) {
+			tree.addChild(variableDeclaration(tokens.subList(2, index + 1)));
+			if(!tree.verifyChildren()) {
+				tree.removeChild();
+				tree.addChild(expressionStatement(tokens.subList(2,  index + 1)));
+				if(!tree.verifyChildren()) {
+					//TODO: error handling
+					return null;
+				}
+			}
+		} else {
+			tree.addChild(GrammarHelper.semicolon(tokens.get(2)));
+		}
+		int index2 = GrammarHelper.findObjectForward(tokens.subList(index + 1, tokens.size()), type_enum.semicolon);
+		if(index2 == -1 || index2 + 1 >= tokens.size()) {
+			//TODO: error handling
+			return null;
+		}
+		tree.addChild(simpleExpression(tokens.subList(index + 1, index2)));
+		tree.addChild(GrammarHelper.semicolon(tokens.get(index2)));
+		index = GrammarHelper.findObjectForward(tokens.subList(index2, tokens.size()), type_enum.openCurlyBracket);
+		if(index == -1 || index + 1 >= tokens.size()) {
+			//TODO: error handling
+			return null;
+		}
+		tree.addChild(expression(tokens.subList(index2 + 1, index - 1)));
+		tree.addChild(GrammarHelper.closedParenthesis(tokens.get(index - 1)));
+		tree.addChild(GrammarHelper.openCurlyBracket(tokens.get(index)));
+		tree.addChild(statementList(tokens.subList(index + 1, tokens.size() - 1)));
+		tree.addChild(GrammarHelper.closedCurlyBracket(tokens.get(tokens.size() - 1)));
+		if(tree.verifyChildren()) {
+			return tree;
+		}
+		return null;
+		//TODO: error checking
+	}
+	/**
 	 * ifStmt → if ( simpleExpression ) { statementList } | if ( simpleExpression ) { statementList } else { statementList }
 	 * @param tokens passed from parent grammar should be if statement
 	 * @return ifStatement tree if valid, null if invalid
@@ -661,7 +721,7 @@ public class Grammar {
 			return null;
 		}
 		tree.addChild(GrammarHelper.ifFunction(tokens.get(0)));
-		if(tree.verifyChildren()) {
+		if(!tree.verifyChildren()) {
 			return null;
 		}
 		tree.addChild(GrammarHelper.openParenthesis(tokens.get(1)));
@@ -729,19 +789,10 @@ public class Grammar {
 	 */
 	private Ptree expressionStatement(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.expressionStatement);
-		if(tokens.size() == 0) {
+		if(tokens.size() < 3) {
 			return null;
 		}
-		
-		//Statment composed of one semicolon
-		if(tokens.size() == 1) {
-			tree.addChild(GrammarHelper.semicolon(tokens.get(0)));
-			if(tree.verifyChildren()) {
-				return tree;
-			}
-			return null;
-		}
-		
+
 		//Statement composed of an expression ending in a semicolon
 		tree.addChild(expression(tokens.subList(0, tokens.size() - 1)));
 		tree.addChild(GrammarHelper.semicolon(tokens.get(tokens.size() - 1)));
@@ -753,7 +804,7 @@ public class Grammar {
 	
 	
 	/**
-	 * expression → ID assignmentOperator simpleExpression | call | ID++ | ID--
+	 * expression → ID assignmentOperator simpleExpression | call | ID decrement | ID increment
 	 * @param tokens passed from parent grammar should be an expression
 	 * @return expression tree if valid, null if invalid
 	 */
@@ -823,6 +874,9 @@ public class Grammar {
 		}
 		tree.removeChildren();
 		
+		if(tokens.size() < 3) {
+			return null;
+		}
 		//Case where logical or is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.orLogicOperator);
 		if(index < 0) {
@@ -858,6 +912,9 @@ public class Grammar {
 		}
 		tree.removeChildren();
 		
+		if(tokens.size() < 3) {
+			return null;
+		}
 		//Case where the logical and operator is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.andLogicOperator);
 		if(index < 0) {
@@ -892,7 +949,10 @@ public class Grammar {
 			return tree;
 		}
 		tree.removeChildren();
-		
+
+		if(tokens.size() < 3) {
+			return null;
+		}
 		//Case where bitwise or operator is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.orOperator);
 		if(index < 0) {
@@ -928,13 +988,16 @@ public class Grammar {
 		}
 		tree.removeChildren();
 		
+		if(tokens.size() < 3) {
+			return null;
+		}
 		//Case where bitwise or operator is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.xorOperator);
 		if(index < 0) {
 			return tree;
 		}
 		tree.addChild(bitXorExpression(tokens.subList(0, index)));
-		tree.addChild(GrammarHelper.bitOr(tokens.get(index)));
+		tree.addChild(GrammarHelper.bitXor(tokens.get(index)));
 		tree.addChild(bitAndExpression(tokens.subList(index + 1, tokens.size())));
 		if(tree.verifyChildren()) {
 			return tree;
@@ -963,6 +1026,9 @@ public class Grammar {
 		}
 		tree.removeChildren();
 		
+		if(tokens.size() < 3) {
+			return null;
+		}
 		//Case where bitwise and operator is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.andOperator);
 		if(index < 0) {
@@ -998,6 +1064,9 @@ public class Grammar {
 		}
 		tree.removeChildren();
 		
+		if(tokens.size() < 3) {
+			return null;
+		}
 		//Case where comparison operator is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.equalOperator, type_enum.notEqualOperator);
 		if(index < 0) {
@@ -1050,7 +1119,10 @@ public class Grammar {
 			return tree;
 		}
 		tree.removeChildren();
-			
+		
+		if(tokens.size() < 3) {
+			return null;
+		}
 		//Case where summation operator is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.additionOperator, type_enum.subtractionOperator);
 		if(index < 0) {
@@ -1104,6 +1176,9 @@ public class Grammar {
 		}
 		tree.removeChildren();
 			
+		if(tokens.size() < 3) {
+			return null;
+		}
 		//Case where multiplicative operator is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.multiplicationOperator, type_enum.divisionOperator, type_enum.modulusOperator);
 		if(index < 0) {
@@ -1158,6 +1233,9 @@ public class Grammar {
 		}
 		tree.removeChildren();
 		
+		if(tokens.size() < 2) {
+			return null;
+		}
 		//Case where the ! unary operator was used
 		tree.addChild(GrammarHelper.notToken(tokens.get(0)));
 		tree.addChild(factor(tokens.subList(1, tokens.size())));
@@ -1168,7 +1246,7 @@ public class Grammar {
 	}
 	
 	/**
-	 * factor → ID | ( expression ) | call | constant
+	 * factor → variable | ( expression ) | call | constant
 	 * @param tokens passed from parent grammar should be a factor in an expression
 	 * @return factor tree if valid, null if invalid
 	 */
@@ -1196,14 +1274,20 @@ public class Grammar {
 			tree.removeChildren();
 			return null;
 		}
-		//Checks if factor is expression inside parenthesis
-		tree.addChild(GrammarHelper.openParenthesis(tokens.get(0)));
-		tree.addChild(simpleExpression(tokens.subList(1, tokens.size() - 1)));
-		tree.addChild(GrammarHelper.closedParenthesis(tokens.get(tokens.size() - 1)));
-		if(tree.verifyChildren()) {
-			return tree;
+		
+		if(tokens.size() < 3) {
+			return null;
 		}
-		tree.removeChildren();
+		//Checks if factor is expression inside parenthesis
+		if(tokens.get(0).type == type_enum.openParenthesis && tokens.get(tokens.size() - 1).type == type_enum.closedParenthesis) {
+			tree.addChild(GrammarHelper.openParenthesis(tokens.get(0)));
+			tree.addChild(simpleExpression(tokens.subList(1, tokens.size() - 1)));
+			tree.addChild(GrammarHelper.closedParenthesis(tokens.get(tokens.size() - 1)));
+			if(tree.verifyChildren()) {
+				return tree;
+			}
+			tree.removeChildren();
+		}
 		
 		//Checks if factor is a function call
 		tree.addChild(call(tokens));
@@ -1228,7 +1312,7 @@ public class Grammar {
 		tree.addChild(GrammarHelper.identifier(tokens.get(0)));
 		tree.addChild(GrammarHelper.openParenthesis(tokens.get(1)));
 		if(tokens.size() > 3) {
-			tree.addChild(argList(tokens.subList(2, tokens.size())));
+			tree.addChild(argList(tokens.subList(2, tokens.size() - 1)));
 		}
 		tree.addChild(GrammarHelper.closedParenthesis(tokens.get(tokens.size() - 1)));
 		if(tree.verifyChildren()) {
@@ -1236,6 +1320,7 @@ public class Grammar {
 		}
 		return null;
 	}
+	
 	
 	/**
 	 * argList → argList, expression | expression
@@ -1245,13 +1330,19 @@ public class Grammar {
 	private Ptree argList(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.argList);
 		
+		if(tokens.size() == 0) {
+			return null;
+		}
 		//Checks if there is one argument being passed in
-		tree.addChild(expression(tokens));
+		tree.addChild(simpleExpression(tokens));
 		if(tree.verifyChildren()) {
 			return tree;
 		}
 		tree.removeChildren();
 		
+		if(tokens.size() < 3) {
+			return null;
+		}
 		//seperates out input by a comma
 		int index = GrammarHelper.findObject(tokens, type_enum.comma);
 		if(index < 0) {
@@ -1259,7 +1350,7 @@ public class Grammar {
 		}
 		tree.addChild(argList(tokens.subList(0, index)));
 		tree.addChild(GrammarHelper.comma(tokens.get(index)));
-		tree.addChild(expression(tokens.subList(index + 1, tokens.size())));
+		tree.addChild(simpleExpression(tokens.subList(index + 1, tokens.size())));
 		if(tree.verifyChildren()) {
 			return tree;
 		}
