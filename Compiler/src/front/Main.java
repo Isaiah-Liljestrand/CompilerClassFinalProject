@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Main {
 	public static void main(String[] args) {
-		boolean tokenize = false;
+		boolean tokenize = true;
 		boolean PrintParse = true; //assuming true for testing
 		String filename = null;
 		Scan scanner;
@@ -69,9 +69,6 @@ public class Main {
 		
 		symTable = new SymbolTable();
 		SymbolTable.buildDeclarationTable(grammar.root, symTable);
-		
-		//AST testAST = new AST(grammar);
-		//testAST.printTree();
 	}
 
 	

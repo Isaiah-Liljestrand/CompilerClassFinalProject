@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Basicaly Ptree but squished
+ * Not currently being used, may be actually filled out in order to print trees more cleanly
  * @author Ben
  */
 public class AST {

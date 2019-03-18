@@ -57,7 +57,8 @@ public class IRelement {
 	}
 	
 	public static String stringFromCommand(command cmd) {
-		switch(cmd) {
+		return cmd.toString();
+		/*switch(cmd) {
 		case declare:
 			return "declare";
 		case destroy:
@@ -102,7 +103,7 @@ public class IRelement {
 			return "label";
 		}
 		return "error";
-	}
+	*/}
 	
 	public String toString() {
 		if (this.cmd == null) {
