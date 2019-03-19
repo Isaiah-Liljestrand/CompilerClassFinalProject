@@ -1,5 +1,7 @@
 package front;
 
+import java.util.Arrays;
+
 import front.Token.type_enum;
 
 public class IRcreation {
@@ -85,8 +87,8 @@ public class IRcreation {
 			break;
 		case declarationList:
 			if(tree.children.size() >= 1) {
-				for(int i = 0; i < tree.children.size(); i++) {
-					declarationHandler(tree.children.get(i), table);
+				for(Ptree t: tree.children) {
+					declarationHandler(t, table);
 				}
 			}
 			else {
@@ -103,7 +105,10 @@ public class IRcreation {
 			variableDeclarationHandler(tree, table);
 			break;
 		default:
-			errorIn("Declaration Handler");
+			//errorIn("Declaration Handler");
+			for(Ptree t: tree.children) {
+				declarationHandler(t, table);
+			}
 		}
 		
 		
@@ -121,14 +126,56 @@ public class IRcreation {
 		}*/
 	}
 	
+	private String paramGetter(Ptree tree) {
+		String tmp = new String("");
+		if(tree.token.type == Token.type_enum.parameter) {
+			tmp = tmp + tree.children.get(0).children.get(0).token.token + " ";
+			tmp = tmp + tree.children.get(1).token.token;
+		}
+		else if(tree.token.type == Token.type_enum.comma) {
+			tmp = tmp + ", ";
+		}
+		else {
+			for(Ptree t: tree.children) {
+				tmp = tmp + paramGetter(t);
+			}	
+		}
+		return tmp;
+	}
+	
+	//@ functionDeclaration
 	//Deals with function declaration.
 	//calls statementHandler
 	private void functionHandler(Ptree tree, SymbolTable table) {
+		String tmp = new String(), tmp2 = new String();
+		Ptree tree2 = tree.children.get(3); //either the params list or )
 		
+		tmp = tmp + treverseDown(tree, findType(tree, Token.type_enum.variableTypeSpecifier)).children.get(0).token.token;
+		tmp = tmp + tree.children.get(1).token.token;
+		
+		//params
+		if(tree2.token.type != Token.type_enum.closedParenthesis) { //parems exist
+			tmp2 += paramGetter(tree2);
+			
+			/**
+			tmp2 = tmp2 + treverseDown(tree, findType(tree, Token.type_enum.variableTypeSpecifier)).children.get(0).token.token;
+			tmp2 = tmp2 + treverseDown(tree, findType(tree, Token.type_enum.parameter)).children.get(1).token.token;*/
+		}
+		IR.addCommand(tmp, Arrays.asList(tmp2.split(",")));
+		for(int i = 3; i < tree.children.size(); i++) {
+			if(tree.children.get(i).token.type == Token.type_enum.openCurlyBracket) {
+				if(tree.children.get(i+1).token.type != Token.type_enum.closedCurlyBracket) { //making sure not an empty function
+					statementHandler(tree.children.get(i+1), table);
+				}
+			}
+		}
+		
+		//IRelement in = new IRelement();
 	}
 	
 	//Deals with all statements.
 	//Calls whileH, forH, ifH, varDecH, expressionHandler, and any others we need to add.
+	//@ statementList
 	private void statementHandler(Ptree tree, SymbolTable table) {
 		
 	}

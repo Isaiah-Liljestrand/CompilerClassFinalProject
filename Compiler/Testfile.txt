@@ -1,6 +1,6 @@
 
 
-int main() {
+int main(int i, int j) {
 	int t;
 	int x = 5 + y, m = 2 * 5 + 7;
 	return r;
