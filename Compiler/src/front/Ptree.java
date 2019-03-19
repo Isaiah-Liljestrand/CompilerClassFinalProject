@@ -38,7 +38,7 @@ public class Ptree {
 	 * Prints the tree using the the recursive PT function
 	 */
 	public void printTree() {
-		System.out.println("\nHash Tree:");
+		System.out.println("\nParse Tree:");
 		PT(0); //assumes the calling Ptree is root
 	}
 	
