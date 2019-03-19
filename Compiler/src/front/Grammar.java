@@ -184,7 +184,7 @@ public class Grammar {
 		
 		//Splits input based on farthest right comma
 		int index = GrammarHelper.findObject(tokens, type_enum.comma);
-		if(index < 0 || index < tokens.size() - 1) {
+		if(index < 1 || index > tokens.size() - 2) {
 			return null;
 		}
 		tree.addChild(variableDeclarationList(tokens.subList(0, index)));
@@ -879,7 +879,7 @@ public class Grammar {
 		}
 		//Case where logical or is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.orLogicOperator);
-		if(index < 0) {
+		if(index < 1 || index > tokens.size() - 2) {
 			return null;
 		}
 		tree.addChild(simpleExpression(tokens.subList(0, index)));
@@ -917,8 +917,8 @@ public class Grammar {
 		}
 		//Case where the logical and operator is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.andLogicOperator);
-		if(index < 0) {
-			return tree;
+		if(index < 1 || index > tokens.size() - 2) {
+			return null;
 		}
 		tree.addChild(andExpression(tokens.subList(0, index)));
 		tree.addChild(GrammarHelper.logicAnd(tokens.get(index)));
@@ -955,8 +955,8 @@ public class Grammar {
 		}
 		//Case where bitwise or operator is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.orOperator);
-		if(index < 0) {
-			return tree;
+		if(index < 1 || index > tokens.size() - 2) {
+			return null;
 		}
 		tree.addChild(bitOrExpression(tokens.subList(0, index)));
 		tree.addChild(GrammarHelper.bitOr(tokens.get(index)));
@@ -993,8 +993,8 @@ public class Grammar {
 		}
 		//Case where bitwise or operator is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.xorOperator);
-		if(index < 0) {
-			return tree;
+		if(index < 1 || index > tokens.size() - 2) {
+			return null;
 		}
 		tree.addChild(bitXorExpression(tokens.subList(0, index)));
 		tree.addChild(GrammarHelper.bitXor(tokens.get(index)));
@@ -1031,8 +1031,8 @@ public class Grammar {
 		}
 		//Case where bitwise and operator is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.andOperator);
-		if(index < 0) {
-			return tree;
+		if(index < 1 || index > tokens.size() - 2) {
+			return null;
 		}
 		tree.addChild(bitAndExpression(tokens.subList(0, index)));
 		tree.addChild(GrammarHelper.bitAnd(tokens.get(index)));
@@ -1069,8 +1069,8 @@ public class Grammar {
 		}
 		//Case where comparison operator is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.equalOperator, type_enum.notEqualOperator);
-		if(index < 0) {
-			return tree;
+		if(index < 1 || index > tokens.size() - 2) {
+			return null;
 		}
 		tree.addChild(sumExpression(tokens.subList(0, index)));
 		tree.addChild(compareOperator(tokens.get(index)));
@@ -1125,8 +1125,8 @@ public class Grammar {
 		}
 		//Case where summation operator is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.additionOperator, type_enum.subtractionOperator);
-		if(index < 0) {
-			return tree;
+		if(index < 1 || index > tokens.size() - 2) {
+			return null;
 		}
 		tree.addChild(sumExpression(tokens.subList(0, index)));
 		tree.addChild(sumOperator(tokens.get(index)));
@@ -1181,8 +1181,8 @@ public class Grammar {
 		}
 		//Case where multiplicative operator is used at this level
 		int index = GrammarHelper.findObject(tokens, type_enum.multiplicationOperator, type_enum.divisionOperator, type_enum.modulusOperator);
-		if(index < 0) {
-			return tree;
+		if(index < 1 || index > tokens.size() - 2) {
+			return null;
 		}
 		tree.addChild(term(tokens.subList(0, index)));
 		tree.addChild(productOperator(tokens.get(index)));

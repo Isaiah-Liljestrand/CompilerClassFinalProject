@@ -105,6 +105,20 @@ public class IRcreation {
 		default:
 			errorIn("Declaration Handler");
 		}
+		
+		
+		/*switch(tree.token.type) {
+		case functionDeclaration:
+			functionHandler(tree, table);
+			break;
+		case variableDeclaration:
+			variableDeclarationHandler(tree, table);
+			break;
+		default:
+			for(Ptree t: tree.children) {
+				declarationHandler(t, table);
+			}
+		}*/
 	}
 	
 	//Deals with function declaration.
