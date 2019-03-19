@@ -109,6 +109,11 @@ public class Token {
 		this.type = type;
 	}
 	
+	Token(String token){
+		this.token = token;
+		this.addTokenIdentity();
+	}
+	
 	Token(String token, int lineNumber){
 		this.token = token;
 		this.lineNumber = lineNumber;
