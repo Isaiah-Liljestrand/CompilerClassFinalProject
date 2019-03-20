@@ -76,7 +76,7 @@ public class IRcreation {
 	 */
 	private void declarationHandler(Ptree tree) {
 		switch(tree.token.type) {
-		case program:
+		/*case program:
 			if(tree.children.size() > 0) {
 				declarationHandler(tree.children.get(0));
 			}
@@ -96,7 +96,7 @@ public class IRcreation {
 			break;
 		case declaration:
 			declarationHandler(tree.children.get(0)); //SHOULD never have >1 child
-			break;
+			break;*/
 		case functionDeclaration:
 			functionHandler(tree);
 			break;
@@ -104,7 +104,10 @@ public class IRcreation {
 			variableDeclarationHandler(tree);
 			break;
 		default:
-			errorIn("Declaration Handler");
+			for(Ptree t : tree.children) {
+				declarationHandler(t);
+			}
+			//errorIn("Declaration Handler");
 		}
 	}
 	
