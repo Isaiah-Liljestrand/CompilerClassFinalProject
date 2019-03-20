@@ -17,6 +17,11 @@ public class IR {
 		instructions.add(elem);
 	}
 	
+	public static void addCommand(String command) {
+		initialize();
+		instructions.add(new IRelement(command));
+	}
+	
 	public static void addCommand(IRelement.command cmd, List<String> parameters) {
 		initialize();
 		instructions.add(new IRelement(cmd, parameters));
@@ -30,7 +35,7 @@ public class IR {
 	public static void createIRFromString(String file) {
 		String[] lines = file.split(" ");
 		for (String line : lines) {
-			IRelement newelem = new IRelement(line, " ");
+			IRelement newelem = new IRelement(line);
 			if (newelem != null) {
 				addCommand(newelem);
 			}
@@ -39,7 +44,7 @@ public class IR {
 	
 	public static void createIRFromStringList(List<String> lines) {
 		for (String line : lines) {
-			IRelement newelem = new IRelement(line, " ");
+			IRelement newelem = new IRelement(line);
 			if (newelem != null) {
 				addCommand(newelem);
 			}
