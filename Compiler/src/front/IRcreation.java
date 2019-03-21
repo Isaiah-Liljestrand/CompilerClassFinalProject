@@ -340,13 +340,62 @@ public class IRcreation {
 		int n = findValue(v1);
 		int n2 = findValue(v2);
 		switch(tree.token.type) {
-		
+		case simpleExpression:
+			if(n != 0 || n2 != 0) {
+				n = 1;
+			}
+			return String.valueOf(n);
+		case andExpression:
+			if(n != 0 && n2 != 0) {
+				return "1";
+			} else {
+				return "0";
+			}
+		case bitOrExpression:
+			return String.valueOf(n | n2);
+		case bitAndExpression:
+			return String.valueOf(n & n2);
+		case bitXorExpression:
+			return String.valueOf(n ^ n2);
+		case compareExpression:
+			if(tree.children.get(1).children.get(0).token.type == type_enum.equalOperator) {
+				if(n == n2) {
+					return "1";
+				}
+				return "0";
+			} else {
+				if(n != n2) {
+					return "1";
+				}
+				return "0";
+			}
+		case sumExpression:
+			if(tree.children.get(1).children.get(0).token.type == type_enum.additionOperator) {
+				return String.valueOf(n + n2);
+			} else {
+				return String.valueOf(n - n2);
+			}
+		case term:
+			type_enum opType = tree.children.get(1).children.get(0).token.type;
+			if(opType == type_enum.multiplicationOperator) {
+				return String.valueOf(n * n2);
+			} else if(opType == type_enum.divisionOperator) {
+				return String.valueOf(n / n2);
+			} else if(opType == type_enum.modulusOperator) {
+				return String.valueOf(n % n2);
+			} else {
+				//TODO: error handling
+			}
 		}
 		return null;
 	}
 	
 	private int findValue(String v) {
-		return ;
+		if(v.charAt(0) == '\'') {
+			return (int)v.charAt(1);
+	 	} else {
+	 		return Integer.parseInt(v);
+	 	}
 	}
 	
 	//Adds setting temp variables before function call.
