@@ -177,8 +177,40 @@ public class IRcreation {
 	//Calls whileH, forH, ifH, varDecH, expressionHandler, and any others we need to add.
 	//@ statementList
 	private void statementHandler(Ptree tree, SymbolTable table) {
-		
+		switch(tree.token.type) {
+		case statement:
+		case statementList:
+			for(Ptree t: tree.children) {
+				declarationHandler(t, table);
+			}
+			break;
+		case variableDeclaration:
+		case variableDeclarationList:
+			variableDeclarationHandler(tree, table);
+			break;
+		case whileStatement:
+			whileHandler(tree, table);
+			break;
+		case forStatement:
+			forHandler(tree, table);
+			break;
+		case ifStatement:
+			ifHandler(tree, table);
+			break;
+		case returnStatement:
+			//returnHandler(tree, table); //unsure if we wana make that funcion or leave it for expression handler
+		case simpleExpression:
+			expressionHandler(tree, table);
+			break;
+		default:
+			//expressionHandler(tree, table); //If we have other unhandled cases (like returnStatement) that I can't think of
+			for(Ptree t: tree.children) { //If we have unhandled garbage
+				declarationHandler(t, table);
+			}
+		}
+			
 	}
+	
 	
 	//Calls simpleExprHandler for while check
 	//Calls statementHandler for body
