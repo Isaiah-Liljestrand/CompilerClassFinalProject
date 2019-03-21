@@ -76,7 +76,7 @@ public class IRcreation {
 	 */
 	private void declarationHandler(Ptree tree) {
 		switch(tree.token.type) {
-		/*case program:
+		case program:
 			if(tree.children.size() > 0) {
 				declarationHandler(tree.children.get(0));
 			}
@@ -96,7 +96,7 @@ public class IRcreation {
 			break;
 		case declaration:
 			declarationHandler(tree.children.get(0)); //SHOULD never have >1 child
-			break;*/
+			break;
 		case functionDeclaration:
 			functionHandler(tree);
 			break;
@@ -104,10 +104,10 @@ public class IRcreation {
 			variableDeclarationHandler(tree);
 			break;
 		default:
-			for(Ptree t : tree.children) {
+			/*for(Ptree t : tree.children) {
 				declarationHandler(t);
-			}
-			//errorIn("Declaration Handler");
+			}*/
+			errorIn("Declaration Handler");
 		}
 	}
 	
@@ -330,13 +330,23 @@ public class IRcreation {
 	
 	//Handles not expressions
 	private String preProcess(Ptree tree, String v) {
-		return null;
+		int n = ~findValue(v);
+		return String.valueOf(n);
 		
 	}
 	
 	//Handles every other type of expression
 	private String preProcess(Ptree tree, String v1, String v2) {
+		int n = findValue(v1);
+		int n2 = findValue(v2);
+		switch(tree.token.type) {
+		
+		}
 		return null;
+	}
+	
+	private int findValue(String v) {
+		return ;
 	}
 	
 	//Adds setting temp variables before function call.
