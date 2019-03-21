@@ -152,7 +152,7 @@ public class IRcreation {
 		for(int i = 3; i < tree.children.size(); i++) {
 			if(tree.children.get(i).token.type == Token.type_enum.openCurlyBracket) {
 				if(tree.children.get(i+1).token.type != Token.type_enum.closedCurlyBracket) { //making sure not an empty function
-					statementHandler(tree.children.get(i+1), table);
+					statementHandler(tree.children.get(i+1));
 				}
 			}
 		}
