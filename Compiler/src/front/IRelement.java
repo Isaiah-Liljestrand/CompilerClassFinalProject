@@ -15,6 +15,7 @@ public class IRelement {
 		sub,
 		mul,
 		div,
+		mod,
 		eq,
 		neq,
 		not,
@@ -39,6 +40,7 @@ public class IRelement {
 		if (str.equals("sub")) return command.sub;
 		if (str.equals("mul")) return command.mul;
 		if (str.equals("div")) return command.div;
+		if (str.equals("mod")) return command.mod;
 		if (str.equals("eq")) return command.eq;
 		if (str.equals("neq")) return command.neq;
 		if (str.equals("not")) return command.not;
@@ -126,8 +128,8 @@ public class IRelement {
 		this.parameters = parameters;
 	}
 	
-	public IRelement(String input, String delimiter) {
-		String[] split = input.split(delimiter);
+	public IRelement(String input/*, String delimiter*/) {   //this seemed unnecessary
+		String[] split = input.split(/*delimiter*/" ");
 		if (split.length > 0) {
 			this.cmd = commandFromString(split[0]);
 			this.parameters = new ArrayList<String>();
