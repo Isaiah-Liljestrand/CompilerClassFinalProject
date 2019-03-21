@@ -1,7 +1,9 @@
 package front;
 
+
 import front.IRelement.command;
 import front.Token.type_enum;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,17 +113,90 @@ public class IRcreation {
 		}
 	}
 	
+	private String paramGetter(Ptree tree) {
+		String tmp = new String("");
+		if(tree.token.type == Token.type_enum.parameter) {
+			tmp = tmp + tree.children.get(0).children.get(0).token.token + " ";
+			tmp = tmp + tree.children.get(1).token.token;
+		}
+		else if(tree.token.type == Token.type_enum.comma) {
+			tmp = tmp + ", ";
+		}
+		else {
+			for(Ptree t: tree.children) {
+				tmp = tmp + paramGetter(t);
+			}	
+		}
+		return tmp;
+	}
+	
+	//@ functionDeclaration
 	//Deals with function declaration.
 	//calls statementHandler
 	private void functionHandler(Ptree tree) {
+		String tmp = new String(), tmp2 = new String();
+		Ptree tree2 = tree.children.get(3); //either the params list or )
 		
+		tmp = tmp + treverseDown(tree, findType(tree, Token.type_enum.variableTypeSpecifier)).children.get(0).token.token;
+		tmp = tmp + tree.children.get(1).token.token;
+		
+		//params
+		if(tree2.token.type != Token.type_enum.closedParenthesis) { //parems exist
+			tmp2 += paramGetter(tree2);
+			
+			/**
+			tmp2 = tmp2 + treverseDown(tree, findType(tree, Token.type_enum.variableTypeSpecifier)).children.get(0).token.token;
+			tmp2 = tmp2 + treverseDown(tree, findType(tree, Token.type_enum.parameter)).children.get(1).token.token;*/
+		}
+		IR.addCommand(tmp, Arrays.asList(tmp2.split(",")));
+		for(int i = 3; i < tree.children.size(); i++) {
+			if(tree.children.get(i).token.type == Token.type_enum.openCurlyBracket) {
+				if(tree.children.get(i+1).token.type != Token.type_enum.closedCurlyBracket) { //making sure not an empty function
+					statementHandler(tree.children.get(i+1), table);
+				}
+			}
+		}
+		
+		//IRelement in = new IRelement();
 	}
 	
 	//Deals with all statements.
 	//Calls whileH, forH, ifH, varDecH, expressionHandler, and any others we need to add.
+	//@ statementList
 	private void statementHandler(Ptree tree) {
-		
+		switch(tree.token.type) {
+		case statement:
+		case statementList:
+			for(Ptree t: tree.children) {
+				declarationHandler(t);
+			}
+			break;
+		case variableDeclaration:
+		case variableDeclarationList:
+			variableDeclarationHandler(tree);
+			break;
+		case whileStatement:
+			whileHandler(tree);
+			break;
+		case forStatement:
+			forHandler(tree);
+			break;
+		case ifStatement:
+			ifHandler(tree);
+			break;
+		case returnStatement:
+			//returnHandler(tree, table); //unsure if we wana make that funcion or leave it for expression handler
+		case simpleExpression:
+			expressionHandler(tree);
+			break;
+		default:
+			//expressionHandler(tree, table); //If we have other unhandled cases (like returnStatement) that I can't think of
+			for(Ptree t: tree.children) { //If we have unhandled garbage
+				declarationHandler(t);
+			}
+		}
 	}
+	
 	
 	//Calls simpleExprHandler for while check
 	//Calls statementHandler for body
