@@ -1,6 +1,7 @@
 package front;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class IR {
@@ -20,6 +21,11 @@ public class IR {
 	public static void addCommand(IRelement.command cmd, List<String> parameters) {
 		initialize();
 		instructions.add(new IRelement(cmd, parameters));
+	}
+	
+	public static void addCommand(IRelement.command cmd, String[] parameters) {
+			initialize();
+			instructions.add(new IRelement(cmd, new ArrayList<String>(Arrays.asList(parameters))));
 	}
 	
 	public static void addCommand(String cmd, List<String> parameters) {
