@@ -7,6 +7,8 @@ import java.util.List;
 
 public class IRcreation {
 	private static int whilecount;
+	private static int forcount;
+	private static int ifcount;
 	
 	public static void createIR(Ptree tree) {
 		whilecount = 0;
@@ -138,6 +140,15 @@ public class IRcreation {
 	//Calls statementHandler for body
 	//Add jmps as needed.
 	private static void whileHandler(Ptree tree) {
+		//General IR structure:
+		//Start label
+		//Conditional step
+		//Conditional jump to end label
+		//statementList body
+		//Jump unconditionally to start label
+		//End label
+		//Destroy variables
+		
 		if (tree.children.size() != 7) {
 			//Add error check
 			return;
@@ -147,9 +158,9 @@ public class IRcreation {
 		//Add the initial while label which is unconditionally jumped to at the end of each while loop.
 		IR.addCommand(IRelement.command.label, new String[]{"whilestart" + wc});
 		//Temp variable %1 should be equal to the result of the simple expression
-		simpleExpressionHandler(tree.children.get(2));
+		simpleExpressionHandler(tree.children.get(2), 1);
 		//Test variable %1 and jump to whileend label if the test fails
-		IR.addCommand(IRelement.command.jmpcnd, new String[]{"whileend" + wc});
+		IR.addCommand(IRelement.command.jmpcnd, new String[]{"whileend" + wc, "1"});
 		//Handle the statements inside the while loop.
 		//The returned list of strings includes the names of all variables created in the statement list.
 		List<String> statement_return = statementHandler(tree.children.get(5));
@@ -167,7 +178,47 @@ public class IRcreation {
 	//Calls statementHandler for body
 	//Add jmps as needed.
 	private static void forHandler(Ptree tree) {
+		//General IR structure:
+		//Initialization step
+		//Start label
+		//Conditional step
+		//Conditional jump to end label
+		//statementList body
+		//Incrementation step
+		//Jump unconditionally to start label
+		//End label
+		//Destroy variables
 		
+		//Handle the initialization part of the for loop.
+		//Has to account for 3 options: an expression, variable declaration, or nothing.
+		int nextlook = 4; //This value adjusts which children are looked at depending on if the initialization step is empty.
+		if (tree.children.get(2).token.type == Token.type_enum.expressionStatement) {
+			expressionHandler(tree.children.get(2));
+		} else if (tree.children.get(2).token.type == Token.type_enum.variableDeclaration) {
+			variableDeclarationHandler(tree.children.get(2));
+		} else {
+			nextlook = 3;
+		}
+		
+		//Add a label for the start of the for loop.
+		String fc = Integer.toString(forcount);
+		forcount++;
+		IR.addCommand(IRelement.command.label, new String[]{"forstart" + fc});
+		
+		//Handle the condition of the for loop
+		simpleExpressionHandler(tree.children.get(nextlook), 1);
+		//Jump conditionally to the end if the condition fails
+		IR.addCommand(IRelement.command.jmpcnd, new String[]{"forend" + fc, "1"});
+		//Handle the statementList inside the for loop body
+		List<String> statement_return = statementHandler(tree.children.get(nextlook + 6));
+		//Handle the incrementation part of the for loop
+		expressionHandler(tree.children.get(nextlook + 2));
+		//Jump unconditionally back to the start of the for loop
+		IR.addCommand(IRelement.command.jmp, new String[]{"forstart" + fc});
+		//Add a label for the end of the for loop.
+		IR.addCommand(IRelement.command.label, new String[]{"forend" + fc});
+		//Destroy the variables created in the for loop body
+		destroyVars(statement_return);
 	}
 	
 	//Calls simpleExpressionHandler for the if check
@@ -175,7 +226,57 @@ public class IRcreation {
 	//Also check for an else and call statementHandler again.
 	//jmps added as needed.
 	private static void ifHandler(Ptree tree) {
+		/*
+		With else
+		Conditional
+		jmpcnd to else
+		if body
+		jmp to endlabel
+		elselabel
+		else body
+		endlabel
+		destroy vars
 
+		Without else
+		Conditional
+		jmpcnd to end
+		if body
+		endlabel
+		destroy vars
+		*/
+		String ic = Integer.toString(ifcount);
+		ifcount++;
+		
+		if (tree.children.size() > 7) { //Has else
+			List<String> statement_return;
+			//Handle the condition of the if statement
+			simpleExpressionHandler(tree.children.get(2), 1);
+			//Jump conditionally to the else statement if the condition fails
+			IR.addCommand(IRelement.command.jmpcnd, new String[]{"else" + ic, "1"});
+			//Handle the statementList inside the if statement body
+			statement_return = statementHandler(tree.children.get(5));
+			//Jump unconditionally to the ifend label
+			IR.addCommand(IRelement.command.jmp, new String[]{"ifend" + ic});
+			//Add a label for the else statement
+			IR.addCommand(IRelement.command.label, new String[]{"else" + ic});
+			//Handle the statementList inside the else statement body
+			statement_return = statementHandler(tree.children.get(8));
+			//Add a label for the end of the if statement
+			IR.addCommand(IRelement.command.label, new String[]{"ifend" + ic});
+			//Destroy the variables created in the if statement body or else statement body
+			destroyVars(statement_return);
+		} else { //Doesn't have else			
+			//Handle the condition of the if statement
+			simpleExpressionHandler(tree.children.get(2), 1);
+			//Jump conditionally to the end if the condition fails
+			IR.addCommand(IRelement.command.jmpcnd, new String[]{"ifend" + ic, "1"});
+			//Handle the statementList inside the if statement body
+			List<String> statement_return = statementHandler(tree.children.get(5));
+			//Add a label for the end of the if statement
+			IR.addCommand(IRelement.command.label, new String[]{"ifend" + ic});
+			//Destroy the variables created in the if statement body
+			destroyVars(statement_return);
+		}
 	}
 	
 	//Calls simpleExpressionHandler
@@ -216,7 +317,7 @@ public class IRcreation {
 		}*/
 	}
 	
-	private List<String> variableHelper(Ptree tree, type_enum type) {
+	private static List<String> variableHelper(Ptree tree, type_enum type) {
 		switch(tree.token.type) {
 		case variableDeclarationList:
 			List<String> list = new ArrayList<String>();
