@@ -32,13 +32,11 @@ public class IRcreation {
 		case program:
 			declarationHandler(tree.children.get(0));
 			break;
+		case declaration:
 		case declarationList:
 			for(Ptree t: tree.children) {
 				declarationHandler(t);
 			}
-			break;
-		case declaration:
-			declarationHandler(tree.children.get(0)); //SHOULD never have >1 child
 			break;
 		case functionDeclaration:
 			functionHandler(tree);
@@ -103,6 +101,7 @@ public class IRcreation {
 		String tmp = new String(), tmp2 = new String();
 		Ptree tree2 = tree.children.get(3); //either the params list or )
 		
+		tmp = tmp + tree.children.get(0).children.get(0).token.token;
 		tmp = tmp + treverseDown(tree, findType(tree, Token.type_enum.variableTypeSpecifier)).children.get(0).token.token;
 		tmp = tmp + tree.children.get(1).token.token;
 		
