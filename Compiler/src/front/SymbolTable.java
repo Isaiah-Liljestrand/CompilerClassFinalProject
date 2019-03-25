@@ -103,7 +103,7 @@ public class SymbolTable {
 		switch(tree.token.type) {
 		case functionDeclaration:
 			SymbolTable sTable = new SymbolTable(table, tree.children.get(1).token.token);
-			buildStatementTable(tree, sTable);
+			buildStatementTable(tree, sTable, false);
 			return;
 		case variableDeclaration:
 			type_enum vType = tree.children.get(0).children.get(0).token.type;
@@ -159,12 +159,24 @@ public class SymbolTable {
 			System.out.println("Error: parameter passed in through function is already declared");
 			return;
 		case ifStatement:
-			sTable = new SymbolTable(table, "if");
-			buildStatementTable(tree, sTable);
+			if(!top) {
+				sTable = new SymbolTable(table, "if");
+				buildStatementTable(tree, sTable, true);
+			} else {
+				for(Ptree t : tree.children) {
+					buildStatementTable(t, table, false);
+				}
+			}
 			return;
 		case whileStatement:
-			sTable = new SymbolTable(table, "while");
-			buildStatementTable(tree, sTable);
+			if(!top) {
+				sTable = new SymbolTable(table, "while");
+				buildStatementTable(tree, sTable, true);
+			} else {
+				for(Ptree t : tree.children) {
+					buildStatementTable(t, table, false);
+				}
+			}
 			return;
 		case variableDeclaration:
 			variableDeclarationHelper(tree, tree.children.get(0).children.get(0).token.type, table);
@@ -189,10 +201,8 @@ public class SymbolTable {
 			}
 		default:
 			//System.out.println("Default");
-			if(tree.children != null) {
-				for(Ptree t : tree.children) {
-					buildStatementTable(t, table, false);
-				}
+			for(Ptree t : tree.children) {
+				buildStatementTable(t, table, false);
 			}
 			
 		}
