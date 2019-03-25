@@ -40,6 +40,7 @@ public class Ptree {
 	public void printTree() {
 		System.out.println("\nParse Tree:");
 		PT(0); //assumes the calling Ptree is root
+		System.out.println();
 	}
 	
 	/**

@@ -69,6 +69,7 @@ public class Main {
 		
 		symTable = new SymbolTable();
 		SymbolTable.buildDeclarationTable(grammar.root, symTable);
+		symTable.printSymbolTable();
 	}
 
 	

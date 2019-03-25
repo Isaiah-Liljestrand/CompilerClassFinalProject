@@ -83,13 +83,12 @@ public class SymbolTable {
 	
 	public void printSymbolTable() {
 	//	System.out.println("TEST");
+		System.out.println("Symbol Table " + label + ":");
 		for(SymbolTableEntry entry : this.entries) {
 			System.out.println(entry.name + " " + entry.value);
 		}
 		for(SymbolTable table : this.children) {
-			for(SymbolTableEntry entry2 : table.entries) {
-				System.out.println(entry2.name + " " + entry2.value);
-			}
+			table.printSymbolTable();
 		}
 	}
 	
@@ -152,11 +151,12 @@ public class SymbolTable {
 		switch(tree.token.type) {
 		case parameter:
 			String string = tree.children.get(1).token.token;
-			type_enum type = tree.children.get(0).token.type;
+			type_enum type = tree.children.get(0).children.get(0).token.type;
 			if(!table.isVariableNameInScope(string)) {
 				table.addEntry(string,  type);
+			} else {
+				System.out.println("Error: parameter passed in through function is already declared");
 			}
-			System.out.println("Error: parameter passed in through function is already declared");
 			return;
 		case ifStatement:
 			if(!top) {
@@ -196,7 +196,7 @@ public class SymbolTable {
 			if(table.isVariableNameInScope(tree.children.get(0).token.token)) {
 				return;
 			} else {
-				System.out.println("Warning: Variable " + tree.token.token + " Not defined in current scope");
+				System.out.println("Warning: Variable " + tree.children.get(0).token.token + " Not defined in current scope");
 				return;
 			}
 		default:
