@@ -15,11 +15,6 @@ public class IRcreation {
 		whilecount = 0;
 		//These functions will not be called in this order. Only calling declarationHandler
 		declarationHandler(tree);
-		functionHandler(tree);
-		whileHandler(tree);
-		forHandler(tree);
-		ifHandler(tree);
-		expressionHandler(tree);
 	}
 	
 
@@ -100,6 +95,13 @@ public class IRcreation {
 	//Deals with function declaration.
 	//calls statementHandler
 	private static void functionHandler(Ptree tree) {
+		//Gets this ParseTree bit. functionDeclaration → functionTypeSpecifier functionDeclarationID ( parameterList ) { statementList }
+		//Create IR with command "function" and a list of parameters that are type followed by ID.
+		//Create the parameters string array from parameterList parsetree
+		//Something like this -> IR.addCommand(IRelement.command.function, new String[] {"int", "x", "int", "y"});
+		//Take the name of the function and it's list of parameters and make an IR.
+		//Check each top level statement in statementList. If none of them is a return statement, add one at the end.
+		
 		String tmp = new String(), tmp2 = new String();
 		Ptree tree2 = tree.children.get(3); //either the params list or )
 		
@@ -381,7 +383,7 @@ public class IRcreation {
 	//Check if variable assignment +=, *=, /=, -=, or =
 	//Calls simpleExpressionHandler
 	private static void expressionHandler(Ptree tree) {
-		
+		Ptree expression = tree.children.get(0);
 	}
 	
 	//Deals with math and other things involved in simple expressions
@@ -571,6 +573,11 @@ public class IRcreation {
 	
 	//Adds setting temp variables before function call.
 	private static void functionCallHandler(Ptree tree, int i) {
-		
+		//Get this parse tree call → ID ( argList )
+		//Need to make this IR -> call name param1 ... paramN name
+		//Last name is optional and is only used for assignment.
+		//Call simpleExpressionHandler(Ptree tree, int i) for each parameter that is a more complex simple exression.
+		//i will be incremented for each parameter.
+		//If simpleExpressionHandler returns a string then do not increment i 
 	}
 }

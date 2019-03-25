@@ -29,7 +29,9 @@ public class IRelement {
 		jmpcnd,
 		function,
 		ret,
-		label
+		label,
+		goto_,
+		gotolabel
 	}
 	
 	public static command commandFromString(String str) {
@@ -55,63 +57,16 @@ public class IRelement {
 		if (str.equals("function")) return command.function;
 		if (str.equals("ret")) return command.ret;
 		if (str.equals("label")) return command.label;
+		if (str.equals("goto_")) return command.goto_;
+		if (str.equals("gotolabel")) return command.gotolabel;
 		return null;
 	}
-	
-	public static String stringFromCommand(command cmd) {
-		return cmd.toString();
-		/*switch(cmd) {
-		case declare:
-			return "declare";
-		case destroy:
-			return "destroy";
-		case set:
-			return "set";
-		case add:
-			return "add";
-		case sub:
-			return "sub";
-		case mul:
-			return "mul";
-		case div:
-			return "div";
-		case eq:
-			return "eq";
-		case neq:
-			return "neq";
-		case not:
-			return "not";
-		case bor:
-			return "bor";
-		case bxor:
-			return "bxor";
-		case band:
-			return "band";
-		case or:
-			return "or";
-		case and:
-			return "and";
-		case xor:
-			return "xor";
-		case jmp:
-			return "jmp";
-		case jmpcnd:
-			return "jmpcnd";
-		case function:
-			return "function";
-		case ret:
-			return "ret";
-		case label:
-			return "label";
-		}
-		return "error";
-	*/}
 	
 	public String toString() {
 		if (this.cmd == null) {
 			return "";
 		}
-		String output = stringFromCommand(this.cmd);
+		String output = this.cmd.toString();
 		for(String param : parameters) {
 			output += " " + param;
 		}
