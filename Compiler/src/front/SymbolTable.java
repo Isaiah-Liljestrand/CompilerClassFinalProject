@@ -29,6 +29,7 @@ public class SymbolTable {
 	private SymbolTable(SymbolTable parent, String label) {
 		this.label = label;
 		this.parent = parent;
+		this.parent.children.add(this);
 		this.children = new ArrayList<SymbolTable>();
 		this.entries = new ArrayList<SymbolTableEntry>();
 	}
@@ -82,13 +83,12 @@ public class SymbolTable {
 	
 	public void printSymbolTable() {
 	//	System.out.println("TEST");
+		System.out.println("Symbol Table " + label + ":");
 		for(SymbolTableEntry entry : this.entries) {
 			System.out.println(entry.name + " " + entry.value);
 		}
 		for(SymbolTable table : this.children) {
-			for(SymbolTableEntry entry2 : table.entries) {
-				System.out.println(entry2.name + " " + entry2.value);
-			}
+			table.printSymbolTable();
 		}
 	}
 	
@@ -102,11 +102,11 @@ public class SymbolTable {
 		switch(tree.token.type) {
 		case functionDeclaration:
 			SymbolTable sTable = new SymbolTable(table, tree.children.get(1).token.token);
-			buildStatementTable(tree, sTable);
+			buildStatementTable(tree, sTable, false);
 			return;
 		case variableDeclaration:
 			type_enum vType = tree.children.get(0).children.get(0).token.type;
-			variableDeclarationHelper(tree, vType, table);
+			variableDeclarationHelper(tree.children.get(1), vType, table);
 			return;
 		default:
 			for(Ptree t : tree.children) {
@@ -144,25 +144,39 @@ public class SymbolTable {
 	 * Builds symbol tables under function declarations or control flow statements
 	 * @param tree current Ptree being dealt with
 	 * @param table top level symbol table
+	 * @param top  whether it is the top of a loop or conditional
 	 */
-	private static void buildStatementTable(Ptree tree, SymbolTable table) {
+	private static void buildStatementTable(Ptree tree, SymbolTable table, boolean top) {
 		SymbolTable sTable;
 		switch(tree.token.type) {
 		case parameter:
 			String string = tree.children.get(1).token.token;
-			type_enum type = tree.children.get(0).token.type;
+			type_enum type = tree.children.get(0).children.get(0).token.type;
 			if(!table.isVariableNameInScope(string)) {
 				table.addEntry(string,  type);
+			} else {
+				System.out.println("Error: parameter passed in through function is already declared");
 			}
-			System.out.println("Error: parameter passed in through function is already declared");
 			return;
 		case ifStatement:
-			sTable = new SymbolTable(table, "if");
-			buildStatementTable(tree, sTable);
+			if(!top) {
+				sTable = new SymbolTable(table, "if");
+				buildStatementTable(tree, sTable, true);
+			} else {
+				for(Ptree t : tree.children) {
+					buildStatementTable(t, table, false);
+				}
+			}
 			return;
 		case whileStatement:
-			sTable = new SymbolTable(table, "while");
-			buildStatementTable(tree, sTable);
+			if(!top) {
+				sTable = new SymbolTable(table, "while");
+				buildStatementTable(tree, sTable, true);
+			} else {
+				for(Ptree t : tree.children) {
+					buildStatementTable(t, table, false);
+				}
+			}
 			return;
 		case variableDeclaration:
 			variableDeclarationHelper(tree, tree.children.get(0).children.get(0).token.type, table);
@@ -170,7 +184,7 @@ public class SymbolTable {
 		case call:
 			//verify that function call is in scope
 			//System.out.println("Call");
-			if(table.isFunctionNameInScope(tree.children.get(0).token.token)){
+			if(table.isFunctionNameInScope(tree.children.get(0).token.token)) {
 				return;
 			} else {
 				System.out.println("Warning: Function " + tree.token.token + " Not defined in current scope");
@@ -182,15 +196,13 @@ public class SymbolTable {
 			if(table.isVariableNameInScope(tree.children.get(0).token.token)) {
 				return;
 			} else {
-				System.out.println("Warning: Variable " + tree.token.token + " Not defined in current scope");
+				System.out.println("Warning: Variable " + tree.children.get(0).token.token + " Not defined in current scope");
 				return;
 			}
 		default:
 			//System.out.println("Default");
-			if(tree.children != null) {
-				for(Ptree t : tree.children) {
-					buildDeclarationTable(t, table);
-				}
+			for(Ptree t : tree.children) {
+				buildStatementTable(t, table, false);
 			}
 			
 		}
