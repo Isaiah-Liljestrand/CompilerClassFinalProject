@@ -19,60 +19,7 @@ public class IRcreation {
 		expressionHandler(tree);
 	}
 	
-	
-	/**
-	 * !!!Won't this be entirely handled by ErrorHandler???!!!
-	 * 
-	 * because I don't wana type "System.out.println()" a bunch of times for error handling & java doesn't allow goto
-	 * @param handler where the error occured
-	 */
-	private static void errorIn(String handler) {
-		System.out.println("~~ ERROR in " + handler +  " ~~");
-	}
-	
-	/**
-	 * gets the Ptree i children(0)s down 
-	 * @param tree the starting tree
-	 * @param i how far to traverse
-	 * @return the Ptree i children(0)s down
-	 */
-	private static Ptree treverseDown(Ptree tree, int i) {
-		for(int j = 0; j < i; j++) {
-			tree = tree.children.get(0);
-		}
-		return tree;
-	}
-	
-	
-	/**
-	 * returns the int of how far down the first children line it takes to find a child of type
-	 * @param tree
-	 * @param type
-	 * @return
-	 */
-	private static int findType(Ptree tree, Token.type_enum type) {
-		int i = 0;
-		while(tree.token.type != type) {
-			i++;
-			tree = tree.children.get(0);
-		}
-		return i;
-	}
-	
-	/**
-	 * returns the int of how far down the first child to have 2 children is, or has no children
-	 * @param tree the starting tree
-	 * @param i how far to traverse
-	 * @return the Ptree i children(0)s down
-	 */
-	private static int find2Kids(Ptree tree) {
-		int i = 0;
-		while(tree.children.size() != 1){
-			i++;
-			tree = tree.children.get(0);
-		}
-		return i;
-	}
+
 	
 	/**
 	 * Global variable declarations and function declarations. Everything passed on to further functions.
@@ -82,21 +29,11 @@ public class IRcreation {
 	private static void declarationHandler(Ptree tree) {
 		switch(tree.token.type) {
 		case program:
-			if(tree.children.size() > 0) {
-				declarationHandler(tree.children.get(0));
-			}
-			else {
-				errorIn("Declaration Handler");
-			}
+			declarationHandler(tree.children.get(0));
 			break;
 		case declarationList:
-			if(tree.children.size() >= 1) {
-				for(Ptree t: tree.children) {
-					declarationHandler(t);
-				}
-			}
-			else {
-				errorIn("Declaration Handler");
+			for(Ptree t: tree.children) {
+				declarationHandler(t);
 			}
 			break;
 		case declaration:
@@ -109,10 +46,7 @@ public class IRcreation {
 			variableDeclarationHandler(tree);
 			break;
 		default:
-			/*for(Ptree t : tree.children) {
-				declarationHandler(t);
-			}*/
-			errorIn("Declaration Handler");
+			//TODO: error checking
 		}
 	}
 	
@@ -146,8 +80,8 @@ public class IRcreation {
 		whilecount++;
 		//Add the initial while label which is unconditionally jumped to at the end of each while loop.
 		IR.addCommand(IRelement.command.label, new String[]{"whilestart" + wc});
-		//Temp variable %1 should be equal to the result of the simple expression
-		simpleExpressionHandler(tree.children.get(2));
+		//Temporary variable %1 should be equal to the result of the simple expression
+		simpleExpressionHandler(tree.children.get(2), 1);
 		//Test variable %1 and jump to whileend label if the test fails
 		IR.addCommand(IRelement.command.jmpcnd, new String[]{"whileend" + wc});
 		//Handle the statements inside the while loop.
@@ -216,7 +150,7 @@ public class IRcreation {
 		}*/
 	}
 	
-	private List<String> variableHelper(Ptree tree, type_enum type) {
+	private static List<String> variableHelper(Ptree tree, type_enum type) {
 		switch(tree.token.type) {
 		case variableDeclarationList:
 			List<String> list = new ArrayList<String>();
@@ -413,9 +347,9 @@ public class IRcreation {
 				return String.valueOf(n / n2);
 			} else if(opType == type_enum.modulusOperator) {
 				return String.valueOf(n % n2);
-			} else {
-				//TODO: error handling
 			}
+		default:
+			//TODO: error handling
 		}
 		return null;
 	}

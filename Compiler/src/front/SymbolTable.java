@@ -29,6 +29,7 @@ public class SymbolTable {
 	private SymbolTable(SymbolTable parent, String label) {
 		this.label = label;
 		this.parent = parent;
+		this.parent.children.add(this);
 		this.children = new ArrayList<SymbolTable>();
 		this.entries = new ArrayList<SymbolTableEntry>();
 	}
@@ -106,7 +107,7 @@ public class SymbolTable {
 			return;
 		case variableDeclaration:
 			type_enum vType = tree.children.get(0).children.get(0).token.type;
-			variableDeclarationHelper(tree, vType, table);
+			variableDeclarationHelper(tree.children.get(1), vType, table);
 			return;
 		default:
 			for(Ptree t : tree.children) {
@@ -144,8 +145,9 @@ public class SymbolTable {
 	 * Builds symbol tables under function declarations or control flow statements
 	 * @param tree current Ptree being dealt with
 	 * @param table top level symbol table
+	 * @param top  whether it is the top of a loop or conditional
 	 */
-	private static void buildStatementTable(Ptree tree, SymbolTable table) {
+	private static void buildStatementTable(Ptree tree, SymbolTable table, boolean top) {
 		SymbolTable sTable;
 		switch(tree.token.type) {
 		case parameter:
@@ -170,7 +172,7 @@ public class SymbolTable {
 		case call:
 			//verify that function call is in scope
 			//System.out.println("Call");
-			if(table.isFunctionNameInScope(tree.children.get(0).token.token)){
+			if(table.isFunctionNameInScope(tree.children.get(0).token.token)) {
 				return;
 			} else {
 				System.out.println("Warning: Function " + tree.token.token + " Not defined in current scope");
@@ -189,7 +191,7 @@ public class SymbolTable {
 			//System.out.println("Default");
 			if(tree.children != null) {
 				for(Ptree t : tree.children) {
-					buildDeclarationTable(t, table);
+					buildStatementTable(t, table, false);
 				}
 			}
 			
