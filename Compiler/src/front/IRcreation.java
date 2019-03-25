@@ -3,6 +3,7 @@ package front;
 import front.IRelement.command;
 import front.Token.type_enum;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class IRcreation {
@@ -50,16 +51,122 @@ public class IRcreation {
 		}
 	}
 	
+	/**
+	 * gets the Ptree i children(0)s down 
+	 * @param tree the starting tree
+	 * @param i how far to traverse
+	 * @return the Ptree i children(0)s down
+	 */
+	private static Ptree treverseDown(Ptree tree, int i) {
+		for(int j = 0; j < i; j++) {
+			tree = tree.children.get(0);
+		}
+		return tree;
+	}
+	
+	
+	/**
+	 * returns the int of how far down the first children line it takes to find a child of type
+	 * @param tree
+	 * @param type
+	 * @return
+	 */
+	private static int findType(Ptree tree, Token.type_enum type) {
+		int i = 0;
+		while(tree.token.type != type) {
+			i++;
+			tree = tree.children.get(0);
+		}
+		return i;
+	}
+	
+	private static String paramGetter(Ptree tree) {
+		String tmp = new String("");
+		if(tree.token.type == Token.type_enum.parameter) {
+			tmp = tmp + tree.children.get(0).children.get(0).token.token + " ";
+			tmp = tmp + tree.children.get(1).token.token;
+		}
+		else if(tree.token.type == Token.type_enum.comma) {
+			tmp = tmp + ", ";
+		}
+		else {
+			for(Ptree t: tree.children) {
+				tmp = tmp + paramGetter(t);
+			}	
+		}
+		return tmp;
+	}
+	
 	//Deals with function declaration.
 	//calls statementHandler
 	private static void functionHandler(Ptree tree) {
+		String tmp = new String(), tmp2 = new String();
+		Ptree tree2 = tree.children.get(3); //either the params list or )
 		
+		tmp = tmp + treverseDown(tree, findType(tree, Token.type_enum.variableTypeSpecifier)).children.get(0).token.token;
+		tmp = tmp + tree.children.get(1).token.token;
+		
+		//params
+		if(tree2.token.type != Token.type_enum.closedParenthesis) { //parems exist
+			tmp2 += paramGetter(tree2);
+			
+			/**
+			tmp2 = tmp2 + treverseDown(tree, findType(tree, Token.type_enum.variableTypeSpecifier)).children.get(0).token.token;
+			tmp2 = tmp2 + treverseDown(tree, findType(tree, Token.type_enum.parameter)).children.get(1).token.token;*/
+		}
+		IR.addCommand(tmp, Arrays.asList(tmp2.split(",")));
+		for(int i = 3; i < tree.children.size(); i++) {
+			if(tree.children.get(i).token.type == Token.type_enum.openCurlyBracket) {
+				if(tree.children.get(i+1).token.type != Token.type_enum.closedCurlyBracket) { //making sure not an empty function
+					statementHandler(tree.children.get(i+1));
+				}
+			}
+		}
 	}
 	
-	//Deals with all statements.
-	//Calls whileH, forH, ifH, varDecH, expressionHandler, and any others we need to add.
+	/**
+	 * Deals with all statements.
+	 * Calls whileH, forH, ifH, varDecH, expressionHandler, and any others we need to add
+	 * @param tree
+	 * @return list of var names declared in it
+	 */
+	
+	
 	private static List<String> statementHandler(Ptree tree) {
+		List<String> vars = new ArrayList<String>();
 		
+		switch(tree.token.type) {
+		case statement:
+		case statementList:
+			for(Ptree t: tree.children) {
+				vars.addAll(statementHandler(t));
+			}
+			break;
+		case variableDeclaration:
+		case variableDeclarationList:
+			vars.addAll(variableDeclarationHandler(tree));
+			break;
+		case whileStatement:
+			whileHandler(tree);
+			break;
+		case forStatement:
+			forHandler(tree);
+			break;
+		case ifStatement:
+			ifHandler(tree);
+			break;
+		case returnStatement:
+			//returnHandler(tree, table); //unsure if we wana make that funcion or leave it for expression handler
+		case simpleExpression:
+			expressionHandler(tree);
+			break;
+		default:
+			//expressionHandler(tree, table); //If we have other unhandled cases (like returnStatement) that I can't think of
+			for(Ptree t: tree.children) { //If we have unhandled garbage
+				declarationHandler(t);
+			}
+		}
+		return vars;
 	}
 	
 	private static void destroyVars(List<String> varnames) {
