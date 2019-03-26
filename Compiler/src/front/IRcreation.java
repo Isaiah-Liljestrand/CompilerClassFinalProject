@@ -585,5 +585,12 @@ public class IRcreation {
 		//Call simpleExpressionHandler(Ptree tree, int i) for each parameter that is a more complex simple exression.
 		//i will be incremented for each parameter.
 		//If simpleExpressionHandler returns a string then do not increment i 
+		for(Ptree child : tree.children) {
+			switch(child.token.type) {
+			case identifier:
+			case parameterList:
+			case parameter:
+			}
+		}
 	}
 }
