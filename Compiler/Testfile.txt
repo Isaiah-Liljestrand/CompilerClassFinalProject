@@ -4,6 +4,8 @@ int main(int i, int j) {
 	int t;
 	goto jump;
 rel:
+	i++;
+	j = 7;
 	int x = 5 + y, m = 2 * 5 + 7;
 jump:
 	while(t == x + 5 - 5 * 8) {

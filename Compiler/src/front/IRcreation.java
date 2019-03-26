@@ -90,6 +90,7 @@ public class IRcreation {
 	
 	//Deals with function declaration.
 	//calls statementHandler
+	//@functionDeclaration
 	private static void functionHandler(Ptree tree) {
 		//Gets this ParseTree bit. functionDeclaration → functionTypeSpecifier functionDeclarationID ( parameterList ) { statementList }
 		//Create IR with command "function" and a list of parameters that are type followed by ID.
@@ -116,6 +117,7 @@ public class IRcreation {
 		} else {
 			index = 5;
 		}
+		
 		//tree of the statementList
 		tree2 = tree.children.get(index);
 		
@@ -413,6 +415,21 @@ public class IRcreation {
 	//Calls simpleExpressionHandler
 	private static void expressionHandler(Ptree tree) {
 		Ptree expression = tree.children.get(0);
+		for(Ptree child : expression.children) {
+			switch(child.token.type) {
+			case call:
+				functionCallHandler(child, 1);
+				break;
+			case simpleExpression:
+				simpleExpressionHandler(child, 1);
+				break;
+			case incrementOperator:
+				IR.addCommand(child.token.token);
+				break;
+			case decrementOperator:
+				IR.addCommand(child.token.token);
+			}
+		}
 	}
 	
 	//Deals with math and other things involved in simple expressions
@@ -602,11 +619,46 @@ public class IRcreation {
 	
 	//Adds setting temp variables before function call.
 	private static void functionCallHandler(Ptree tree, int i) {
+		String tmp;
+		String name = null;
+		String ID = null;
+		int nflag = 0;
+		List<String> params = new ArrayList<String>();
 		//Get this parse tree call → ID ( argList )
 		//Need to make this IR -> call name param1 ... paramN name
 		//Last name is optional and is only used for assignment.
 		//Call simpleExpressionHandler(Ptree tree, int i) for each parameter that is a more complex simple exression.
 		//i will be incremented for each parameter.
 		//If simpleExpressionHandler returns a string then do not increment i 
+		for(Ptree child : tree.children) {
+			switch(child.token.type) {
+			case identifier:
+				if(nflag == 0) {
+					ID = child.token.token;
+					nflag++;
+				}
+				else {
+					name = child.token.token;
+				}
+				break;
+			case parameterList:
+				for(Ptree p : child.children) {
+					tmp = simpleExpressionHandler(p, i);
+					if(tmp == null) {
+						i++;
+						params.add(p.token.token);
+					}
+					else {
+						params.add(tmp);
+					}
+				}
+				break;
+			default:
+			}
+		}
+		if(name != null) {
+			params.add(name);
+		}
+		IR.addCommand(ID, params);
 	}
 }
