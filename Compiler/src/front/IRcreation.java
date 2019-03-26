@@ -94,6 +94,7 @@ public class IRcreation {
 	
 	//Deals with function declaration.
 	//calls statementHandler
+	//@functionDeclaration
 	private static void functionHandler(Ptree tree) {
 		//Gets this ParseTree bit. functionDeclaration → functionTypeSpecifier functionDeclarationID ( parameterList ) { statementList }
 		//Create IR with command "function" and a list of parameters that are type followed by ID.
@@ -102,12 +103,12 @@ public class IRcreation {
 		//Take the name of the function and it's list of parameters and make an IR.
 		//Check each top level statement in statementList. If none of them is a return statement, add one at the end.
 		
-		String tmp = new String(), tmp2 = new String();
+		String /**tmp = new String(),*/ tmp2 = new String();
 		Ptree tree2 = tree.children.get(3); //either the params list or )
 		
-		tmp = tmp + tree.children.get(0).children.get(0).token.token;
+		/**tmp = tmp + tree.children.get(0).children.get(0).token.token;
 		tmp = tmp + treverseDown(tree, findType(tree, Token.type_enum.variableTypeSpecifier)).children.get(0).token.token;
-		tmp = tmp + tree.children.get(1).token.token;
+		tmp = tmp + tree.children.get(1).token.token;*/
 		
 		//params
 		if(tree2.token.type != Token.type_enum.closedParenthesis) { //parems exist
@@ -117,13 +118,18 @@ public class IRcreation {
 			tmp2 = tmp2 + treverseDown(tree, findType(tree, Token.type_enum.variableTypeSpecifier)).children.get(0).token.token;
 			tmp2 = tmp2 + treverseDown(tree, findType(tree, Token.type_enum.parameter)).children.get(1).token.token;*/
 		}
-		IR.addCommand(tmp, Arrays.asList(tmp2.split(",")));
+		IR.addCommand(IRelement.command.function, Arrays.asList(tmp2.split("\\s*(,|\\s)\\s*")));
 		for(int i = 3; i < tree.children.size(); i++) {
 			if(tree.children.get(i).token.type == Token.type_enum.openCurlyBracket) {
 				if(tree.children.get(i+1).token.type != Token.type_enum.closedCurlyBracket) { //making sure not an empty function
 					statementHandler(tree.children.get(i+1));
 				}
 			}
+		}
+		if(tree.children.get(tree.children.size() - 1).children.get(0).token.type != Token.type_enum.returnStatement){ //no return function at the end
+			List<String> ret = new ArrayList<String>();
+			ret.add("0"); //returning 0 for success
+			IR.addCommand(IRelement.command.ret, ret); //unsure 
 		}
 	}
 	
