@@ -75,21 +75,17 @@ public class IRcreation {
 		return i;
 	}
 	
-	private static String paramGetter(Ptree tree) {
-		String tmp = new String("");
+	private static List<String> paramGetter(Ptree tree) {
+		List<String> list = new ArrayList<String>();
 		if(tree.token.type == Token.type_enum.parameter) {
-			tmp = tmp + tree.children.get(0).children.get(0).token.token + " ";
-			tmp = tmp + tree.children.get(1).token.token;
-		}
-		else if(tree.token.type == Token.type_enum.comma) {
-			tmp = tmp + ", ";
-		}
-		else {
+			list.add(tree.children.get(0).children.get(0).token.token);
+			list.add(tree.children.get(1).token.token);
+		} else {
 			for(Ptree t: tree.children) {
-				tmp = tmp + paramGetter(t);
-			}	
+				list.addAll(paramGetter(t));
+			}
 		}
-		return tmp;
+		return list;
 	}
 	
 	//Deals with function declaration.
@@ -102,28 +98,61 @@ public class IRcreation {
 		//Take the name of the function and it's list of parameters and make an IR.
 		//Check each top level statement in statementList. If none of them is a return statement, add one at the end.
 		
-		String tmp = new String(), tmp2 = new String();
-		Ptree tree2 = tree.children.get(3); //either the params list or )
+		//List to be passed into addCommand
+		List<String> list = new ArrayList<String>();
+		int index;
+		Ptree tree2 = tree.children.get(3);
 		
-		tmp = tmp + tree.children.get(0).children.get(0).token.token;
-		tmp = tmp + treverseDown(tree, findType(tree, Token.type_enum.variableTypeSpecifier)).children.get(0).token.token;
-		tmp = tmp + tree.children.get(1).token.token;
+		//Adding the function type
+		list.add(tree.children.get(0).children.get(0).token.token);
 		
-		//params
-		if(tree2.token.type != Token.type_enum.closedParenthesis) { //parems exist
-			tmp2 += paramGetter(tree2);
-			
-			/**
-			tmp2 = tmp2 + treverseDown(tree, findType(tree, Token.type_enum.variableTypeSpecifier)).children.get(0).token.token;
-			tmp2 = tmp2 + treverseDown(tree, findType(tree, Token.type_enum.parameter)).children.get(1).token.token;*/
+		//Adding the name of the function
+		list.add(tree.children.get(1).token.token);
+		
+		//Adding parameters if they exist
+		if(tree2.token.type == type_enum.parameterList) {
+			list.addAll(paramGetter(tree2));
+			index = 6;
+		} else {
+			index = 5;
 		}
-		IR.addCommand(tmp, Arrays.asList(tmp2.split(",")));
-		for(int i = 3; i < tree.children.size(); i++) {
-			if(tree.children.get(i).token.type == Token.type_enum.openCurlyBracket) {
-				if(tree.children.get(i+1).token.type != Token.type_enum.closedCurlyBracket) { //making sure not an empty function
-					statementHandler(tree.children.get(i+1));
+		//tree of the statementList
+		tree2 = tree.children.get(index);
+		
+		IR.addCommand(command.function, list);
+		destroyVars(statementHandler(tree2));
+		
+		if(!returnStatementExists(tree2)) {
+			if(tree.children.get(0).children.get(0).token.type == type_enum.k_void) {
+				IR.addCommand("return");
+			} else {
+				IR.addCommand("return 0");
+			}
+			//Add return statement depending on function type
+		}
+	}
+	
+	private static boolean returnStatementExists(Ptree tree) {
+		switch(tree.token.type) {
+		case statementList:
+		case statement:
+			for(Ptree t: tree.children) {
+				if(returnStatementExists(t)) {
+					return true;
 				}
 			}
+			return false;
+		case returnStatement:
+			return true;
+		case ifStatement:
+			if(tree.children.size() < 10) {
+				return false;
+			}
+			if(returnStatementExists(tree.children.get(5)) && returnStatementExists(tree.children.get(9))) {
+				return true;
+			}
+		default:
+			return false;
 		}
 	}
 	

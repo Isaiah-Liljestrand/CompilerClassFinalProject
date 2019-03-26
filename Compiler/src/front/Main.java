@@ -45,6 +45,7 @@ public class Main {
 			ErrorHandler.printStrings("Scanner");
 			return;
 		}
+		
 		if (tokenize) {
 			System.out.println("Scanner:");
 			scanner.printTokens();

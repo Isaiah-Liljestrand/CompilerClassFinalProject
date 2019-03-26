@@ -130,6 +130,7 @@ public class Token {
 			break;
 		case ':':
 			this.type = type_enum.colon;
+			break;
 		case ',':
 			this.type = type_enum.comma;
 			break;

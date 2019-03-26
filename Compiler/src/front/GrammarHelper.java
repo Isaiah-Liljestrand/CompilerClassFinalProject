@@ -450,12 +450,12 @@ public class GrammarHelper {
 	 * @param type enumeration that describes what token to search for
 	 * @return index of element or -1 if failed
 	 */
-	public static int findObjectForward(List<Token> tokens, type_enum type) {
+	public static int findObjectForward(List<Token> tokens, type_enum type, int offset) {
 		int index = 0, pCount = 0;
 		while(index < tokens.size()) {
 			if(tokens.get(index).type == type) {
 				if(pCount == 0) {
-					return index;
+					return index + offset;
 				}
 			}
 			switch(tokens.get(index).type) {

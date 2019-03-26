@@ -62,7 +62,7 @@ public class Grammar {
 		//Case where the lowest current declaration ends with a semicolon, splits the input appropriately
 		if(tokens.get(tokens.size() - 1).type == type_enum.semicolon) {
 			index = GrammarHelper.findObject(tokens.subList(0, tokens.size() - 1), type_enum.semicolon, type_enum.closedCurlyBracket);
-			if(index < 0) {
+			if(index == -1) {
 				return null;
 			}
 			index++;
@@ -76,11 +76,11 @@ public class Grammar {
 		//Case where the lowest current declaration ends with a closed curly bracket, splits the input appropriately
 		} else if (tokens.get(tokens.size() - 1).type == type_enum.closedCurlyBracket) {
 			index = GrammarHelper.findMatchingBracket(tokens, tokens.size() - 1);
-			if(index < 0) {
+			if(index == -1) {
 				return null;
 			}
 			index = GrammarHelper.findObject(tokens.subList(0, index), type_enum.semicolon, type_enum.closedCurlyBracket);
-			if(index < 0) {
+			if(index == -1) {
 				return null;
 			}
 			index++;
@@ -332,7 +332,7 @@ public class Grammar {
 		
 		//finds comma that should seperate parameters
 		int index = GrammarHelper.findObject(tokens, type_enum.comma);
-		if(index < 0) {
+		if(index == -1) {
 			return null;
 		}
 		tree.addChild(parameterList(tokens.subList(0, index)));
@@ -379,17 +379,22 @@ public class Grammar {
 		}
 		
 		//Single statment
-		tree.addChild(statement(tokens));
-		if(tree.verifyChildren()) {
-			return tree;
-		}
-		tree.removeChildren();
+		//tree.addChild(statement(tokens));
+		//if(tree.verifyChildren()) {
+		//	return tree;
+		//}
+		//tree.removeChildren();
 		
-		//Multiple statements where the last statement ends with a semicolon
-		if(tokens.get(tokens.size() - 1).type == type_enum.semicolon) {
-			index = GrammarHelper.findObject(tokens.subList(0, tokens.size() - 1), type_enum.semicolon, type_enum.closedCurlyBracket);
-			if(index < 0) {
-				return null;
+		//Multiple statements where the last statement ends with a semicolon or colon
+		if(tokens.get(tokens.size() - 1).type == type_enum.semicolon || tokens.get(tokens.size() - 1).type == type_enum.colon) {
+			index = GrammarHelper.findObject(tokens.subList(0, tokens.size() - 1), type_enum.semicolon, type_enum.closedCurlyBracket, type_enum.colon);
+			if(index == -1) {
+				tree.addChild(statement(tokens));
+				if(tree.verifyChildren()) {
+					return tree;
+				} else {
+					return null;
+				}
 			}
 			index++;
 			tree.addChild(statementList(tokens.subList(0, index)));
@@ -403,14 +408,22 @@ public class Grammar {
 		} else if (tokens.get(tokens.size() - 1).type == type_enum.closedCurlyBracket) {
 			index = GrammarHelper.findMatchingBracket(tokens, tokens.size() - 1);
 			//Case where the last statement is a if else block
-			if(tokens.get(index - 1).type == type_enum.k_else && tokens.get(index - 2).type == type_enum.closedCurlyBracket) {
+			if(tokens.get(index - 1).type == type_enum.k_else) {
 				index = GrammarHelper.findMatchingBracket(tokens, index - 2);
-				if(index < 0) {
+				if(index == -1) {
 					return null;
 				}
 				index = GrammarHelper.findObject(tokens.subList(0, index), type_enum.k_if);
-				if(index < 0) {
+				if(index == -1) {
 					return null;
+				}
+				if(index == 0) {
+					tree.addChild(statement(tokens));
+					if(tree.verifyChildren()) {
+						return tree;
+					} else {
+						return null;
+					}
 				}
 				tree.addChild(statementList(tokens.subList(0, index)));
 				tree.addChild(statement(tokens.subList(index, tokens.size())));
@@ -419,9 +432,14 @@ public class Grammar {
 				}
 				return null;
 			}
-			index = GrammarHelper.findObject(tokens.subList(0, index), type_enum.closedCurlyBracket, type_enum.semicolon);
-			if(index < 0) {
-				return null;
+			index = GrammarHelper.findObject(tokens.subList(0, index), type_enum.closedCurlyBracket, type_enum.semicolon, type_enum.colon);
+			if(index == -1) {
+				tree.addChild(statement(tokens));
+				if(tree.verifyChildren()) {
+					return tree;
+				} else {
+					return null;
+				}
 			}
 			index++;
 			tree.addChild(statementList(tokens.subList(0, index)));
@@ -530,7 +548,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		//TODO: error reporting
+		ErrorHandler.addError("Failure in goto statement, line number:" + tokens.get(0).lineNumber);
 		return null;
 	}
 	
@@ -550,6 +568,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
+		ErrorHandler.addError("Failure in goto jump place, line number:" + tokens.get(0).lineNumber);
 		return null;
 	}
 	
@@ -570,7 +589,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		//TODO: add error reporting
+		ErrorHandler.addError("Failure in return statement, line number:" + tokens.get(0).lineNumber);
 		return null;
 	}
 	
@@ -595,7 +614,6 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		//TODO: error reporting
 		return null;
 	}
 	
@@ -667,7 +685,7 @@ public class Grammar {
 		}
 		
 		tree.addChild(GrammarHelper.openParenthesis(tokens.get(1)));
-		int index = GrammarHelper.findObjectForward(tokens.subList(2, tokens.size()), type_enum.semicolon);
+		int index = GrammarHelper.findObjectForward(tokens.subList(2, tokens.size()), type_enum.semicolon, 2);
 		if(index == -1 || index + 1 >= tokens.size()) {
 			//TODO: error handling
 			return null;
@@ -685,22 +703,22 @@ public class Grammar {
 		} else {
 			tree.addChild(GrammarHelper.semicolon(tokens.get(2)));
 		}
-		int index2 = GrammarHelper.findObjectForward(tokens.subList(index + 1, tokens.size()), type_enum.semicolon);
+		int index2 = GrammarHelper.findObjectForward(tokens.subList(index + 1, tokens.size()), type_enum.semicolon, index + 1);
 		if(index2 == -1 || index2 + 1 >= tokens.size()) {
 			//TODO: error handling
 			return null;
 		}
 		tree.addChild(simpleExpression(tokens.subList(index + 1, index2)));
 		tree.addChild(GrammarHelper.semicolon(tokens.get(index2)));
-		index = GrammarHelper.findObjectForward(tokens.subList(index2, tokens.size()), type_enum.openCurlyBracket);
+		index = GrammarHelper.findObjectForward(tokens.subList(index2, tokens.size()), type_enum.closedParenthesis, index2);
 		if(index == -1 || index + 1 >= tokens.size()) {
-			//TODO: error handling
+			System.out.println(index);
 			return null;
 		}
-		tree.addChild(expression(tokens.subList(index2 + 1, index - 1)));
-		tree.addChild(GrammarHelper.closedParenthesis(tokens.get(index - 1)));
-		tree.addChild(GrammarHelper.openCurlyBracket(tokens.get(index)));
-		tree.addChild(statementList(tokens.subList(index + 1, tokens.size() - 1)));
+		tree.addChild(expression(tokens.subList(index2 + 1, index)));
+		tree.addChild(GrammarHelper.closedParenthesis(tokens.get(index)));
+		tree.addChild(GrammarHelper.openCurlyBracket(tokens.get(index + 1)));
+		tree.addChild(statementList(tokens.subList(index + 2, tokens.size() - 1)));
 		tree.addChild(GrammarHelper.closedCurlyBracket(tokens.get(tokens.size() - 1)));
 		if(tree.verifyChildren()) {
 			return tree;
@@ -738,7 +756,7 @@ public class Grammar {
 		int index2 = GrammarHelper.findMatchingBracket(tokens, index + 1);
 		
 		//Checks that the bracket location is legitimate
-		if(index2 < 0 || !(index + 2 < index2)) {
+		if(index2 == -1 || !(index + 2 < index2)) {
 			//TODO: error reporting
 			return null;
 		}
@@ -766,7 +784,7 @@ public class Grammar {
 		index = GrammarHelper.findMatchingBracket(tokens, index2 + 2);
 		
 		//Checks if the bracket index is a legitimate size
-		if(index < 0 || !(index2 + 3 < index) || index != tokens.size()) {
+		if(index == -1 || !(index2 + 3 < index) || index != tokens.size()) {
 			//TODO: error reporting
 			return null;
 		}
@@ -864,6 +882,14 @@ public class Grammar {
 		
 		//Checks for a legitimate size
 		if(tokens.size() == 0) {
+			return null;
+		}
+		
+		if(GrammarHelper.findObject(tokens, type_enum.closedCurlyBracket, type_enum.openCurlyBracket) != -1) {
+			return null;
+		}
+		
+		if(GrammarHelper.findObject(tokens, type_enum.semicolon, type_enum.colon) != -1) {
 			return null;
 		}
 		
@@ -1311,7 +1337,7 @@ public class Grammar {
 		}
 		tree.addChild(GrammarHelper.identifier(tokens.get(0)));
 		tree.addChild(GrammarHelper.openParenthesis(tokens.get(1)));
-		if(tokens.size() > 3) {
+		if(tokens.size() > 3 && tree.verifyChildren()) {
 			tree.addChild(argList(tokens.subList(2, tokens.size() - 1)));
 		}
 		tree.addChild(GrammarHelper.closedParenthesis(tokens.get(tokens.size() - 1)));
@@ -1345,7 +1371,7 @@ public class Grammar {
 		}
 		//seperates out input by a comma
 		int index = GrammarHelper.findObject(tokens, type_enum.comma);
-		if(index < 0) {
+		if(index == -1) {
 			return null;
 		}
 		tree.addChild(argList(tokens.subList(0, index)));

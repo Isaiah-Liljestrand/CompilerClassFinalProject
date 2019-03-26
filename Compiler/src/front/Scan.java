@@ -54,7 +54,6 @@ public class Scan {
 				character = line.charAt(i);
 				if(!isValidCharacter(character)) {
 					ErrorHandler.addError("Chraracter " + character + " not recognized");
-					System.out.println("Error: '" + character + "' not recognized");
 				} else if(!(character == ' ') && !(character == '\t')) {
 					for(j = line.length(); j > i; j--) {
 						tokenString = line.substring(i, j);
@@ -134,6 +133,7 @@ public class Scan {
 		string = string + "&|%|"; 					// & and %
 		string = string + "\\!|,|"; 				// ! and ,
 		string = string + ";|\\=|";      			// ; and =
+		string = string + ":|";						// :
 		string = string + "\'[a-zA-Z]\'|";			// 'character'
 		string = string + "0x[a-f0-9]+|"; 			// Accepts hex input
 		string = string + "/\\*.*\\*/|";			// Accepts any comments of the form /*......*/

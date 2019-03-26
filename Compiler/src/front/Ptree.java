@@ -126,7 +126,20 @@ public class Ptree {
 				}
 			}
 			if(!b) {
-				ErrorHandler.addError("No goto jump place for goto call " + tcall.children.get(1).token.token + "at line " + tcall.children.get(1).token.lineNumber);
+				ErrorHandler.addError("No goto jump place for goto call " + tcall.children.get(1).token.token + " at line " + tcall.children.get(1).token.lineNumber);
+				return;
+			}
+		}
+		
+		for(Ptree tjump : gotoJumpPlace) {
+			b = false;
+			for(Ptree tcall : gotoCalls) {
+				if(tcall.children.get(1).token.token.equals(tjump.children.get(0).token.token)) {
+					b = true;
+				}
+			}
+			if(!b) {
+				ErrorHandler.addError("Unused goto jump place: " + tjump.children.get(0).token.token + " at line " + tjump.children.get(0).token.lineNumber);
 				return;
 			}
 		}
