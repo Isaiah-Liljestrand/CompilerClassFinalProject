@@ -3,7 +3,6 @@ package front;
 import front.IRelement.command;
 import front.Token.type_enum;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class IRcreation {
@@ -454,37 +453,40 @@ public class IRcreation {
 	//Calls simpleExpressionHandler
 	private static void expressionHandler(Ptree tree) {
 		Ptree expression = tree.children.get(0);
-		
-			switch(expression.token.type) {
-			case call:
-				functionCallHandler(expression.children.get(0).children.get(0), 1);
-				break;
-			case incrementOperator:
-				IR.addCommand("add " + expression.children.get(0).children.get(0).token.token + " 1");
-				//This isn't a command, this is just adding a line to the IR that says "++"
-				//IR.addCommand(child.token.token);
-				break;
-			case decrementOperator:
-				IR.addCommand("sub" + expression.children.get(0).children.get(0).token.token + " 1");
-				break;
-			case additionAssignmentOperator:
-				//Don't know if I did this right, trying to get the variable or constant after it
-				IR.addCommand("add" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
-				break;
-			case subtractionAssignmentOperator:
-				//Don't know if I did this right, trying to get the variable or constant after it
-				IR.addCommand("sub" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
-			case multiplicationAssignmentOperator:
-				//Don't know if I did this right, trying to get the variable or constant after it
-				IR.addCommand("mul" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
-			case divisionAssignmentOperator:
-				//Don't know if I did this right, trying to get the variable or constant after it
-				IR.addCommand("div" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
-			case assignmentOperator:
-				//Don't know if I did this right, trying to get the variable or constant after it
-				IR.addCommand("set" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
-				break;
-			default:
+		String n;
+		switch(expression.children.get(1).token.type) {
+		case call:
+			functionCallHandler(expression.children.get(0).children.get(0), 1);
+			break;
+		case incrementOperator:
+			IR.addCommand("add " + expression.children.get(0).children.get(0).token.token + " 1");
+			break;
+		case decrementOperator:
+			IR.addCommand("sub " + expression.children.get(0).children.get(0).token.token + " 1");
+			break;
+		case additionAssignmentOperator:
+			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
+				IR.addCommand("add " + expression.children.get(0).children.get(0).token.token + " %1");
+			} else {
+				IR.addCommand("add " + expression.children.get(0).children.get(0).token.token + " " + n);
+			}
+			//IR.addCommand("add " + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
+			break;
+		case subtractionAssignmentOperator:
+			//Don't know if I did this right, trying to get the variable or constant after it
+			IR.addCommand("sub" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
+		case multiplicationAssignmentOperator:
+			//Don't know if I did this right, trying to get the variable or constant after it
+			IR.addCommand("mul" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
+		case divisionAssignmentOperator:
+			//Don't know if I did this right, trying to get the variable or constant after it
+			IR.addCommand("div" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
+		case assignmentOperator:
+			//Don't know if I did this right, trying to get the variable or constant after it
+			IR.addCommand("set" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
+			break;
+		default:
+			ErrorHandler.addError("default case reached in expressionHandler");
 		}
 	}
 	
