@@ -454,10 +454,10 @@ public class IRcreation {
 	private static void expressionHandler(Ptree tree) {
 		Ptree expression = tree.children.get(0);
 		String n;
+		if(expression.children.get(0).token.type == type_enum.call) {
+			functionCallHandler(expression.children.get(0), 0);
+		}
 		switch(expression.children.get(1).token.type) {
-		case call:
-			functionCallHandler(expression.children.get(0).children.get(0), 1);
-			break;
 		case incrementOperator:
 			IR.addCommand("add " + expression.children.get(0).children.get(0).token.token + " 1");
 			break;
