@@ -454,10 +454,10 @@ public class IRcreation {
 	//Calls simpleExpressionHandler
 	private static void expressionHandler(Ptree tree) {
 		Ptree expression = tree.children.get(0);
-		for(Ptree child : expression.children) {
-			switch(child.token.type) {
+		
+			switch(expression.token.type) {
 			case call:
-				functionCallHandler(child, 1);
+				functionCallHandler(expression.children.get(0).children.get(0), 1);
 				break;
 			case incrementOperator:
 				IR.addCommand("add " + expression.children.get(0).children.get(0).token.token + " 1");
@@ -465,15 +465,26 @@ public class IRcreation {
 				//IR.addCommand(child.token.token);
 				break;
 			case decrementOperator:
-				IR.addCommand(child.token.token);
+				IR.addCommand("sub" + expression.children.get(0).children.get(0).token.token + " 1");
 				break;
 			case additionAssignmentOperator:
+				//Don't know if I did this right, trying to get the variable or constant after it
+				IR.addCommand("add" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
+				break;
 			case subtractionAssignmentOperator:
+				//Don't know if I did this right, trying to get the variable or constant after it
+				IR.addCommand("sub" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
 			case multiplicationAssignmentOperator:
+				//Don't know if I did this right, trying to get the variable or constant after it
+				IR.addCommand("mul" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
 			case divisionAssignmentOperator:
+				//Don't know if I did this right, trying to get the variable or constant after it
+				IR.addCommand("div" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
 			case assignmentOperator:
+				//Don't know if I did this right, trying to get the variable or constant after it
+				IR.addCommand("set" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
+				break;
 			default:
-			}
 		}
 	}
 	
@@ -734,8 +745,9 @@ public class IRcreation {
 			}
 		}
 		if(name != null) {
-			params.add(name);
+			IR.addCommand("call" + ID + params + name);
+		} else {
+			IR.addCommand("call" + ID + params);
 		}
-		IR.addCommand(ID, params);
 	}
 }
