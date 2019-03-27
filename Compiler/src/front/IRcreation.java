@@ -189,7 +189,7 @@ public class IRcreation {
 			}
 			break;
 		case gotoJumpPlace:
-			IR.addCommand("gotolabel " + tree.children.get(0));
+			IR.addCommand("gotolabel " + tree.children.get(0).token.token);
 			break;
 		case gotoStatement:
 			IR.addCommand("goto_ " + tree.children.get(1).token.token);
@@ -282,14 +282,12 @@ public class IRcreation {
 		
 		//Handle the initialization part of the for loop.
 		//Has to account for 3 options: an expression, variable declaration, or nothing.
-		int nextlook = 4; //This value adjusts which children are looked at depending on if the initialization step is empty.
+		int next = 3; //This value adjusts which children are looked at depending on if the initialization step is empty.
 		List<String> forvars = new ArrayList<String>();
 		if (tree.children.get(2).token.type == Token.type_enum.expressionStatement) {
 			expressionHandler(tree.children.get(2));
 		} else if (tree.children.get(2).token.type == Token.type_enum.variableDeclaration) {
 			forvars.addAll(variableDeclarationHandler(tree.children.get(2)));
-		} else {
-			nextlook = 3;
 		}
 		
 		//Add a label for the start of the for loop.
@@ -298,7 +296,7 @@ public class IRcreation {
 		IR.addCommand(IRelement.command.label, new String[]{"forstart" + fc});
 		
 		//Handle the condition of the for loop
-		if((expression = simpleExpressionHandler(tree.children.get(nextlook), 1)) != null) {
+		if((expression = simpleExpressionHandler(tree.children.get(next), 1)) != null) {
 			IR.addCommand("set %1 " + expression);
 		}
 		IR.addCommand("not %1");
@@ -307,10 +305,10 @@ public class IRcreation {
 		IR.addCommand(IRelement.command.jmpcnd, new String[]{"forend" + fc, "1"});
 		
 		//Handle the statementList inside the for loop body
-		destroyVars(statementHandler(tree.children.get(nextlook + 6)));
+		destroyVars(statementHandler(tree.children.get(next + 6)));
 		
 		//Handle the incrementation part of the for loop
-		expressionHandler(tree.children.get(nextlook + 2));
+		expressionHandler(tree.children.get(next + 2));
 		
 		//Jump unconditionally back to the start of the for loop
 		IR.addCommand(IRelement.command.jmp, new String[]{"forstart" + fc});
@@ -407,14 +405,27 @@ public class IRcreation {
 	}
 	
 	private static List<String> variableHelper(Ptree tree, type_enum type) {
+		List<String> list = new ArrayList<String>();
 		switch(tree.token.type) {
 		case variableDeclarationList:
-			List<String> list = new ArrayList<String>();
 			for(Ptree t : tree.children) {
 				list.addAll(variableHelper(t, type));
 			}
 			return list;
 		case variableDeclarationInitialize:
+			String expression, ID = tree.children.get(0).children.get(0).token.token;
+			IR.addCommand("declare " + ID);
+			if(tree.children.size() == 3) {
+				if((expression = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
+					IR.addCommand("set " + ID + " %1");
+				} else {
+					IR.addCommand("set " + ID + " " + expression);
+				}
+			}
+			list.add(ID);
+			return list;
+		case comma:
+			return list;
 			//add declaration
 			//call simple expression if needed then set variable to %i
 			//return List containing the variable being dealt with
@@ -430,7 +441,9 @@ public class IRcreation {
 	//Check if variable assignment +=, *=, /=, -=, or =
 	//Calls simpleExpressionHandler
 	private static void expressionHandler(Ptree tree) {
-		tree = tree.children.get(0);
+		if(tree.token.type == type_enum.expressionStatement) {
+			tree = tree.children.get(0);
+		}
 		String n;
 		if(tree.children.get(0).token.type == type_enum.call) {
 			functionCallHandler(tree.children.get(0), 0);

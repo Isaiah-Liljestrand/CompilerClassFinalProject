@@ -12,8 +12,8 @@ jump:
 		return 'a';
 	}
 	
-	for(int m = 89; m != 99; m++) {
-		x -= m;
+	for(int n = 89; m != 99; m++) {
+		x -= n;
 	}
 	t = 5;
 	int r = t;

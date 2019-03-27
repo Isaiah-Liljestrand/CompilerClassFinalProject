@@ -57,6 +57,12 @@ public class IR {
 		}
 	}
 	
+	public static void printIR() {
+		for(String t : stringListFromIR()) {
+			System.out.println(t);
+		}
+	}
+	
 	public static List<String> stringListFromIR() {
 		List<String> output = new ArrayList<String>();
 		for(IRelement elem : instructions) {
