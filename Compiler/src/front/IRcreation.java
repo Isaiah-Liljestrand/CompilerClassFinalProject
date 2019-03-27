@@ -460,7 +460,9 @@ public class IRcreation {
 				functionCallHandler(child, 1);
 				break;
 			case incrementOperator:
-				IR.addCommand(child.token.token);
+				IR.addCommand("add " + expression.children.get(0).children.get(0).token.token + " 1");
+				//This isn't a command, this is just adding a line to the IR that says "++"
+				//IR.addCommand(child.token.token);
 				break;
 			case decrementOperator:
 				IR.addCommand(child.token.token);
@@ -699,9 +701,9 @@ public class IRcreation {
 		String ID = null;
 		int nflag = 0;
 		List<String> params = new ArrayList<String>();
-		//Get this parse tree call → ID ( argList )
+		//Get this parse tree call - ID ( argList )
 		//Need to make this IR -> call name param1 ... paramN name
-		//Last name is optional and is only used for assignment.
+		//Last name is optional and is only used for assignment. if i is 0 then it is a void call
 		//Call simpleExpressionHandler(Ptree tree, int i) for each parameter that is a more complex simple exression.
 		//i will be incremented for each parameter.
 		//If simpleExpressionHandler returns a string then do not increment i 
