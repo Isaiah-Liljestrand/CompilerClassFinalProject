@@ -1,5 +1,3 @@
-
-
 int main(int i, int j) {
 	int t;
 	goto jump;

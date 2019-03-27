@@ -49,20 +49,26 @@ public class Grammar {
 		
 		//Invalid if the list size is 0
 		if(tokens.size() == 0) {
+			ErrorHandler.addError("declarationList called on a subset of size zero");
 			return null;
 		}
 		
 		//Checks if the passed in tokens represent a single declaration
-		tree.addChild(declaration(tokens));
-		if(tree.verifyChildren()) {
-			return tree;
-		}
-		tree.removeChildren();
+		//tree.addChild(declaration(tokens));
+		//if(tree.verifyChildren()) {
+		//	return tree;
+		//}
+		//tree.removeChildren();
 		
 		//Case where the lowest current declaration ends with a semicolon, splits the input appropriately
 		if(tokens.get(tokens.size() - 1).type == type_enum.semicolon) {
 			index = GrammarHelper.findObject(tokens.subList(0, tokens.size() - 1), type_enum.semicolon, type_enum.closedCurlyBracket);
 			if(index == -1) {
+				tree.addChild(declaration(tokens));
+				if(tree.verifyChildren()) {
+					return tree;
+				}
+				ErrorHandler.addError("Error in declarationList, find failed at line:" + tokens.get(0).lineNumber);
 				return null;
 			}
 			index++;
@@ -81,6 +87,11 @@ public class Grammar {
 			}
 			index = GrammarHelper.findObject(tokens.subList(0, index), type_enum.semicolon, type_enum.closedCurlyBracket);
 			if(index == -1) {
+				tree.addChild(declaration(tokens));
+				if(tree.verifyChildren()) {
+					return tree;
+				}
+				ErrorHandler.addError("Error in declarationList, find failed at line:" + tokens.get(0).lineNumber);
 				return null;
 			}
 			index++;
@@ -92,7 +103,7 @@ public class Grammar {
 			return null;
 		}
 		
-		//Failed to satisfy any pre-existing constructs
+		ErrorHandler.addError("Error in declarationList, failed to fit any pre-existing constructs at line:" + tokens.get(0).lineNumber);
 		return null;
 	}
 
@@ -106,18 +117,24 @@ public class Grammar {
 		Ptree tree = new Ptree(type_enum.declaration);
 		
 		//Checks if declaration is a function declaration
-		tree.addChild(functionDeclaration(tokens));
-		if(tree.verifyChildren()) {
-			return tree;
-		}
-		tree.removeChildren();
-		
+		if(tokens.get(tokens.size() - 1).type == type_enum.closedCurlyBracket) {
+			tree.addChild(functionDeclaration(tokens));
+			if(tree.verifyChildren()) {
+				return tree;
+			}
+			return null;
 		//Checks if the declaration is a variable declaration
-		tree.addChild(variableDeclaration(tokens));
-		if(tree.verifyChildren()) {
-			return tree;
+		} else if(tokens.get(tokens.size() -1).type == type_enum.semicolon) {
+			tree.addChild(variableDeclaration(tokens));
+			if(tree.verifyChildren()) {
+				return tree;
+			}
+			ErrorHandler.addError("variableDeclaration failed at line:" + tokens.get(0).lineNumber);
+			return null;
+		} else {
+			ErrorHandler.addError("Failed to create anything in declaration at line:" + tokens.get(0).lineNumber);
+			return null;
 		}
-		return null;
 	}
 	
 	
@@ -170,23 +187,23 @@ public class Grammar {
 			return null;
 		}
 		
-		//Single variable declaration
-		tree.addChild(variableDeclarationInitialize(tokens));
-		if(tree.verifyChildren()) {
-			return tree;
-		}
-		tree.removeChildren();
-		
-		//Verifies that the size is large enough to be valid for multiple declarations
-		if(tokens.size() < 3) {
-			return null;
-		}
 		
 		//Splits input based on farthest right comma
 		int index = GrammarHelper.findObject(tokens, type_enum.comma);
-		if(index < 1 || index > tokens.size() - 2) {
+		if(index == -1) {
+			tree.addChild(variableDeclarationInitialize(tokens));
+			if(tree.verifyChildren()) {
+				return tree;
+			}
 			return null;
 		}
+		if(tokens.size() < 3) {
+			return null;
+		}
+		if(index == 0 || index > tokens.size() - 2) {
+			return null;
+		}
+
 		tree.addChild(variableDeclarationList(tokens.subList(0, index)));
 		tree.addChild(GrammarHelper.comma(tokens.get(index)));
 		tree.addChild(variableDeclarationInitialize(tokens.subList(index + 1, tokens.size())));
@@ -239,6 +256,7 @@ public class Grammar {
 	private Ptree variableDeclarationID(Token token) {
 		if(token.type != type_enum.identifier) {
 			return null;
+			
 		}
 		Ptree tree = new Ptree(type_enum.variableDeclarationID);
 		tree.addChild(new Ptree(token));
@@ -256,8 +274,8 @@ public class Grammar {
 		int index, index2;
 		
 		//Verifies there are at least the minimum possible tokens for a function declaration
-		if(tokens.size() < 6) {
-			//System.out.println("FunctionDeclaration did nothing");
+		if(tokens.size() < 7) {
+			ErrorHandler.addError("Illegitimate size for functionDeclaration at line:" + tokens.get(0).lineNumber);
 			return null;
 		}
 		tree.addChild(functionTypeSpecifier(tokens.get(0)));
@@ -265,6 +283,7 @@ public class Grammar {
 		tree.addChild(GrammarHelper.openParenthesis(tokens.get(2)));
 		index = GrammarHelper.findMatchingParenthesis(tokens, 2);
 		if (index == -1 || index > tokens.size() - 3) {
+			ErrorHandler.addError("Failed to find matching parenthesis or illegitimate placement in functionDeclaration at line:" + tokens.get(0).lineNumber);
 			return null;
 		}
 		
@@ -278,6 +297,7 @@ public class Grammar {
 		
 		//Verifies legitimacy of index2 values
 		if (index2 != tokens.size() - 1 || index2 < (index + 3)) {
+			ErrorHandler.addError("Failed to find a legitimate match for bracket in functionDeclaration at line:" + tokens.get(0).lineNumber);
 			return null;
 		}
 
@@ -307,6 +327,7 @@ public class Grammar {
 			tree.addChild(new Ptree(token));
 			return tree;
 		default:
+			ErrorHandler.addError("functionTypeSpecifier failed at line:" + token.lineNumber);
 			return null;
 		}
 	}
@@ -320,20 +341,30 @@ public class Grammar {
 	private Ptree parameterList(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.parameterList);
 		if(tokens.size() == 0) {
+			ErrorHandler.addError("parameterList was called on an empty set of tokens");
 			return null;
  		}
 		
 		//Case where only one parameter is passed in
-		tree.addChild(parameter(tokens));
-		if(tree.verifyChildren()) {
-			return tree;
-		}
-		tree.removeChildren();
+		//tree.addChild(parameter(tokens));
+		//if(tree.verifyChildren()) {
+		//	return tree;
+		//}
+		//tree.removeChildren();
 		
 		//finds comma that should seperate parameters
 		int index = GrammarHelper.findObject(tokens, type_enum.comma);
-		if(index == -1) {
+		if(index == 0 || index == tokens.size() - 1) {
+			ErrorHandler.addError("Invalid comma placement on line:" + tokens.get(0).lineNumber);
 			return null;
+		}
+		if(index == -1) {
+			tree.addChild(parameter(tokens));
+			if(tree.verifyChildren()) {
+				return tree;
+			}
+			ErrorHandler.addError("parameterList failed at line:" + tokens.get(0).lineNumber);
+			
 		}
 		tree.addChild(parameterList(tokens.subList(0, index)));
 		tree.addChild(GrammarHelper.comma(tokens.get(index)));
@@ -341,6 +372,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
+		ErrorHandler.addError("parameterList failed due to invalid arguments at line:" + tokens.get(0).lineNumber);
 		return null;
 	}
 	
@@ -353,6 +385,7 @@ public class Grammar {
 	private Ptree parameter(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.parameter);
 		if(tokens.size() != 2) {
+			ErrorHandler.addError("invalid size of string passed into parameter at line:" + tokens.get(0).lineNumber);
 			return null;
 		}
 		tree.addChild(variableTypeSpecifier(tokens.get(0)));
@@ -360,6 +393,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
+		ErrorHandler.addError("parameter inputs are invalid at line:" + tokens.get(0).lineNumber);
 		return null;
 	}
 	
@@ -375,6 +409,7 @@ public class Grammar {
 		
 		//Invalid size
 		if(tokens.size() == 0) {
+			ErrorHandler.addError("Empty list of tokens passed into statementList");
 			return null;
 		}
 		
@@ -393,6 +428,7 @@ public class Grammar {
 				if(tree.verifyChildren()) {
 					return tree;
 				} else {
+					ErrorHandler.addError("Failed to instantiate a single statement at line:" + tokens.get(tokens.size() - 1).lineNumber);
 					return null;
 				}
 			}
@@ -411,10 +447,12 @@ public class Grammar {
 			if(tokens.get(index - 1).type == type_enum.k_else) {
 				index = GrammarHelper.findMatchingBracket(tokens, index - 2);
 				if(index == -1) {
+				ErrorHandler.addError("Failed to find matching bracket to else statement at line:" + tokens.get(index - 2).lineNumber);
 					return null;
 				}
 				index = GrammarHelper.findObject(tokens.subList(0, index), type_enum.k_if);
 				if(index == -1) {
+					ErrorHandler.addError("Failed to find if statement preceding else statement near line:" + tokens.get(index));
 					return null;
 				}
 				if(index == 0) {
@@ -422,6 +460,7 @@ public class Grammar {
 					if(tree.verifyChildren()) {
 						return tree;
 					} else {
+						ErrorHandler.addError("Failed to create an if else statement block at line:" + tokens.get(0).lineNumber);
 						return null;
 					}
 				}
@@ -580,6 +619,9 @@ public class Grammar {
 	 */
 	private Ptree returnStatement(List<Token> tokens) {
 		Ptree tree = new Ptree(type_enum.returnStatement);
+		if(tokens.size() < 2) {
+			return null;
+		}
 		tree.addChild(GrammarHelper.returnFunction(tokens.get(0)));
 		if(!tree.verifyChildren()) {
 			return null;
@@ -589,10 +631,6 @@ public class Grammar {
 			if(tree.verifyChildren()) {
 				return tree;
 			}
-			ErrorHandler.addError("Failure in return statement, line number" + tokens.get(0).lineNumber);
-			return null;
-		}
-		if(tokens.size() < 3) {
 			ErrorHandler.addError("Failure in return statement, line number" + tokens.get(0).lineNumber);
 			return null;
 		}
@@ -626,6 +664,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
+		ErrorHandler.addError("break statement failure at line:" + tokens.get(0).lineNumber);
 		return null;
 	}
 	
@@ -651,7 +690,7 @@ public class Grammar {
 		
 		//Checks parenthesis location output
 		if(index <= 2 || index > tokens.size() - 3) {
-			//TODO: error reporting
+			ErrorHandler.addError("While statement failed due to invalid closed parenthesis at line:" + tokens.get(0).lineNumber);
 			return null;
 		}
 		
@@ -663,7 +702,7 @@ public class Grammar {
 		
 		//checks bracket location output
 		if(index2 != tokens.size() - 1 || index2 <= index + 2) {
-			//TODO: error reporting
+			ErrorHandler.addError("Invalid matching bracket in while statement at line:" + tokens.get(0).lineNumber);
 			return null;
 		}
 		
@@ -673,7 +712,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		//TODO: error reporting
+		ErrorHandler.addError("Failure in while statement at line:" + tokens.get(0).lineNumber);
 		return null;
 	}
 	
@@ -699,7 +738,7 @@ public class Grammar {
 		tree.addChild(GrammarHelper.openParenthesis(tokens.get(1)));
 		int index = GrammarHelper.findObjectForward(tokens.subList(2, tokens.size()), type_enum.semicolon, 2);
 		if(index == -1 || index + 1 >= tokens.size()) {
-			//TODO: error handling
+			ErrorHandler.addError("invalid matching parenthesis in for statement at line:" + tokens.get(1).lineNumber);
 			return null;
 		}
 		if(!(index == 2)) {
@@ -708,7 +747,7 @@ public class Grammar {
 				tree.removeChild();
 				tree.addChild(expressionStatement(tokens.subList(2,  index + 1)));
 				if(!tree.verifyChildren()) {
-					//TODO: error handling
+					ErrorHandler.addError("Initialization step in for statement failed to meet constructs at line:" + tokens.get(2).lineNumber);
 					return null;
 				}
 			}
@@ -717,14 +756,14 @@ public class Grammar {
 		}
 		int index2 = GrammarHelper.findObjectForward(tokens.subList(index + 1, tokens.size()), type_enum.semicolon, index + 1);
 		if(index2 == -1 || index2 + 1 >= tokens.size()) {
-			//TODO: error handling
+			ErrorHandler.addError("Failed to next semicolon in for statement at line:" + tokens.get(0).lineNumber);
 			return null;
 		}
 		tree.addChild(simpleExpression(tokens.subList(index + 1, index2)));
 		tree.addChild(GrammarHelper.semicolon(tokens.get(index2)));
 		index = GrammarHelper.findObjectForward(tokens.subList(index2, tokens.size()), type_enum.closedParenthesis, index2);
 		if(index == -1 || index + 1 >= tokens.size()) {
-			System.out.println(index);
+			ErrorHandler.addError("Failed to find valid matching parenthesis in for statement at line:" + tokens.get(1).lineNumber);
 			return null;
 		}
 		tree.addChild(expression(tokens.subList(index2 + 1, index)));
@@ -735,8 +774,8 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
+		ErrorHandler.addError("For statement failed at line:" + tokens.get(0).lineNumber);
 		return null;
-		//TODO: error checking
 	}
 	/**
 	 * ifStmt → if ( simpleExpression ) { statementList } | if ( simpleExpression ) { statementList } else { statementList }
@@ -759,7 +798,7 @@ public class Grammar {
 		
 		//Checks parenthesis location output
 		if(index < 3 || !(index + 1 < tokens.size())) {
-			//TODO: error reporting
+			ErrorHandler.addError("Failed to find valid matching parenthesis for if statement at line:" + tokens.get(0).lineNumber);
 			return null;
 		}
 		tree.addChild(simpleExpression(tokens.subList(2, index)));
@@ -769,7 +808,7 @@ public class Grammar {
 		
 		//Checks that the bracket location is legitimate
 		if(index2 == -1 || !(index + 2 < index2)) {
-			//TODO: error reporting
+			ErrorHandler.addError("Failed to find valid matching bracker for if statement at line:" + tokens.get(index + 1).lineNumber);
 			return null;
 		}
 		
@@ -782,11 +821,13 @@ public class Grammar {
 			if(tree.verifyChildren()) {
 				return tree;
 			}
+			ErrorHandler.addError("If statement failed at line:" + tokens.get(0));
 			return null;
 		}
 		
 		//Checks index of index2
 		if(index2 + 4 >= tokens.size()) {
+			ErrorHandler.addError("Invalid placement of closing bracket at line:" + tokens.get(index2).lineNumber);
 			return null;
 		}
 		
@@ -797,7 +838,7 @@ public class Grammar {
 		
 		//Checks if the bracket index is a legitimate size
 		if(index == -1 || !(index2 + 3 < index) || index != tokens.size()) {
-			//TODO: error reporting
+			ErrorHandler.addError("Not found or invalid matching bracket in if statement:" + tokens.get(index2 + 2).lineNumber);
 			return null;
 		}
 		
@@ -807,7 +848,7 @@ public class Grammar {
 		if(tree.verifyChildren()) {
 			return tree;
 		}
-		//TODO: error reporting
+		ErrorHandler.addError("Failed if statement at line:" + tokens.get(0).lineNumber);
 		return null;
 	}
 	

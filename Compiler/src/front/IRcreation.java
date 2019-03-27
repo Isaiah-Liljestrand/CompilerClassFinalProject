@@ -502,7 +502,7 @@ public class IRcreation {
 	 * Deals with all simple expressions
 	 * @param tree parse tree node of wherever is being dealt with
 	 * @param i intermediate variable in usage
-	 * @return String of whatever variable is being passed up or null in the case of an intermidiate variable
+	 * @return String of whatever variable is being passed up or null in the case of an intermediate variable
 	 */
 	private static String simpleExpressionHandler(Ptree tree, int i) {
 		switch(tree.token.type) {
