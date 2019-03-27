@@ -43,39 +43,12 @@ public class IRcreation {
 			variableDeclarationHandler(tree);
 			break;
 		default:
-			//TODO: error checking
+			ErrorHandler.addError("default Case reached in declarationHandler");
 		}
 	}
 	
-	/**
-	 * gets the Ptree i children(0)s down 
-	 * @param tree the starting tree
-	 * @param i how far to traverse
-	 * @return the Ptree i children(0)s down
-	 */
-	private static Ptree treverseDown(Ptree tree, int i) {
-		for(int j = 0; j < i; j++) {
-			tree = tree.children.get(0);
-		}
-		return tree;
-	}
-	
-	
-	/**
-	 * returns the int of how far down the first children line it takes to find a child of type
-	 * @param tree
-	 * @param type
-	 * @return
-	 */
-	private static int findType(Ptree tree, Token.type_enum type) {
-		int i = 0;
-		while(tree.token.type != type) {
-			i++;
-			tree = tree.children.get(0);
-		}
-		return i;
-	}
-	
+
+	//Use findTree function from Ptree instead of traverseDown or findType
 	
 	/**
 	 * Creates a list of parameters to be declared in a function declaration
@@ -261,26 +234,33 @@ public class IRcreation {
 		//Destroy variables
 		
 		if (tree.children.size() != 7) {
-			//Add error check
+			ErrorHandler.addError("tree children size incorrect in whilehandler");
 			return;
 		}
-		String wc = Integer.toString(whilecount);
+		String expression, wc = Integer.toString(whilecount);
 		whilecount++;
+		
 		//Add the initial while label which is unconditionally jumped to at the end of each while loop.
 		IR.addCommand(IRelement.command.label, new String[]{"whilestart" + wc});
+		
 		//Temporary variable %1 should be equal to the result of the simple expression
-		simpleExpressionHandler(tree.children.get(2), 1);
+		if((expression = simpleExpressionHandler(tree.children.get(2), 1)) != null) {
+			IR.addCommand("set %1 " + expression);
+		}
+		IR.addCommand("not %1");
+		
 		//Test variable %1 and jump to whileend label if the test fails
 		IR.addCommand(IRelement.command.jmpcnd, new String[]{"whileend" + wc, "1"});
+		
 		//Handle the statements inside the while loop.
 		//The returned list of strings includes the names of all variables created in the statement list.
-		List<String> statement_return = statementHandler(tree.children.get(5));
+		destroyVars(statementHandler(tree.children.get(5)));
+		
 		//Unconditionally jump back to the start of the while loop
 		IR.addCommand(IRelement.command.jmp, new String[]{"whilestart" + wc});
+		
 		//Add a label for the end of the while loop.
 		IR.addCommand(IRelement.command.label, new String[]{"whileend" + wc});
-		//Destroy the variables created inside the while loop.
-		destroyVars(statement_return);
 	}
 	
 	//For first part it can be nothing, varDecHandler, or expressionHandler
@@ -303,33 +283,43 @@ public class IRcreation {
 		//Handle the initialization part of the for loop.
 		//Has to account for 3 options: an expression, variable declaration, or nothing.
 		int nextlook = 4; //This value adjusts which children are looked at depending on if the initialization step is empty.
+		List<String> forvars = new ArrayList<String>();
 		if (tree.children.get(2).token.type == Token.type_enum.expressionStatement) {
 			expressionHandler(tree.children.get(2));
 		} else if (tree.children.get(2).token.type == Token.type_enum.variableDeclaration) {
-			variableDeclarationHandler(tree.children.get(2));
+			forvars.addAll(variableDeclarationHandler(tree.children.get(2)));
 		} else {
 			nextlook = 3;
 		}
 		
 		//Add a label for the start of the for loop.
-		String fc = Integer.toString(forcount);
+		String expression, fc = Integer.toString(forcount);
 		forcount++;
 		IR.addCommand(IRelement.command.label, new String[]{"forstart" + fc});
 		
 		//Handle the condition of the for loop
-		simpleExpressionHandler(tree.children.get(nextlook), 1);
+		if((expression = simpleExpressionHandler(tree.children.get(nextlook), 1)) != null) {
+			IR.addCommand("set %1 " + expression);
+		}
+		IR.addCommand("not %1");
+		
 		//Jump conditionally to the end if the condition fails
 		IR.addCommand(IRelement.command.jmpcnd, new String[]{"forend" + fc, "1"});
+		
 		//Handle the statementList inside the for loop body
-		List<String> statement_return = statementHandler(tree.children.get(nextlook + 6));
+		destroyVars(statementHandler(tree.children.get(nextlook + 6)));
+		
 		//Handle the incrementation part of the for loop
 		expressionHandler(tree.children.get(nextlook + 2));
+		
 		//Jump unconditionally back to the start of the for loop
 		IR.addCommand(IRelement.command.jmp, new String[]{"forstart" + fc});
+		
 		//Add a label for the end of the for loop.
 		IR.addCommand(IRelement.command.label, new String[]{"forend" + fc});
+		
 		//Destroy the variables created in the for loop body
-		destroyVars(statement_return);
+		destroyVars(forvars);
 	}
 	
 	//Calls simpleExpressionHandler for the if check
@@ -355,46 +345,58 @@ public class IRcreation {
 		endlabel
 		destroy vars
 		*/
-		String ic = Integer.toString(ifcount);
+		
+		String expression, ic = Integer.toString(ifcount);
 		ifcount++;
 		
 		if (tree.children.size() > 7) { //Has else
-			List<String> statement_return;
+			
 			//Handle the condition of the if statement
-			simpleExpressionHandler(tree.children.get(2), 1);
+			if((expression = simpleExpressionHandler(tree.children.get(2), 1)) != null) {
+				IR.addCommand("set %1 " + expression);
+			}
+			IR.addCommand("not %1");
+			
 			//Jump conditionally to the else statement if the condition fails
 			IR.addCommand(IRelement.command.jmpcnd, new String[]{"else" + ic, "1"});
-			//Handle the statementList inside the if statement body
-			statement_return = statementHandler(tree.children.get(5));
+			
+			//Handle the statementList inside the if statement body and deletes variables
+			destroyVars(statementHandler(tree.children.get(5)));
+			
 			//Jump unconditionally to the ifend label
 			IR.addCommand(IRelement.command.jmp, new String[]{"ifend" + ic});
+			
 			//Add a label for the else statement
 			IR.addCommand(IRelement.command.label, new String[]{"else" + ic});
+			
 			//Handle the statementList inside the else statement body
-			statement_return = statementHandler(tree.children.get(8));
+			destroyVars(statementHandler(tree.children.get(8)));
+			
 			//Add a label for the end of the if statement
 			IR.addCommand(IRelement.command.label, new String[]{"ifend" + ic});
-			//Destroy the variables created in the if statement body or else statement body
-			destroyVars(statement_return);
+			
 		} else { //Doesn't have else			
+			
 			//Handle the condition of the if statement
-			simpleExpressionHandler(tree.children.get(2), 1);
+			if((expression = simpleExpressionHandler(tree.children.get(2), 1)) != null) {
+				IR.addCommand("set %1 " + expression);
+			}
+			IR.addCommand("not %1");
+			
 			//Jump conditionally to the end if the condition fails
 			IR.addCommand(IRelement.command.jmpcnd, new String[]{"ifend" + ic, "1"});
+			
 			//Handle the statementList inside the if statement body
-			List<String> statement_return = statementHandler(tree.children.get(5));
+			destroyVars(statementHandler(tree.children.get(5)));
+			
 			//Add a label for the end of the if statement
 			IR.addCommand(IRelement.command.label, new String[]{"ifend" + ic});
-			//Destroy the variables created in the if statement body
-			destroyVars(statement_return);
 		}
 	}
 	
 	//Calls simpleExpressionHandler
 	//Please use recursion as much as possible. 
 	private static List<String> variableDeclarationHandler(Ptree tree) {
-		//Do something like this
-
 		//1. store variable type
 		type_enum type = tree.children.get(0).children.get(0).token.type;
 		
@@ -402,30 +404,6 @@ public class IRcreation {
 		return variableHelper(tree.children.get(1), type);
 		
 		//3. do stuff in subfunction
-		
-		
-		
-		
-		
-		
-		
-		/*System.out.print("declare "); //can currently handle 1 
-		type_enum type = tree.children.get(0).children.get(0).token.type;
-		System.out.print(treverseDown(tree, findType(tree, Token.type_enum.variableTypeSpecifier)).children.get(0).token.token);
-		System.out.print(treverseDown(tree.children.get(1), findType(tree.children.get(1), Token.type_enum.identifier)).token.token);
-		//up to varID varName
-		
-		//if doing assignment at declaration
-		if(treverseDown(tree.children.get(1), findType(tree.children.get(1), Token.type_enum.variableDeclarationInitialize)).children.size() > 1) { //inline assignment
-			System.out.print(treverseDown(tree.children.get(1), findType(tree.children.get(1), Token.type_enum.variableDeclarationInitialize)).children.get(1).token.token); //1 is the =
-			simpleExpressionHandler(treverseDown(tree.children.get(1), findType(tree.children.get(1), Token.type_enum.variableDeclarationInitialize)).children.get(2)); //pumps the simple expression assignment to the simple expression handler
-			//simpleExpressionHandler(treverseDown(tree.children.get(1), findType(tree.children.get(1), Token.type_enum.variableDeclarationInitialize)).children.get(2), table); //pumps the simple expression assignment to the simple expression handler
-		}
-		
-		//System.out.print(treverseDown(tree.children.get(1), 3).token.token); //outs the var name
-		if(tree.children.get(2).token.type == Token.type_enum.semicolon) { //prints a new line with the ;
-			System.out.println("");
-		}*/
 	}
 	
 	private static List<String> variableHelper(Ptree tree, type_enum type) {
@@ -441,7 +419,7 @@ public class IRcreation {
 			//call simple expression if needed then set variable to %i
 			//return List containing the variable being dealt with
 		default:
-			//TODO: error reporting, should be incapable of reaching
+			ErrorHandler.addError("default case reached in variableHelper");
 		}
 		return null;
 	}
@@ -452,38 +430,55 @@ public class IRcreation {
 	//Check if variable assignment +=, *=, /=, -=, or =
 	//Calls simpleExpressionHandler
 	private static void expressionHandler(Ptree tree) {
-		Ptree expression = tree.children.get(0);
+		tree = tree.children.get(0);
 		String n;
-		if(expression.children.get(0).token.type == type_enum.call) {
-			functionCallHandler(expression.children.get(0), 0);
+		if(tree.children.get(0).token.type == type_enum.call) {
+			functionCallHandler(tree.children.get(0), 0);
+			return;
 		}
-		switch(expression.children.get(1).token.type) {
+		
+		String ID = Ptree.findTree(tree,  type_enum.identifier).token.token;
+		switch(tree.children.get(1).token.type) {
 		case incrementOperator:
-			IR.addCommand("add " + expression.children.get(0).children.get(0).token.token + " 1");
+			IR.addCommand("add " + ID + " 1");
 			break;
 		case decrementOperator:
-			IR.addCommand("sub " + expression.children.get(0).children.get(0).token.token + " 1");
+			IR.addCommand("sub " + ID + " 1");
 			break;
 		case additionAssignmentOperator:
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
-				IR.addCommand("add " + expression.children.get(0).children.get(0).token.token + " %1");
+				IR.addCommand("add " + ID + " %1");
 			} else {
-				IR.addCommand("add " + expression.children.get(0).children.get(0).token.token + " " + n);
+				IR.addCommand("add " + ID + " " + n);
 			}
-			//IR.addCommand("add " + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
 			break;
 		case subtractionAssignmentOperator:
-			//Don't know if I did this right, trying to get the variable or constant after it
-			IR.addCommand("sub" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
+			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
+				IR.addCommand("sub " + ID + " %1");
+			} else {
+				IR.addCommand("sub " + ID + " " + n);
+			}
+			break;
 		case multiplicationAssignmentOperator:
-			//Don't know if I did this right, trying to get the variable or constant after it
-			IR.addCommand("mul" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
+			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
+				IR.addCommand("mul " + ID + " %1");
+			} else {
+				IR.addCommand("mul " + ID + " " + n);
+			}
+			break;
 		case divisionAssignmentOperator:
-			//Don't know if I did this right, trying to get the variable or constant after it
-			IR.addCommand("div" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
+			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
+				IR.addCommand("div " + ID + " %1");
+			} else {
+				IR.addCommand("div " + ID + " " + n);
+			}
+			break;
 		case assignmentOperator:
-			//Don't know if I did this right, trying to get the variable or constant after it
-			IR.addCommand("set" + treverseDown(expression.children.get(0).children.get(1), 11).token.token);
+			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
+				IR.addCommand("set " + ID + " %1");
+			} else {
+				IR.addCommand("set " + ID + " " + n);
+			}
 			break;
 		default:
 			ErrorHandler.addError("default case reached in expressionHandler");
@@ -689,7 +684,7 @@ public class IRcreation {
 				return String.valueOf(n % n2);
 			}
 		default:
-			//TODO: error handling
+			ErrorHandler.addError("default case reached in preProcess");
 		}
 		return null;
 	}

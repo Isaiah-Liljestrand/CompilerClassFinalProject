@@ -161,4 +161,24 @@ public class Ptree {
 		}
 		return trees;
 	}
+	
+	/**
+	 * Returns the first tree of the specified type it finds
+	 * @param tree node being evaluated
+	 * @param type the type being looked for
+	 * @return tree if found, null otherwise
+	 */
+	public static Ptree findTree(Ptree tree, type_enum type) {
+		if(tree.token.type == type) {
+			return tree;
+		}
+		
+		for(Ptree t: tree.children) {
+			if(findTree(t, type) != null) {
+				return findTree(t, type);
+			}
+		}
+		
+		return null;
+	}
 }
