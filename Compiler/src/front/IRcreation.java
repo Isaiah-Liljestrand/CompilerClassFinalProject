@@ -11,18 +11,20 @@ public class IRcreation {
 	private static int forcount;
 	private static int ifcount;
 	
+	/**
+	 * Begins the process to create the IR
+	 * @param tree top 'program' node
+	 */
 	public static void createIR(Ptree tree) {
 		whilecount = 0;
-		//These functions will not be called in this order. Only calling declarationHandler
+		forcount = 0;
+		ifcount = 0;
 		declarationHandler(tree);
 	}
 	
-
-	
 	/**
-	 * Global variable declarations and function declarations. Everything passed on to further functions.
-	 * Calls functionHandler, and variableDeclarationHandler
-	 * 
+	 * Handles all global variable declarations and function declarations.
+	 * @param node in the tree being handled
 	 */
 	private static void declarationHandler(Ptree tree) {
 		switch(tree.token.type) {
@@ -75,6 +77,12 @@ public class IRcreation {
 		return i;
 	}
 	
+	
+	/**
+	 * Creates a list of parameters to be declared in a function declaration
+	 * @param tree any tree that comes from parameterList
+	 * @return list of all parameters found
+	 */
 	private static List<String> paramGetter(Ptree tree) {
 		List<String> list = new ArrayList<String>();
 		if(tree.token.type == Token.type_enum.parameter) {
@@ -88,20 +96,22 @@ public class IRcreation {
 		return list;
 	}
 	
-	//Deals with function declaration.
-	//calls statementHandler
-	//@functionDeclaration
+	
+	/**
+	 * Called to handle each function declaration
+	 * @param tree function declaration node
+	 */
 	private static void functionHandler(Ptree tree) {
-		//Gets this ParseTree bit. functionDeclaration → functionTypeSpecifier functionDeclarationID ( parameterList ) { statementList }
+		//Gets this ParseTree bit - functionTypeSpecifier functionDeclarationID ( parameterList ) { statementList } parameter list is optional
 		//Create IR with command "function" and a list of parameters that are type followed by ID.
-		//Create the parameters string array from parameterList parsetree
+		//Create the parameters string array from parameterList
 		//Something like this -> IR.addCommand(IRelement.command.function, new String[] {"int", "x", "int", "y"});
 		//Take the name of the function and it's list of parameters and make an IR.
 		//Check each top level statement in statementList. If none of them is a return statement, add one at the end.
 		
 		//List to be passed into addCommand
 		List<String> list = new ArrayList<String>();
-		int index;
+		int index = 5;
 		Ptree tree2 = tree.children.get(3);
 		
 		//Adding the function type
@@ -113,27 +123,33 @@ public class IRcreation {
 		//Adding parameters if they exist
 		if(tree2.token.type == type_enum.parameterList) {
 			list.addAll(paramGetter(tree2));
-			index = 6;
-		} else {
-			index = 5;
+			index++;
 		}
 		
 		//tree of the statementList
 		tree2 = tree.children.get(index);
 		
+		//Creates necessary IR
 		IR.addCommand(command.function, list);
+		
+		//Calls the statementHandler to handle internals and then destroy all declared variables
 		destroyVars(statementHandler(tree2));
 		
+		//Adds a return statement if it is necessary
 		if(!returnStatementExists(tree2)) {
 			if(tree.children.get(0).children.get(0).token.type == type_enum.k_void) {
 				IR.addCommand("return");
 			} else {
 				IR.addCommand("return 0");
 			}
-			//Add return statement depending on function type
 		}
 	}
 	
+	/**
+	 * Checks that there is necessarily a return statement to be hit in the function
+	 * @param tree node being dealt with
+	 * @return true if there is a return statement to be hit, false if not
+	 */
 	private static boolean returnStatementExists(Ptree tree) {
 		switch(tree.token.type) {
 		case statementList:
@@ -150,6 +166,7 @@ public class IRcreation {
 			if(tree.children.size() < 10) {
 				return false;
 			}
+			//Case where there is a return statement is in both sections of an if else statement
 			if(returnStatementExists(tree.children.get(5)) && returnStatementExists(tree.children.get(9))) {
 				return true;
 			}
@@ -158,14 +175,13 @@ public class IRcreation {
 		}
 	}
 	
+	
 	/**
 	 * Deals with all statements.
-	 * Calls whileH, forH, ifH, varDecH, expressionHandler, and any others we need to add
+	 * Calls whileHandler, forHandler, ifHandler, varDecHandler, expressionHandler, and any others we need to add
 	 * @param tree
 	 * @return list of var names declared in it
 	 */
-	
-	
 	private static List<String> statementHandler(Ptree tree) {
 		List<String> vars = new ArrayList<String>();
 		
@@ -177,7 +193,6 @@ public class IRcreation {
 			}
 			break;
 		case variableDeclaration:
-		case variableDeclarationList:
 			vars.addAll(variableDeclarationHandler(tree));
 			break;
 		case whileStatement:
@@ -190,19 +205,43 @@ public class IRcreation {
 			ifHandler(tree);
 			break;
 		case returnStatement:
-			//returnHandler(tree, table); //unsure if we wana make that funcion or leave it for expression handler
-		case simpleExpression:
+			if(tree.children.size() == 2) {
+				IR.addCommand("return");
+			} else {
+				String n = simpleExpressionHandler(tree.children.get(1), 1);
+				if(n == null) {
+					IR.addCommand("return %1");
+				} else {
+					IR.addCommand("return " + n);
+				}
+			}
+			break;
+		case gotoJumpPlace:
+			IR.addCommand("gotolabel " + tree.children.get(0));
+			break;
+		case gotoStatement:
+			IR.addCommand("goto_ " + tree.children.get(1).token.token);
+			break;
+		case breakStatement:
+			IR.addCommand("break");
+			break;
+		case expressionStatement:
 			expressionHandler(tree);
 			break;
 		default:
+			ErrorHandler.addError("Under statementhandler default was called");
 			//expressionHandler(tree, table); //If we have other unhandled cases (like returnStatement) that I can't think of
-			for(Ptree t: tree.children) { //If we have unhandled garbage
+			for(Ptree t: tree.children) { //If we have garbage
 				declarationHandler(t);
 			}
 		}
 		return vars;
 	}
 	
+	/**
+	 * Add destroy statements for all variables declared in a block
+	 * @param varnames list of variable names to be destroyed
+	 */
 	private static void destroyVars(List<String> varnames) {
 		for(String name : varnames) {
 			IR.addCommand(IRelement.command.destroy, new String[]{name});
@@ -420,19 +459,28 @@ public class IRcreation {
 			case call:
 				functionCallHandler(child, 1);
 				break;
-			case simpleExpression:
-				simpleExpressionHandler(child, 1);
-				break;
 			case incrementOperator:
 				IR.addCommand(child.token.token);
 				break;
 			case decrementOperator:
 				IR.addCommand(child.token.token);
+				break;
+			case additionAssignmentOperator:
+			case subtractionAssignmentOperator:
+			case multiplicationAssignmentOperator:
+			case divisionAssignmentOperator:
+			case assignmentOperator:
+			default:
 			}
 		}
 	}
 	
-	//Deals with math and other things involved in simple expressions
+	/**
+	 * Deals with all simple expressions
+	 * @param tree parse tree node of wherever is being dealt with
+	 * @param i intermediate variable in usage
+	 * @return String of whatever variable is being passed up or null in the case of an intermidiate variable
+	 */
 	private static String simpleExpressionHandler(Ptree tree, int i) {
 		switch(tree.token.type) {
 		case constant:
@@ -458,6 +506,11 @@ public class IRcreation {
 		}
 	}
 	
+	/**
+	 * Tests if the current node of the tree being scanned is an expression or just an intermediary step
+	 * @param tree node being evaluated
+	 * @return true if the expression is a used expression or false if just an intermediary
+	 */
 	private static boolean isExpression(Ptree tree) {
 		switch(tree.token.type) {
 		case simpleExpression:
@@ -469,6 +522,7 @@ public class IRcreation {
 		case sumExpression:
 		case term:
 		case notExpression:
+			//Situation where expression node is actually used rather than being passed through
 			if(tree.children.size() > 1) {
 				return true;
 			}
@@ -477,6 +531,12 @@ public class IRcreation {
 		}
 	}
 	
+	/**
+	 * Creates IR and preprocesses input for simple expression handler
+	 * @param tree tree of whatever expression is being evaluated
+	 * @param i index of whatever temporary variable is being used at the moment
+	 * @return String of the preprocessed value or null if it evaluates to an intermediate variable
+	 */
 	private static String implementExpression(Ptree tree, int i) {
 		String n, n2;
 		IRelement.command c = command.set;
@@ -489,7 +549,7 @@ public class IRcreation {
 				IR.addCommand("not %" + i);
 				return null;
 			} else {
-				return preProcess(tree, n);
+				return preProcess(n);
 			}
 		}
 		switch(tree.token.type) {
@@ -532,7 +592,7 @@ public class IRcreation {
 			}
 			break;
 		default:
-			//TODO: error reporting, should be unreachable
+			ErrorHandler.addError("default condition met in simple expressionhandler");
 			return null;
 		}
 		if(n == null && n2 == null) {
@@ -548,13 +608,23 @@ public class IRcreation {
 		return null;
 	}
 	
-	//Handles not expressions
-	private static String preProcess(Ptree tree, String v) {
+	/**
+	 * Preprocesses not values
+	 * @param v value of the constant to be reversed
+	 * @return the string 1 or 0
+	 */
+	private static String preProcess(String v) {
 		int n = ~findValue(v);
 		return String.valueOf(n);		
 	}
 	
-	//Handles every other type of expression
+	/**
+	 * Preprocesses values in the case where two constants are being operated on
+	 * @param tree the expression to be evaluated
+	 * @param v1 the left constant
+	 * @param v2 the right constant
+	 * @return a string of whatever the preprocessed value is
+	 */
 	private static String preProcess(Ptree tree, String v1, String v2) {
 		int n = findValue(v1);
 		int n2 = findValue(v2);
@@ -609,6 +679,11 @@ public class IRcreation {
 		return null;
 	}
 	
+	/**
+	 * Returns the integer value of whatever is being handled for preprocessing
+	 * @param v value being evaluated
+	 * @return integer that is representative of the string passed in
+	 */
 	private static int findValue(String v) {
 		if(v.charAt(0) == '\'') {
 			return (int)v.charAt(1);

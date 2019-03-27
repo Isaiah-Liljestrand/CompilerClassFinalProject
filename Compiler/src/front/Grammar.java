@@ -378,7 +378,7 @@ public class Grammar {
 			return null;
 		}
 		
-		//Single statment
+		//Single statement
 		//tree.addChild(statement(tokens));
 		//if(tree.verifyChildren()) {
 		//	return tree;
@@ -582,6 +582,18 @@ public class Grammar {
 		Ptree tree = new Ptree(type_enum.returnStatement);
 		tree.addChild(GrammarHelper.returnFunction(tokens.get(0)));
 		if(!tree.verifyChildren()) {
+			return null;
+		}
+		if(tokens.size() == 2) {
+			tree.addChild(GrammarHelper.semicolon(tokens.get(1)));
+			if(tree.verifyChildren()) {
+				return tree;
+			}
+			ErrorHandler.addError("Failure in return statement, line number" + tokens.get(0).lineNumber);
+			return null;
+		}
+		if(tokens.size() < 3) {
+			ErrorHandler.addError("Failure in return statement, line number" + tokens.get(0).lineNumber);
 			return null;
 		}
 		tree.addChild(simpleExpression(tokens.subList(1, tokens.size() - 1)));
