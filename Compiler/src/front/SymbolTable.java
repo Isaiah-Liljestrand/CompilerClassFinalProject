@@ -178,6 +178,16 @@ public class SymbolTable {
 				}
 			}
 			return;
+		case forStatement:
+			if(!top) {
+				sTable = new SymbolTable(table, "for");
+				buildStatementTable(tree, sTable, true);
+			} else {
+				for(Ptree t : tree.children) {
+					buildStatementTable(t, table, false);
+				}
+			}
+			return;
 		case variableDeclaration:
 			variableDeclarationHelper(tree, tree.children.get(0).children.get(0).token.type, table);
 			return;
