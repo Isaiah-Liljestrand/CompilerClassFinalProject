@@ -182,9 +182,9 @@ public class IRcreation {
 			} else {
 				String n = simpleExpressionHandler(tree.children.get(1), 1);
 				if(n == null) {
-					IR.addCommand("return %1");
+					IR.addCommand("ret %1");
 				} else {
-					IR.addCommand("return " + n);
+					IR.addCommand("ret " + n);
 				}
 			}
 			break;
@@ -215,8 +215,10 @@ public class IRcreation {
 	 * @param varnames list of variable names to be destroyed
 	 */
 	private static void destroyVars(List<String> varnames) {
-		for(String name : varnames) {
-			IR.addCommand(IRelement.command.destroy, new String[]{name});
+		if (varnames.size() > 0) {
+			for(String name : varnames) {
+				IR.addCommand(IRelement.command.destroy, new String[]{name});
+			}
 		}
 	}
 	
