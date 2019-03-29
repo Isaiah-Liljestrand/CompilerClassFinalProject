@@ -717,47 +717,37 @@ public class IRcreation {
 	
 	//Adds setting temp variables before function call.
 	private static void functionCallHandler(Ptree tree, int i) {
-		String tmp;
-		String name = null;
-		String ID = null;
-		int nflag = 0;
-		List<String> params = new ArrayList<String>();
-		//Get this parse tree call - ID ( argList )
-		//Need to make this IR -> call name param1 ... paramN name
-		//Last name is optional and is only used for assignment. if i is 0 then it is a void call
-		//Call simpleExpressionHandler(Ptree tree, int i) for each parameter that is a more complex simple exression.
-		//i will be incremented for each parameter.
-		//If simpleExpressionHandler returns a string then do not increment i 
-		for(Ptree child : tree.children) {
-			switch(child.token.type) {
-			case identifier:
-				if(nflag == 0) {
-					ID = child.token.token;
-					nflag++;
-				}
-				else {
-					name = child.token.token;
-				}
-				break;
-			case parameterList:
-				for(Ptree p : child.children) {
-					tmp = simpleExpressionHandler(p, i);
-					if(tmp == null) {
-						i++;
-						params.add(p.token.token);
-					}
-					else {
-						params.add(tmp);
-					}
-				}
-				break;
-			default:
+		String ID = tree.children.get(0).token.token;
+		String name, n;
+		
+		if(tree.children.size() == 3) {
+			name = " %" + String.valueOf(i);
+			if(i == 0) {
+				name = "";
 			}
-		}
-		if(name != null) {
-			IR.addCommand("call" + ID + params + name);
+			IR.addCommand("call " + ID + name);
 		} else {
-			IR.addCommand("call" + ID + params);
+			name = String.valueOf(i);
+			if(i == 0) {
+				i++;
+				name = null;
+			}
+			List<Ptree> trees = new ArrayList<Ptree>();
+			List<String> list = new ArrayList<String>();
+			Ptree.findTrees(tree.children.get(2), trees, type_enum.simpleExpression);
+			for(Ptree t : trees) {
+				n = simpleExpressionHandler(t, i);
+				if(n == null) {
+					list.add("%" + i);
+					i++;
+				} else {
+					list.add(n);
+				}
+			}
+			if(name != null) {
+				list.add(name);
+			}
+			IR.addCommand(command.call, list);
 		}
 	}
 }

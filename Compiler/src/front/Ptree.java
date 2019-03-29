@@ -112,10 +112,10 @@ public class Ptree {
 	 */
 	public static void gotoChecker(Ptree tree) {
 		List<Ptree> gotoJumpPlace = new ArrayList<Ptree>();
-		gotoJumpPlace = findTrees(tree, gotoJumpPlace, type_enum.gotoJumpPlace);
+		findTrees(tree, gotoJumpPlace, type_enum.gotoJumpPlace);
 		
 		List<Ptree> gotoCalls = new ArrayList<Ptree>();
-		gotoCalls = findTrees(tree, gotoCalls, type_enum.gotoStatement);
+		findTrees(tree, gotoCalls, type_enum.gotoStatement);
 		
 		boolean b;
 		for(Ptree tcall : gotoCalls) {
@@ -151,15 +151,14 @@ public class Ptree {
 	 * @param trees must be initialized to a new arraylist before call
 	 * @return List of Ptrees containing specified token
 	 */
-	public static List<Ptree> findTrees(Ptree tree, List<Ptree> trees, type_enum type) {
+	public static void findTrees(Ptree tree, List<Ptree> trees, type_enum type) {
 		if(tree.token.type == type) {
 			trees.add(tree);
 		}
 		
 		for(Ptree t: tree.children) {
-			trees = findTrees(t, trees, type);
+			findTrees(t, trees, type);
 		}
-		return trees;
 	}
 	
 	/**

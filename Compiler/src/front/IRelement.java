@@ -28,6 +28,7 @@ public class IRelement {
 		jmp,
 		jmpcnd,
 		function,
+		call,
 		ret,
 		label,
 		goto_,
@@ -55,6 +56,7 @@ public class IRelement {
 		if (str.equals("jmp")) return command.jmp;
 		if (str.equals("jmpcnd")) return command.jmpcnd;
 		if (str.equals("function")) return command.function;
+		if (str.equals("call")) return command.call;
 		if (str.equals("ret")) return command.ret;
 		if (str.equals("label")) return command.label;
 		if (str.equals("goto_")) return command.goto_;
