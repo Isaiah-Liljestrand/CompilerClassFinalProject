@@ -75,6 +75,10 @@ public class Main {
 		System.out.println();
 		IRcreation.createIR(grammar.root);
 		IR.printIR();
+		if(ErrorHandler.errorsExist()) {
+			ErrorHandler.printStrings("IR creation");
+			return;
+		}
 	}
 
 	

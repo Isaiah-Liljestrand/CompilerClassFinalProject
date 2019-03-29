@@ -59,6 +59,7 @@ public class IRelement {
 		if (str.equals("label")) return command.label;
 		if (str.equals("goto_")) return command.goto_;
 		if (str.equals("gotolabel")) return command.gotolabel;
+		ErrorHandler.addError("Command '" + str + "' not found while creating IRelement.\n");
 		return null;
 	}
 	
