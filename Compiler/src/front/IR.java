@@ -29,8 +29,8 @@ public class IR {
 	}
 	
 	public static void addCommand(IRelement.command cmd, String[] parameters) {
-			initialize();
-			instructions.add(new IRelement(cmd, new ArrayList<String>(Arrays.asList(parameters))));
+		initialize();
+		instructions.add(new IRelement(cmd, new ArrayList<String>(Arrays.asList(parameters))));
 	}
 	
 	public static void addCommand(String cmd, List<String> parameters) {
