@@ -13,14 +13,9 @@ public class IR {
 		}
 	}
 	
-	public static void addCommand(IRelement elem) {
+	public static void addCommand(IRelement.command cmd, String parameters) {
 		initialize();
-		instructions.add(elem);
-	}
-	
-	public static void addCommand(String command) {
-		initialize();
-		instructions.add(new IRelement(command));
+		instructions.add(new IRelement(cmd, parameters));
 	}
 	
 	public static void addCommand(IRelement.command cmd, List<String> parameters) {
@@ -28,31 +23,23 @@ public class IR {
 		instructions.add(new IRelement(cmd, parameters));
 	}
 	
-	public static void addCommand(IRelement.command cmd, String[] parameters) {
-		initialize();
-		instructions.add(new IRelement(cmd, new ArrayList<String>(Arrays.asList(parameters))));
-	}
-	
-	public static void addCommand(String cmd, List<String> parameters) {
-		initialize();
-		instructions.add(new IRelement(cmd, parameters));
-	}
-	
 	public static void createIRFromString(String file) {
+		initialize();
 		String[] lines = file.split(" ");
 		for (String line : lines) {
 			IRelement newelem = new IRelement(line);
 			if (newelem != null) {
-				addCommand(newelem);
+				instructions.add(newelem);
 			}
 		}
 	}
 	
 	public static void createIRFromStringList(List<String> lines) {
+		initialize();
 		for (String line : lines) {
 			IRelement newelem = new IRelement(line);
 			if (newelem != null) {
-				addCommand(newelem);
+				instructions.add(newelem);
 			}
 		}
 	}

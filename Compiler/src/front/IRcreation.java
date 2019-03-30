@@ -110,11 +110,12 @@ public class IRcreation {
 		//Adds a return statement if it is necessary
 		if(!returnStatementExists(tree2)) {
 			if(tree.children.get(0).children.get(0).token.type == type_enum.k_void) {
-				IR.addCommand("return");
+				IR.addCommand(IRelement.command.ret, "");
 			} else {
-				IR.addCommand("return 0");
+				IR.addCommand(IRelement.command.ret, "0");
 			}
 		}
+		IR.addCommand(IRelement.command.endfunction, "");
 	}
 	
 	/**
@@ -178,24 +179,24 @@ public class IRcreation {
 			break;
 		case returnStatement:
 			if(tree.children.size() == 2) {
-				IR.addCommand("return");
+				IR.addCommand(IRelement.command.ret, "");
 			} else {
 				String n = simpleExpressionHandler(tree.children.get(1), 1);
 				if(n == null) {
-					IR.addCommand("ret %1");
+					IR.addCommand(IRelement.command.ret, "%1");
 				} else {
-					IR.addCommand("ret " + n);
+					IR.addCommand(IRelement.command.ret, n);
 				}
 			}
 			break;
 		case gotoJumpPlace:
-			IR.addCommand("gotolabel " + tree.children.get(0).token.token);
+			IR.addCommand(IRelement.command.gotolabel, tree.children.get(0).token.token);
 			break;
 		case gotoStatement:
-			IR.addCommand("goto_ " + tree.children.get(1).token.token);
+			IR.addCommand(IRelement.command.goto_, tree.children.get(1).token.token);
 			break;
 		case breakStatement:
-			IR.addCommand("break");
+			IR.addCommand(IRelement.command.break_, "");
 			break;
 		case expressionStatement:
 			expressionHandler(tree);
@@ -217,7 +218,7 @@ public class IRcreation {
 	private static void destroyVars(List<String> varnames) {
 		if (varnames.size() > 0) {
 			for(String name : varnames) {
-				IR.addCommand(IRelement.command.destroy, new String[]{name});
+				IR.addCommand(IRelement.command.destroy, name);
 			}
 		}
 	}
@@ -243,26 +244,26 @@ public class IRcreation {
 		whilecount++;
 		
 		//Add the initial while label which is unconditionally jumped to at the end of each while loop.
-		IR.addCommand(IRelement.command.label, new String[]{"whilestart" + wc});
+		IR.addCommand(IRelement.command.label, "whilestart " + wc);
 		
 		//Temporary variable %1 should be equal to the result of the simple expression
 		if((expression = simpleExpressionHandler(tree.children.get(2), 1)) != null) {
-			IR.addCommand("set %1 " + expression);
+			IR.addCommand(IRelement.command.set, "%1 " + expression);
 		}
-		IR.addCommand("not %1");
+		IR.addCommand(IRelement.command.not, "%1");
 		
 		//Test variable %1 and jump to whileend label if the test fails
-		IR.addCommand(IRelement.command.jmpcnd, new String[]{"whileend" + wc, "1"});
+		IR.addCommand(IRelement.command.jmpcnd, "whileend " + wc + " 1");
 		
 		//Handle the statements inside the while loop.
 		//The returned list of strings includes the names of all variables created in the statement list.
 		destroyVars(statementHandler(tree.children.get(5)));
 		
 		//Unconditionally jump back to the start of the while loop
-		IR.addCommand(IRelement.command.jmp, new String[]{"whilestart" + wc});
+		IR.addCommand(IRelement.command.jmp, "whilestart " + wc);
 		
 		//Add a label for the end of the while loop.
-		IR.addCommand(IRelement.command.label, new String[]{"whileend" + wc});
+		IR.addCommand(IRelement.command.label, "whileend " + wc);
 	}
 	
 	//For first part it can be nothing, varDecHandler, or expressionHandler
@@ -295,16 +296,16 @@ public class IRcreation {
 		//Add a label for the start of the for loop.
 		String expression, fc = Integer.toString(forcount);
 		forcount++;
-		IR.addCommand(IRelement.command.label, new String[]{"forstart" + fc});
+		IR.addCommand(IRelement.command.label, "forstart " + fc);
 		
 		//Handle the condition of the for loop
 		if((expression = simpleExpressionHandler(tree.children.get(next), 1)) != null) {
-			IR.addCommand("set %1 " + expression);
+			IR.addCommand(IRelement.command.set, "%1 " + expression);
 		}
-		IR.addCommand("not %1");
+		IR.addCommand(IRelement.command.not, "%1");
 		
 		//Jump conditionally to the end if the condition fails
-		IR.addCommand(IRelement.command.jmpcnd, new String[]{"forend" + fc, "1"});
+		IR.addCommand(IRelement.command.jmpcnd, "forend " + fc + " 1");
 		
 		//Handle the statementList inside the for loop body
 		destroyVars(statementHandler(tree.children.get(next + 6)));
@@ -313,10 +314,10 @@ public class IRcreation {
 		expressionHandler(tree.children.get(next + 2));
 		
 		//Jump unconditionally back to the start of the for loop
-		IR.addCommand(IRelement.command.jmp, new String[]{"forstart" + fc});
+		IR.addCommand(IRelement.command.jmp, "forstart " + fc);
 		
 		//Add a label for the end of the for loop.
-		IR.addCommand(IRelement.command.label, new String[]{"forend" + fc});
+		IR.addCommand(IRelement.command.label, "forend " + fc);
 		
 		//Destroy the variables created in the for loop body
 		destroyVars(forvars);
@@ -353,44 +354,44 @@ public class IRcreation {
 			
 			//Handle the condition of the if statement
 			if((expression = simpleExpressionHandler(tree.children.get(2), 1)) != null) {
-				IR.addCommand("set %1 " + expression);
+				IR.addCommand(IRelement.command.set, "%1 " + expression);
 			}
-			IR.addCommand("not %1");
+			IR.addCommand(IRelement.command.not, "%1");
 			
 			//Jump conditionally to the else statement if the condition fails
-			IR.addCommand(IRelement.command.jmpcnd, new String[]{"else" + ic, "1"});
+			IR.addCommand(IRelement.command.jmpcnd, "else " + ic + " 1");
 			
 			//Handle the statementList inside the if statement body and deletes variables
 			destroyVars(statementHandler(tree.children.get(5)));
 			
 			//Jump unconditionally to the ifend label
-			IR.addCommand(IRelement.command.jmp, new String[]{"ifend" + ic});
+			IR.addCommand(IRelement.command.jmp, "ifend " + ic);
 			
 			//Add a label for the else statement
-			IR.addCommand(IRelement.command.label, new String[]{"else" + ic});
+			IR.addCommand(IRelement.command.label, "else " + ic);
 			
 			//Handle the statementList inside the else statement body
 			destroyVars(statementHandler(tree.children.get(8)));
 			
 			//Add a label for the end of the if statement
-			IR.addCommand(IRelement.command.label, new String[]{"ifend" + ic});
+			IR.addCommand(IRelement.command.label, "ifend " + ic);
 			
 		} else { //Doesn't have else			
 			
 			//Handle the condition of the if statement
 			if((expression = simpleExpressionHandler(tree.children.get(2), 1)) != null) {
-				IR.addCommand("set %1 " + expression);
+				IR.addCommand(IRelement.command.set, "%1 " + expression);
 			}
-			IR.addCommand("not %1");
+			IR.addCommand(IRelement.command.not, "%1");
 			
 			//Jump conditionally to the end if the condition fails
-			IR.addCommand(IRelement.command.jmpcnd, new String[]{"ifend" + ic, "1"});
+			IR.addCommand(IRelement.command.jmpcnd, "ifend " + ic + " 1");
 			
 			//Handle the statementList inside the if statement body
 			destroyVars(statementHandler(tree.children.get(5)));
 			
 			//Add a label for the end of the if statement
-			IR.addCommand(IRelement.command.label, new String[]{"ifend" + ic});
+			IR.addCommand(IRelement.command.label, "ifend " + ic);
 		}
 	}
 	
@@ -416,12 +417,12 @@ public class IRcreation {
 			return list;
 		case variableDeclarationInitialize:
 			String expression, ID = tree.children.get(0).children.get(0).token.token;
-			IR.addCommand("declare " + ID);
+			IR.addCommand(IRelement.command.declare, ID);
 			if(tree.children.size() == 3) {
 				if((expression = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
-					IR.addCommand("set " + ID + " %1");
+					IR.addCommand(IRelement.command.set, ID + " %1");
 				} else {
-					IR.addCommand("set " + ID + " " + expression);
+					IR.addCommand(IRelement.command.set, ID + " " + expression);
 				}
 			}
 			list.add(ID);
@@ -455,44 +456,44 @@ public class IRcreation {
 		String ID = Ptree.findTree(tree,  type_enum.identifier).token.token;
 		switch(tree.children.get(1).token.type) {
 		case incrementOperator:
-			IR.addCommand("add " + ID + " 1");
+			IR.addCommand(IRelement.command.add, ID + " 1");
 			break;
 		case decrementOperator:
-			IR.addCommand("sub " + ID + " 1");
+			IR.addCommand(IRelement.command.sub, ID + " 1");
 			break;
 		case additionAssignmentOperator:
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
-				IR.addCommand("add " + ID + " %1");
+				IR.addCommand(IRelement.command.add, ID + " %1");
 			} else {
-				IR.addCommand("add " + ID + " " + n);
+				IR.addCommand(IRelement.command.add, ID + " " + n);
 			}
 			break;
 		case subtractionAssignmentOperator:
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
-				IR.addCommand("sub " + ID + " %1");
+				IR.addCommand(IRelement.command.sub, ID + " %1");
 			} else {
-				IR.addCommand("sub " + ID + " " + n);
+				IR.addCommand(IRelement.command.sub, ID + " " + n);
 			}
 			break;
 		case multiplicationAssignmentOperator:
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
-				IR.addCommand("mul " + ID + " %1");
+				IR.addCommand(IRelement.command.mul, ID + " %1");
 			} else {
-				IR.addCommand("mul " + ID + " " + n);
+				IR.addCommand(IRelement.command.mul, ID + " " + n);
 			}
 			break;
 		case divisionAssignmentOperator:
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
-				IR.addCommand("div " + ID + " %1");
+				IR.addCommand(IRelement.command.div, ID + " %1");
 			} else {
-				IR.addCommand("div " + ID + " " + n);
+				IR.addCommand(IRelement.command.div, ID + " " + n);
 			}
 			break;
 		case assignmentOperator:
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
-				IR.addCommand("set " + ID + " %1");
+				IR.addCommand(IRelement.command.set, ID + " %1");
 			} else {
-				IR.addCommand("set " + ID + " " + n);
+				IR.addCommand(IRelement.command.set, ID + " " + n);
 			}
 			break;
 		default:
@@ -511,7 +512,7 @@ public class IRcreation {
 		case constant:
 			return tree.children.get(0).token.token;
 		case variable:
-			IR.addCommand(new IRelement("set " + "%" + i + " " + tree.children.get(0).token.token));
+			IR.addCommand(IRelement.command.set, "%" + i + " " + tree.children.get(0).token.token);
 			return null;
 		case call:
 			functionCallHandler(tree, i);
@@ -571,7 +572,7 @@ public class IRcreation {
 		} else {
 			n = simpleExpressionHandler(tree.children.get(1), i);
 			if(n == null) {
-				IR.addCommand("not %" + i);
+				IR.addCommand(IRelement.command.not, "%" + i);
 				return null;
 			} else {
 				return preProcess(n);
@@ -621,12 +622,12 @@ public class IRcreation {
 			return null;
 		}
 		if(n == null && n2 == null) {
-			IR.addCommand(c.toString() + " %" + i + " %" + (i + 1));
+			IR.addCommand(c, "%" + i + " %" + (i + 1));
 		} else if(n == null && n2 != null) {
-			IR.addCommand(c.toString() + " %" + i + " " + n2);
+			IR.addCommand(c, "%" + i + " " + n2);
 		} else if(n != null && n2 == null) {
-			IR.addCommand("set %" + i + " " + n);
-			IR.addCommand(c.toString() + " %" + i + " %" + (i + 1));
+			IR.addCommand(IRelement.command.set, "%" + i + " " + n);
+			IR.addCommand(c, "%" + i + " %" + (i + 1));
 		} else {
 			return preProcess(tree, n, n2);
 		}
@@ -727,7 +728,7 @@ public class IRcreation {
 			if(i == 0) {
 				name = "";
 			}
-			IR.addCommand("call " + ID + name);
+			IR.addCommand(IRelement.command.call, ID + name);
 		} else {
 			name = String.valueOf(i);
 			if(i == 0) {

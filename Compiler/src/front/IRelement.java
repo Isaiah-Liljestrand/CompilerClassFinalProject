@@ -32,7 +32,9 @@ public class IRelement {
 		ret,
 		label,
 		goto_,
-		gotolabel
+		gotolabel,
+		endfunction,
+		break_
 	}
 	
 	public static command commandFromString(String str) {
@@ -61,6 +63,8 @@ public class IRelement {
 		if (str.equals("label")) return command.label;
 		if (str.equals("goto_")) return command.goto_;
 		if (str.equals("gotolabel")) return command.gotolabel;
+		if (str.equals("endfunction")) return command.endfunction;
+		if (str.equals("break_")) return command.break_;
 		ErrorHandler.addError("Command '" + str + "' not found while creating IRelement.\n");
 		return null;
 	}
@@ -84,6 +88,17 @@ public class IRelement {
 	public IRelement(String cmd, List<String> parameters) {
 		this.cmd = commandFromString(cmd);
 		this.parameters = parameters;
+	}
+	
+	public IRelement(command cmd, String input) {
+		this.cmd = cmd;
+		String[] split = input.split(/*delimiter*/" ");
+		if (split.length > 0) {
+			this.parameters = new ArrayList<String>();
+			for(int i = 0; i < split.length; i++) {
+				this.parameters.add(split[i]);
+			}
+		}
 	}
 	
 	public IRelement(String input/*, String delimiter*/) {   //this seemed unnecessary
