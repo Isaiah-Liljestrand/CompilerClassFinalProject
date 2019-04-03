@@ -223,9 +223,10 @@ public class IRcreation {
 		}
 	}
 	
-	//Calls simpleExprHandler for while check
-	//Calls statementHandler for body
-	//Add jmps as needed.
+	/**
+	 * Deals with a while statement by calling subfunctions and dealing with structure
+	 * @param tree should be a whileStatement node of a parse tree
+	 */
 	private static void whileHandler(Ptree tree) {
 		//General IR structure:
 		//Start label
@@ -233,8 +234,8 @@ public class IRcreation {
 		//Conditional jump to end label
 		//statementList body
 		//Jump unconditionally to start label
-		//End label
 		//Destroy variables
+		//End label
 		
 		if (tree.children.size() != 7) {
 			ErrorHandler.addError("tree children size incorrect in whilehandler");
@@ -266,11 +267,11 @@ public class IRcreation {
 		IR.addCommand(IRelement.command.label, "whileend " + wc);
 	}
 	
-	//For first part it can be nothing, varDecHandler, or expressionHandler
-	//Middle part is simpleExprHandler
-	//Third part is expressionHandler
-	//Calls statementHandler for body
-	//Add jmps as needed.
+
+	/**
+	 * forHandler takes in a parse tree string with a forStatement
+	 * @param tree forStatement parse tree node
+	 */
 	private static void forHandler(Ptree tree) {
 		//General IR structure:
 		//Initialization step
@@ -278,10 +279,11 @@ public class IRcreation {
 		//Conditional step
 		//Conditional jump to end label
 		//statementList body
-		//Incrementation step
+		//Destroy variables
+		//Increment step
 		//Jump unconditionally to start label
 		//End label
-		//Destroy variables
+		//Destroy initialization step stuff
 		
 		//Handle the initialization part of the for loop.
 		//Has to account for 3 options: an expression, variable declaration, or nothing.
@@ -323,10 +325,10 @@ public class IRcreation {
 		destroyVars(forvars);
 	}
 	
-	//Calls simpleExpressionHandler for the if check
-	//Calls statementHandler for body
-	//Also check for an else and call statementHandler again.
-	//jmps added as needed.
+	/**
+	 * Handles if statement, can deal with one else statement at most
+	 * @param tree ifStatement node in a parse tree
+	 */
 	private static void ifHandler(Ptree tree) {
 		/*
 		With else
@@ -438,11 +440,10 @@ public class IRcreation {
 		return null;
 	}
 	
-	//Something like setting variables
-	//Check if increment or decrement
-	//Check if function call
-	//Check if variable assignment +=, *=, /=, -=, or =
-	//Calls simpleExpressionHandler
+	/**
+	 * Handles expression statments. possible expressions involve increment decrement assignments or function calls
+	 * @param tree should be an expressionStatement node in a parse tree
+	 */
 	private static void expressionHandler(Ptree tree) {
 		if(tree.token.type == type_enum.expressionStatement) {
 			tree = tree.children.get(0);
