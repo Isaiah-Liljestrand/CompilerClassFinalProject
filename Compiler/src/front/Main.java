@@ -71,6 +71,10 @@ public class Main {
 		symTable = new SymbolTable();
 		SymbolTable.buildDeclarationTable(grammar.root, symTable);
 		symTable.printSymbolTable();
+		if(ErrorHandler.errorsExist()) {
+			ErrorHandler.printStrings("Symbol Table Creation");
+			return;
+		}
 		
 		System.out.println();
 		IRcreation.createIR(grammar.root);

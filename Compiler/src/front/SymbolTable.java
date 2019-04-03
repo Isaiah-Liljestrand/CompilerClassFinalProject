@@ -130,8 +130,10 @@ public class SymbolTable {
 				table.addEntry(string, vType);
 				return;
 			}
-			System.out.println("Error: Variable already declared");   // needs to be elaborated
+			ErrorHandler.addError("Variable " + string + " already declared");
 			return;
+		case simpleExpression:
+			buildStatementTable(tree, table, false);
 		default:
 			for(Ptree t : tree.children) {
 				variableDeclarationHelper(t, vType, table);
@@ -155,7 +157,7 @@ public class SymbolTable {
 			if(!table.isVariableNameInScope(string)) {
 				table.addEntry(string,  type);
 			} else {
-				System.out.println("Error: parameter passed in through function is already declared");
+				ErrorHandler.addError("Function parameter " + string + " already declared");
 			}
 			return;
 		case ifStatement:
@@ -197,7 +199,7 @@ public class SymbolTable {
 			if(table.isFunctionNameInScope(tree.children.get(0).token.token)) {
 				return;
 			} else {
-				System.out.println("Warning: Function " + tree.token.token + " Not defined in current scope");
+				ErrorHandler.addError("Function " + tree.token.token + " not in scope");
 				return;
 			}
 		case variable:
@@ -206,7 +208,7 @@ public class SymbolTable {
 			if(table.isVariableNameInScope(tree.children.get(0).token.token)) {
 				return;
 			} else {
-				System.out.println("Warning: Variable " + tree.children.get(0).token.token + " Not defined in current scope");
+				ErrorHandler.addError("Variable " + tree.children.get(0).token.token + " not in scope");
 				return;
 			}
 		default:

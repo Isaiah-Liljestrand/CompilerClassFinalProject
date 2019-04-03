@@ -3,6 +3,7 @@ int main(int i, int j) {
 	goto jump;
 rel:
 	i++;
+	char y = 0;
 	j = 7;
 	int x = 5 + y, m = 2 * 5 + 7;
 jump:
@@ -11,9 +12,14 @@ jump:
 	}
 	
 	for(int n = 89; m != 99; m++) {
-		x -= n;
+		int class = 8;
+		x *= n;
 	}
-	t = 5;
+	
+	for(int n = 89; m != 99; m++) {
+		x *= n;
+	}
+	t = 5 / i;
 	int r = t;
 	goto rel;
 	return r;

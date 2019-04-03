@@ -310,7 +310,7 @@ public class IRcreation {
 		IR.addCommand(IRelement.command.jmpcnd, "forend " + fc + " 1");
 		
 		//Handle the statementList inside the for loop body
-		destroyVars(statementHandler(tree.children.get(next + 6)));
+		destroyVars(statementHandler(tree.children.get(next + 5)));
 		
 		//Handle the incrementation part of the for loop
 		expressionHandler(tree.children.get(next + 2));
@@ -596,21 +596,21 @@ public class IRcreation {
 			c = command.band;
 			break;
 		case compareExpression:
-			if(tree.children.get(1).token.type == type_enum.equalOperator) {
+			if(tree.children.get(1).children.get(0).token.type == type_enum.equalOperator) {
 				c = command.eq;
 			} else {
 				c = command.neq;
 			}
 			break;
 		case sumExpression:
-			if(tree.children.get(1).token.type == type_enum.additionOperator) {
+			if(tree.children.get(1).children.get(0).token.type == type_enum.additionOperator) {
 				c = command.add;
 			} else {
 				c = command.sub;
 			}
 			break;
 		case term:
-			if(tree.children.get(1).token.type == type_enum.multiplicationOperator) {
+			if(tree.children.get(1).children.get(0).token.type == type_enum.multiplicationOperator) {
 				c = command.mul;
 			} else if (tree.children.get(1).token.type == type_enum.divisionOperator){
 				c = command.div;
