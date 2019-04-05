@@ -1,7 +1,7 @@
-package front;
+package CompilerCode;
 
-import front.IRelement.command;
-import front.Token.type_enum;
+import CompilerCode.IRelement.command;
+import CompilerCode.Token.type_enum;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -245,7 +245,7 @@ public class IRcreation {
 		whilecount++;
 		
 		//Add the initial while label which is unconditionally jumped to at the end of each while loop.
-		IR.addCommand(IRelement.command.label, "whilestart " + wc);
+		IR.addCommand(IRelement.command.label, "whilestart" + wc);
 		
 		//Temporary variable %1 should be equal to the result of the simple expression
 		if((expression = simpleExpressionHandler(tree.children.get(2), 1)) != null) {
@@ -254,17 +254,17 @@ public class IRcreation {
 		IR.addCommand(IRelement.command.not, "%1");
 		
 		//Test variable %1 and jump to whileend label if the test fails
-		IR.addCommand(IRelement.command.jmpcnd, "whileend " + wc + " 1");
+		IR.addCommand(IRelement.command.jmpcnd, "whileend" + wc + " 1");
 		
 		//Handle the statements inside the while loop.
 		//The returned list of strings includes the names of all variables created in the statement list.
 		destroyVars(statementHandler(tree.children.get(5)));
 		
 		//Unconditionally jump back to the start of the while loop
-		IR.addCommand(IRelement.command.jmp, "whilestart " + wc);
+		IR.addCommand(IRelement.command.jmp, "whilestart" + wc);
 		
 		//Add a label for the end of the while loop.
-		IR.addCommand(IRelement.command.label, "whileend " + wc);
+		IR.addCommand(IRelement.command.label, "whileend" + wc);
 	}
 	
 
@@ -298,7 +298,7 @@ public class IRcreation {
 		//Add a label for the start of the for loop.
 		String expression, fc = Integer.toString(forcount);
 		forcount++;
-		IR.addCommand(IRelement.command.label, "forstart " + fc);
+		IR.addCommand(IRelement.command.label, "forstart" + fc);
 		
 		//Handle the condition of the for loop
 		if((expression = simpleExpressionHandler(tree.children.get(next), 1)) != null) {
@@ -307,7 +307,7 @@ public class IRcreation {
 		IR.addCommand(IRelement.command.not, "%1");
 		
 		//Jump conditionally to the end if the condition fails
-		IR.addCommand(IRelement.command.jmpcnd, "forend " + fc + " 1");
+		IR.addCommand(IRelement.command.jmpcnd, "forend" + fc + " 1");
 		
 		//Handle the statementList inside the for loop body
 		destroyVars(statementHandler(tree.children.get(next + 5)));
@@ -316,10 +316,10 @@ public class IRcreation {
 		expressionHandler(tree.children.get(next + 2));
 		
 		//Jump unconditionally back to the start of the for loop
-		IR.addCommand(IRelement.command.jmp, "forstart " + fc);
+		IR.addCommand(IRelement.command.jmp, "forstart" + fc);
 		
 		//Add a label for the end of the for loop.
-		IR.addCommand(IRelement.command.label, "forend " + fc);
+		IR.addCommand(IRelement.command.label, "forend" + fc);
 		
 		//Destroy the variables created in the for loop body
 		destroyVars(forvars);

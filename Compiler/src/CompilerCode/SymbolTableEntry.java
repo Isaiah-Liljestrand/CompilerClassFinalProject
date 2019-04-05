@@ -1,6 +1,6 @@
-package front;
+package CompilerCode;
 
-import front.Token.type_enum;
+import CompilerCode.Token.type_enum;
 
 public class SymbolTableEntry {
 	protected String name;

@@ -1,8 +1,8 @@
-package front;
+package CompilerCode;
 
 import java.util.List;
 
-import front.Token.type_enum;
+import CompilerCode.Token.type_enum;
 
 /**
  * Small functions that aid in grammar operations

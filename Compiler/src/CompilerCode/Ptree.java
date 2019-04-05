@@ -1,9 +1,9 @@
-package front;
+package CompilerCode;
 
 import java.util.List;
 import java.util.ArrayList;
 
-import front.Token.type_enum;
+import CompilerCode.Token.type_enum;
 
 /**
  * Parse Tree Class
@@ -110,7 +110,8 @@ public class Ptree {
 	 * @param tree root of the parse tree
 	 * @return true if all goto statements match up
 	 */
-	public static void gotoChecker(Ptree tree) {
+	public static void gotoBreakChecker(Ptree tree) {
+		breakChecker(tree, false);
 		List<Ptree> gotoJumpPlace = new ArrayList<Ptree>();
 		findTrees(tree, gotoJumpPlace, type_enum.gotoJumpPlace);
 		
@@ -142,6 +143,24 @@ public class Ptree {
 				ErrorHandler.addError("Unused goto jump place: " + tjump.children.get(0).token.token + " at line " + tjump.children.get(0).token.lineNumber);
 				return;
 			}
+		}
+	}
+	
+	/**
+	 * Checks that all break statements in the program are inside loops
+	 * @param tree parse tree location
+	 * @param inLoop whether the current node is in 
+	 */
+	public static void breakChecker(Ptree tree, boolean inLoop) {
+		if(tree.token.type == type_enum.k_break && !inLoop) {
+			ErrorHandler.addError("break statement at " + tree.token.lineNumber + " is not in a loop");
+		}
+		
+		if(tree.token.type == type_enum.whileStatement && tree.token.type == type_enum.forStatement) {
+			inLoop = true;
+		}
+		for(Ptree t : tree.children) {
+			breakChecker(t, inLoop);
 		}
 	}
 	

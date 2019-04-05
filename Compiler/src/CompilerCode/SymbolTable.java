@@ -1,9 +1,9 @@
-package front;
+package CompilerCode;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import front.Token.type_enum;
+import CompilerCode.Token.type_enum;
 
 public class SymbolTable {
 	protected String label;

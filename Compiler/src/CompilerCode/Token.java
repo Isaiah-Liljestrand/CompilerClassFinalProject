@@ -1,4 +1,4 @@
-package front;
+package CompilerCode;
 
 public class Token {
 	protected String token;
