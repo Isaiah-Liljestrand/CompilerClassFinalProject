@@ -361,22 +361,22 @@ public class IRcreation {
 			IR.addCommand(IRelement.command.not, "%1");
 			
 			//Jump conditionally to the else statement if the condition fails
-			IR.addCommand(IRelement.command.jmpcnd, "else " + ic + " 1");
+			IR.addCommand(IRelement.command.jmpcnd, "else" + ic + " 1");
 			
 			//Handle the statementList inside the if statement body and deletes variables
 			destroyVars(statementHandler(tree.children.get(5)));
 			
 			//Jump unconditionally to the ifend label
-			IR.addCommand(IRelement.command.jmp, "ifend " + ic);
+			IR.addCommand(IRelement.command.jmp, "ifend" + ic);
 			
 			//Add a label for the else statement
-			IR.addCommand(IRelement.command.label, "else " + ic);
+			IR.addCommand(IRelement.command.label, "else" + ic);
 			
 			//Handle the statementList inside the else statement body
 			destroyVars(statementHandler(tree.children.get(8)));
 			
 			//Add a label for the end of the if statement
-			IR.addCommand(IRelement.command.label, "ifend " + ic);
+			IR.addCommand(IRelement.command.label, "ifend" + ic);
 			
 		} else { //Doesn't have else			
 			
@@ -387,13 +387,13 @@ public class IRcreation {
 			IR.addCommand(IRelement.command.not, "%1");
 			
 			//Jump conditionally to the end if the condition fails
-			IR.addCommand(IRelement.command.jmpcnd, "ifend " + ic + " 1");
+			IR.addCommand(IRelement.command.jmpcnd, "ifend" + ic + " 1");
 			
 			//Handle the statementList inside the if statement body
 			destroyVars(statementHandler(tree.children.get(5)));
 			
 			//Add a label for the end of the if statement
-			IR.addCommand(IRelement.command.label, "ifend " + ic);
+			IR.addCommand(IRelement.command.label, "ifend" + ic);
 		}
 	}
 	
