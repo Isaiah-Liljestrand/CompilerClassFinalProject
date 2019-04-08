@@ -44,31 +44,56 @@ public class Scan {
 		//If the current token plus the new character is not valid, then the current token should be added to the list of valid tokens.
 		List<Token> tokens = new ArrayList<Token>(); //List to return
 		String tokenString;
+		boolean isComment = false;
+		Pattern commentRegex = Pattern.compile("/\\*");
 		char character;
 		int i, j;
 		int lineNumber = 0;
 		//Loop through every character in the string
 		for(String line : text) {
 			lineNumber++;
-			for (i = 0; i < line.length(); i++) {
-				character = line.charAt(i);
-				if(!isValidCharacter(character)) {
-					ErrorHandler.addError("Chraracter " + character + " not recognized");
-				} else if(!(character == ' ') && !(character == '\t')) {
-					for(j = line.length(); j > i; j--) {
-						tokenString = line.substring(i, j);
-						if(stringMatchesToken(tokenString)) {
-							tokens.add(new Token(tokenString, lineNumber));
+			i = 0;
+			if(isComment) {
+				for(i = 0; i < line.length(); i++) {
+					if(line.charAt(i) == '*' && line.charAt(i + 1) == '/') {
+						i += 2;
+						isComment = false;
+						break;
+					}
+				}
+			}
+			
+			if(!isComment) {
+				for (; i < line.length(); i++) {
+					character = line.charAt(i);
+					if(!isValidCharacter(character)) {
+						ErrorHandler.addError("Chraracter " + character + " not recognized");
+					} else if(!(character == ' ') && !(character == '\t')) {
+						for(j = line.length(); j > i; j--) {
+							tokenString = line.substring(i, j);
+							if(stringMatchesToken(tokenString)) {
+								if(commentRegex.matcher(tokenString).matches()) {
+									isComment = true;
+									break;
+								}
+								tokens.add(new Token(tokenString, lineNumber));
+								break;
+							}
+						}
+						if(j == i) {
+							ErrorHandler.addError("Section " + line.substring(i, line.length()) + " not recognized");
+							break;
+						}
+						i = j - 1;
+						if(isComment) {
 							break;
 						}
 					}
-					if(j == i) {
-						ErrorHandler.addError("Section " + line.substring(i, line.length()) + " not recognized");
-						break;
-					}
-					i = j - 1;
 				}
 			}
+		}
+		if(isComment) {
+			ErrorHandler.addError("Comment started but not finished");
 		}
 		removeComments(tokens);
 		return tokens;
@@ -79,12 +104,14 @@ public class Scan {
 	 * @param tokens all tokens parsed from the scannar
 	 */
 	private static void removeComments(List<Token> tokens) {
-		Pattern commentRegex = Pattern.compile("//.|/\\*.*\\*/");
+		Pattern commentRegex = Pattern.compile("//.*|/\\*.*\\*/");
+		List<Token> t = new ArrayList<Token>();
 		for(Token tok : tokens) {
 			if(commentRegex.matcher(tok.token).matches()) {
-				tokens.remove(tok);
+				t.add(tok);
 			}
 		}
+		tokens.removeAll(t);
 	}
 	
 	/**
@@ -106,7 +133,7 @@ public class Scan {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Checks if a string matches any token in the global variable REGEX
 	 * @param value The string to check
@@ -137,7 +164,8 @@ public class Scan {
 		string = string + "\'[a-zA-Z]\'|";			// 'character'
 		string = string + "0x[a-f0-9]+|"; 			// Accepts hex input
 		string = string + "/\\*.*\\*/|";			// Accepts any comments of the form /*......*/
-		string = string + "//.|";					// Accepts any comments or the form //......
+		string = string + "//.*|";					// Accepts any comments or the form //......
+		string = string + "/\\*|";					// Accepts /*
 		string = string + "\\+\\+|"; 				// ++
 		string = string + "\\-\\-|"; 				// --
 		string = string + "\\-\\=|";  				// -=

@@ -15,9 +15,10 @@ jump:
 		int class = 8;
 		x *= n;
 	}
-	
+	//lolhaha
 	for(int n = 89; m != 99; m++) {
-		x *= n;
+		x *= n;/*fdsasdf      
+		asdf*/
 	}
 	t = 5 / i;
 	int r = t;
