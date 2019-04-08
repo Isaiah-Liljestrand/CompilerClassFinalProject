@@ -18,9 +18,10 @@ jump:
 	//lolhaha
 	for(int n = 89; m != 99; m++) {
 		x *= n;/*fdsasdf      
-		asdf*/
+		asdf
 	}
-	t = 5 / i;
+	t = 5 / i;*/
+	}
 	int r = t;
 	goto rel;
 	return r;

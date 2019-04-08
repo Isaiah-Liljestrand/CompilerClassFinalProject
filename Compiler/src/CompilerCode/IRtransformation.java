@@ -38,29 +38,45 @@ public class IRtransformation {
 	}
 	
 	public static void logicalOr() {
-		
+		for(IRelement e : IR.instructions) {
+			if(e.cmd == IRelement.command.or) {
+				
+			}
+		}
 	}
 	
 	public static void logicalAnd() {
-		
+		for(IRelement e : IR.instructions) {
+			if(e.cmd == IRelement.command.and) {
+				
+			}
+		}
 	}
 	
 	public static void equal() {
-		
+		for(IRelement e : IR.instructions) {
+			if(e.cmd == IRelement.command.eq) {
+				
+			}
+		}
 	}
 	
 	public static void notEqual() {
-		
+		for(IRelement e : IR.instructions) {
+			if(e.cmd == IRelement.command.neq) {
+				
+			}
+		}
 	}
 	
 	public static void gotoHandler() {
 		for(IRelement e : IR.instructions) {
 			if(e.cmd == IRelement.command.goto_) {
-				e.parameters.set(0,"goto" + e.parameters.get(0));
+				e.parameters.set(0,"goto_" + e.parameters.get(0));
 				e.cmd = IRelement.command.jmp;
 			}
 			if(e.cmd == IRelement.command.gotolabel) {
-				e.parameters.set(0,"goto" + e.parameters.get(0));
+				e.parameters.set(0,"goto_" + e.parameters.get(0));
 				e.cmd = IRelement.command.label;
 			}
 		}

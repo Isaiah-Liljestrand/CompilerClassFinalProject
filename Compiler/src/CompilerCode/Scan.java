@@ -54,7 +54,7 @@ public class Scan {
 			lineNumber++;
 			i = 0;
 			if(isComment) {
-				for(i = 0; i < line.length(); i++) {
+				for(; i < line.length() - 1; i++) {
 					if(line.charAt(i) == '*' && line.charAt(i + 1) == '/') {
 						i += 2;
 						isComment = false;
