@@ -93,7 +93,11 @@ public class Scan {
 			}
 		}
 		if(isComment) {
-			ErrorHandler.addError("Comment started but not finished");
+			int error = 0;
+			if(tokens.size() > 0) {
+				error = tokens.get(tokens.size() - 1).lineNumber;
+			}
+			ErrorHandler.addError("Comment started but not finished at line:" + error);
 		}
 		removeComments(tokens);
 		return tokens;
