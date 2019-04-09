@@ -454,7 +454,7 @@ public class IRcreation {
 			return;
 		}
 		
-		String ID = Ptree.findTree(tree,  type_enum.identifier).token.token;
+		String ID = tree.findTree(type_enum.identifier).token.token;
 		switch(tree.children.get(1).token.type) {
 		case incrementOperator:
 			IR.addCommand(IRelement.command.add, ID + " 1");
@@ -738,7 +738,7 @@ public class IRcreation {
 			}
 			List<Ptree> trees = new ArrayList<Ptree>();
 			List<String> list = new ArrayList<String>();
-			Ptree.findTrees(tree.children.get(2), trees, type_enum.simpleExpression);
+			tree.children.get(2).findTrees(trees, type_enum.simpleExpression);
 			for(Ptree t : trees) {
 				n = simpleExpressionHandler(t, i);
 				if(n == null) {

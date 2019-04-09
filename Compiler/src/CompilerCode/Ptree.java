@@ -110,13 +110,13 @@ public class Ptree {
 	 * @param tree root of the parse tree
 	 * @return true if all goto statements match up
 	 */
-	public static void gotoBreakChecker(Ptree tree) {
-		breakChecker(tree, false);
+	public static void parseErrorChecker(Ptree tree) {
+		tree.breakChecker(false);
 		List<Ptree> gotoJumpPlace = new ArrayList<Ptree>();
-		findTrees(tree, gotoJumpPlace, type_enum.gotoJumpPlace);
+		tree.findTrees(gotoJumpPlace, type_enum.gotoJumpPlace);
 		
 		List<Ptree> gotoCalls = new ArrayList<Ptree>();
-		findTrees(tree, gotoCalls, type_enum.gotoStatement);
+		tree.findTrees(gotoCalls, type_enum.gotoStatement);
 		
 		boolean b;
 		for(Ptree tcall : gotoCalls) {
@@ -145,22 +145,23 @@ public class Ptree {
 			}
 		}
 	}
+
 	
 	/**
 	 * Checks that all break statements in the program are inside loops
 	 * @param tree parse tree location
 	 * @param inLoop whether the current node is in 
 	 */
-	public static void breakChecker(Ptree tree, boolean inLoop) {
-		if(tree.token.type == type_enum.k_break && !inLoop) {
-			ErrorHandler.addError("break statement at " + tree.token.lineNumber + " is not in a loop");
+	private void breakChecker(boolean inLoop) {
+		if(this.token.type == type_enum.k_break && !inLoop) {
+			ErrorHandler.addError("break statement at " + this.token.lineNumber + " is not in a loop");
 		}
 		
-		if(tree.token.type == type_enum.whileStatement && tree.token.type == type_enum.forStatement) {
+		if(this.token.type == type_enum.whileStatement && this.token.type == type_enum.forStatement) {
 			inLoop = true;
 		}
-		for(Ptree t : tree.children) {
-			breakChecker(t, inLoop);
+		for(Ptree t : this.children) {
+			t.breakChecker(inLoop);
 		}
 	}
 	
@@ -170,13 +171,13 @@ public class Ptree {
 	 * @param trees must be initialized to a new arraylist before call
 	 * @return List of Ptrees containing specified token
 	 */
-	public static void findTrees(Ptree tree, List<Ptree> trees, type_enum type) {
-		if(tree.token.type == type) {
-			trees.add(tree);
+	public void findTrees(List<Ptree> trees, type_enum type) {
+		if(this.token.type == type) {
+			trees.add(this);
 		}
 		
-		for(Ptree t: tree.children) {
-			findTrees(t, trees, type);
+		for(Ptree t: this.children) {
+			t.findTrees(trees, type);
 		}
 	}
 	
@@ -186,14 +187,14 @@ public class Ptree {
 	 * @param type the type being looked for
 	 * @return tree if found, null otherwise
 	 */
-	public static Ptree findTree(Ptree tree, type_enum type) {
-		if(tree.token.type == type) {
-			return tree;
+	public Ptree findTree(type_enum type) {
+		if(this.token.type == type) {
+			return this;
 		}
 		
-		for(Ptree t: tree.children) {
-			if(findTree(t, type) != null) {
-				return findTree(t, type);
+		for(Ptree t: this.children) {
+			if(t.findTree(type) != null) {
+				return t.findTree(type);
 			}
 		}
 		

@@ -57,7 +57,7 @@ public class Main {
 			return;
 		}
 		
-		Ptree.gotoBreakChecker(grammar.root);
+		Ptree.parseErrorChecker(grammar.root);
 		if(ErrorHandler.errorsExist()) {
 			ErrorHandler.printStrings("Goto Checker");
 			return;
