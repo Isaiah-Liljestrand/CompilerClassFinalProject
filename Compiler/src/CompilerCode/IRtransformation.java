@@ -1,7 +1,9 @@
 package CompilerCode;
 
 
-
+/*
+ * IRtransformation applies minor changes to the IR in order to prepare it for x86 transformations
+ */
 public class IRtransformation {
 	public static void IRtransformationFunction() {
 		breakHandler();
@@ -13,7 +15,9 @@ public class IRtransformation {
 	}
 	
 	
-	
+	/**
+	 * Removes all break statements and replaces them with jumps to the end of the current loop function
+	 */
 	public static void breakHandler() {
 		int i, j;
 		for(i = 0; i < IR.instructions.size(); i++) {
@@ -69,6 +73,28 @@ public class IRtransformation {
 		}
 	}
 	
+	/**
+	 * Moves all destroy functions forward in the code to free up register and stack space earlier
+	 */
+	public static void destroyOptimizer() {
+		for(int j = 0; j < IR.instructions.size(); j++) {
+			IRelement e = IR.instructions.get(j);
+			if(e.cmd == IRelement.command.destroy) {
+				String n = e.parameters.get(0);
+				int i = IR.instructions.indexOf(e);
+				IR.instructions.remove(e);
+				for(; i > -1; i--) {
+					if(IR.instructions.get(i).parameters.contains(n)) {
+						IR.instructions.add(i + 1, e);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Removes all goto calls and statements and replaces them with jumps and labels
+	 */
 	public static void gotoHandler() {
 		for(IRelement e : IR.instructions) {
 			if(e.cmd == IRelement.command.goto_) {
