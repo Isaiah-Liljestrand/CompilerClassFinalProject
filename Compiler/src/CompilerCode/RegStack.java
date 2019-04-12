@@ -101,6 +101,30 @@ public class RegStack {
 		return setReg(findLRUReg(), value);
 	}
 
+	/**
+	 * hotfix to the "loss of a variable if pushed to the stack while trying to push to reg" problem (can't return 2 ints)
+	 * @return true if the LRU reg is empty (0)
+	 */
+	public boolean isRegEmpty(){
+		int tmp = stack.get(this.findLRUReg());
+		if(tmp == 0){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * hotfix to the "loss of a variable if pushed to the stack while trying to push to reg" problem (can't return 2 ints)
+	 * @param reg the reg num in question if it's empty or not
+	 * @return true if the given reg number is empty (0)
+	 */
+	public boolean isRegEmpty(int reg){
+		int tmp = stack.get(reg);
+		if(tmp == 0){
+			return true;
+		}
+		return false;
+	}
 	
 	public int getReg(int reg){
 		incrementLRU();
