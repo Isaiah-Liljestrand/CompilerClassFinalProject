@@ -10,20 +10,14 @@ import java.util.List;
  * @author Isaiah-Liljestrand
  */
 public class ErrorHandler {
-	protected static List<String> errors;
-	
-	public static void checkInit() {
-		if (errors == null) {
-			errors = new ArrayList<String>();
-		}
-	}
+	protected static List<String> errors = new ArrayList<String>();
+
 	
 	/**
 	 * Tells the caller whether any errors have been reported yet
 	 * @return true if errors exist, false if no errors have been reported
 	 */
 	public static boolean errorsExist() {
-		checkInit();
 		if(errors.size() == 0) {
 			return false;
 		}
@@ -36,7 +30,6 @@ public class ErrorHandler {
 	 */
 	
 	public static void addError(String errorString) {
-		checkInit();
 		errors.add(errorString);
 	}
 	
@@ -45,7 +38,6 @@ public class ErrorHandler {
 	 * @param errorLocation should report which part of the compilation where there was failure
 	 */
 	public static void printStrings(String errorLocation) {
-		checkInit();
 		int i = 1;
 		for(String error : errors) {
 			System.out.println("Error#:" + i + " Location:" + errorLocation + " ErrorMessage:" + error);
