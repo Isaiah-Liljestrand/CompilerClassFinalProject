@@ -149,8 +149,8 @@ public class RegStack {
 	
 	/**
 	 * 
-	 * @param val
-	 * @return the location onto he stack
+	 * @param val to go onto the stack
+	 * @return the location onto the stack
 	 */
 	public int pushToStack(int val){
 		int i = regNum; 
@@ -175,6 +175,10 @@ public class RegStack {
 	
 	public int copyFromStack(int offset){
 		return stack.get(offset + regNum);
+	}
+	
+	public void delFromStack(int offset){
+		lastUsed.set(offset + regNum, 0); //marks as free space
 	}
 	
 	public int getrbp(){
