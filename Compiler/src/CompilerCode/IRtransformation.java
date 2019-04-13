@@ -7,11 +7,9 @@ package CompilerCode;
 public class IRtransformation {
 	public static void IRtransformationFunction() {
 		breakHandler();
-		logicalOr();
-		logicalAnd();
-		equal();
-		notEqual();
 		gotoHandler();
+		destroyOptimizer();
+		declarationOptimizer();
 	}
 	
 	
@@ -41,51 +39,50 @@ public class IRtransformation {
 		}
 	}
 	
-	public static void logicalOr() {
-		for(IRelement e : IR.instructions) {
-			if(e.cmd == IRelement.command.or) {
-				
-			}
-		}
-	}
-	
-	public static void logicalAnd() {
-		for(IRelement e : IR.instructions) {
-			if(e.cmd == IRelement.command.and) {
-				
-			}
-		}
-	}
-	
-	public static void equal() {
-		for(IRelement e : IR.instructions) {
-			if(e.cmd == IRelement.command.eq) {
-				
-			}
-		}
-	}
-	
-	public static void notEqual() {
-		for(IRelement e : IR.instructions) {
-			if(e.cmd == IRelement.command.neq) {
-				
+	/**
+	 * Moves all destroy functions forward in the code to free up register and stack space earlier
+	 */
+	public static void destroyOptimizer() {
+		int offset = 0;
+		for(int j = 0; j < IR.instructions.size(); j++) {
+			IRelement e = IR.instructions.get(j);
+			if(e.cmd == IRelement.command.destroy) {
+				String n = e.parameters.get(0);
+				IR.instructions.remove(e);
+				for(int i = j - 1; i > -1; i--) {
+					if(IR.instructions.get(i).cmd == IRelement.command.destroy && IR.instructions.get(i).parameters.contains(n)) {
+						offset++;
+					} else if(IR.instructions.get(i).cmd == IRelement.command.declare && IR.instructions.get(i).parameters.contains(n)) {
+						offset--;
+					}
+					if(offset == 0 && IR.instructions.get(i).parameters.contains(n)) {
+						IR.instructions.add(i + 1, e);
+						break;
+					}
+				}
 			}
 		}
 	}
 	
 	/**
-	 * Moves all destroy functions forward in the code to free up register and stack space earlier
+	 * Moves all declaration calls in an IR forward in order to 
 	 */
-	public static void destroyOptimizer() {
-		for(int j = 0; j < IR.instructions.size(); j++) {
+	public static void declarationOptimizer() {
+		int offset = 0;
+		for(int j = IR.instructions.size() - 1; j >= 0; j--) {
 			IRelement e = IR.instructions.get(j);
-			if(e.cmd == IRelement.command.destroy) {
+			if(e.cmd == IRelement.command.declare) {
 				String n = e.parameters.get(0);
-				int i = IR.instructions.indexOf(e);
 				IR.instructions.remove(e);
-				for(; i > -1; i--) {
-					if(IR.instructions.get(i).parameters.contains(n)) {
-						IR.instructions.add(i + 1, e);
+				for(int i = j; i < IR.instructions.size(); i++) {
+					if(IR.instructions.get(i).cmd == IRelement.command.destroy && IR.instructions.get(i).parameters.contains(n)) {
+						offset--;
+					} else if(IR.instructions.get(i).cmd == IRelement.command.declare && IR.instructions.get(i).parameters.contains(n)) {
+						offset++;
+					}
+					if(offset == 0 && IR.instructions.get(i).parameters.contains(n)) {
+						IR.instructions.add(i, e);
+						break;
 					}
 				}
 			}

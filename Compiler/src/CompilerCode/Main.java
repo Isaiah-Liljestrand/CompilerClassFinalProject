@@ -69,7 +69,7 @@ public class Main {
 		}
 		
 		symTable = new SymbolTable();
-		SymbolTable.buildDeclarationTable(grammar.root, symTable);
+		symTable.buildDeclarationTable(grammar.root);
 		symTable.printSymbolTable();
 		if(ErrorHandler.errorsExist()) {
 			ErrorHandler.printStrings("Symbol Table Creation");

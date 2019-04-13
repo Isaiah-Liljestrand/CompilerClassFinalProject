@@ -81,6 +81,9 @@ public class SymbolTable {
 		}
 	}
 	
+	/**
+	 * Simple function that prints all symbol tables recursively
+	 */
 	public void printSymbolTable() {
 	//	System.out.println("TEST");
 		System.out.println("Symbol Table " + label + ":");
@@ -98,19 +101,19 @@ public class SymbolTable {
 	 * @param tree current Ptree being dealt with
 	 * @param table top level symbol table
 	 */
-	public static void buildDeclarationTable(Ptree tree, SymbolTable table) {
+	public void buildDeclarationTable(Ptree tree) {
 		switch(tree.token.type) {
 		case functionDeclaration:
-			SymbolTable sTable = new SymbolTable(table, tree.children.get(1).token.token);
-			buildStatementTable(tree, sTable, false);
+			SymbolTable sTable = new SymbolTable(this, tree.children.get(1).token.token);
+			sTable.buildStatementTable(tree, false);
 			return;
 		case variableDeclaration:
 			type_enum vType = tree.children.get(0).children.get(0).token.type;
-			variableDeclarationHelper(tree.children.get(1), vType, table);
+			this.variableDeclarationHelper(tree.children.get(1), vType);
 			return;
 		default:
 			for(Ptree t : tree.children) {
-				buildDeclarationTable(t, table);
+				this.buildDeclarationTable(t);
 			}
 		}
 	}
@@ -122,21 +125,31 @@ public class SymbolTable {
 	 * @param vType int or char
 	 * @param table symbol table of the current scope
 	 */
-	public static void variableDeclarationHelper(Ptree tree, type_enum vType, SymbolTable table) {
+	public void variableDeclarationHelper(Ptree tree, type_enum vType) {
 		switch(tree.token.type) {
+		case variableDeclarationInitialize:
+			if(tree.children.size() == 1) {
+				variableDeclarationHelper(tree, vType);
+			} else {
+				variableDeclarationHelper(tree.children.get(2), vType);
+				variableDeclarationHelper(tree.children.get(0), vType);
+			}
+			return;
 		case variableDeclarationID:
 			String string = tree.children.get(0).token.token;
-			if(!table.isVariableNameInScope(string)) {
-				table.addEntry(string, vType);
-				return;
+			for(SymbolTableEntry s : this.entries) {
+				if(s.name.equals(string)) {
+					ErrorHandler.addError("Variable " + string + " already declared");
+				}
 			}
-			ErrorHandler.addError("Variable " + string + " already declared");
+			addEntry(string, vType);
 			return;
 		case simpleExpression:
-			buildStatementTable(tree, table, false);
+			buildStatementTable(tree, false);
+			return;
 		default:
 			for(Ptree t : tree.children) {
-				variableDeclarationHelper(t, vType, table);
+				variableDeclarationHelper(t, vType);
 			}
 		}
 	}
@@ -148,64 +161,61 @@ public class SymbolTable {
 	 * @param table top level symbol table
 	 * @param top  whether it is the top of a loop or conditional
 	 */
-	private static void buildStatementTable(Ptree tree, SymbolTable table, boolean top) {
+	private void buildStatementTable(Ptree tree, boolean top) {
 		SymbolTable sTable;
 		switch(tree.token.type) {
 		case parameter:
 			String string = tree.children.get(1).token.token;
 			type_enum type = tree.children.get(0).children.get(0).token.type;
-			if(!table.isVariableNameInScope(string)) {
-				table.addEntry(string,  type);
-			} else {
-				ErrorHandler.addError("Function parameter " + string + " already declared");
+			for(SymbolTableEntry s : this.entries) {
+				if(s.name.equals(string)) {
+					ErrorHandler.addError("Variable " + string + " already declared");
+				}
 			}
+			addEntry(string, type);
 			return;
 		case ifStatement:
 			if(!top) {
-				sTable = new SymbolTable(table, "if");
-				buildStatementTable(tree, sTable, true);
+				sTable = new SymbolTable(this, "if");
+				sTable.buildStatementTable(tree, true);
 			} else {
 				for(Ptree t : tree.children) {
-					buildStatementTable(t, table, false);
+					buildStatementTable(t, false);
 				}
 			}
 			return;
 		case whileStatement:
 			if(!top) {
-				sTable = new SymbolTable(table, "while");
-				buildStatementTable(tree, sTable, true);
+				sTable = new SymbolTable(this, "while");
+				sTable.buildStatementTable(tree, true);
 			} else {
 				for(Ptree t : tree.children) {
-					buildStatementTable(t, table, false);
+					buildStatementTable(t, false);
 				}
 			}
 			return;
 		case forStatement:
 			if(!top) {
-				sTable = new SymbolTable(table, "for");
-				buildStatementTable(tree, sTable, true);
+				sTable = new SymbolTable(this, "for");
+				sTable.buildStatementTable(tree, true);
 			} else {
 				for(Ptree t : tree.children) {
-					buildStatementTable(t, table, false);
+					buildStatementTable(t, false);
 				}
 			}
 			return;
 		case variableDeclaration:
-			variableDeclarationHelper(tree, tree.children.get(0).children.get(0).token.type, table);
+			variableDeclarationHelper(tree, tree.children.get(0).children.get(0).token.type);
 			return;
 		case call:
-			//verify that function call is in scope
-			//System.out.println("Call");
-			if(table.isFunctionNameInScope(tree.children.get(0).token.token)) {
+			if(isFunctionNameInScope(tree.children.get(0).token.token)) {
 				return;
 			} else {
-				ErrorHandler.addError("Function " + tree.token.token + " not in scope");
+				ErrorHandler.addError("Function call " + tree.children.get(0).token.token + " not in scope");
 				return;
 			}
 		case variable:
-			//System.out.println("Variable");
-			//verify legitimacy and check that it is in scope
-			if(table.isVariableNameInScope(tree.children.get(0).token.token)) {
+			if(isVariableNameInScope(tree.children.get(0).token.token)) {
 				return;
 			} else {
 				ErrorHandler.addError("Variable " + tree.children.get(0).token.token + " not in scope");
@@ -214,7 +224,7 @@ public class SymbolTable {
 		default:
 			//System.out.println("Default");
 			for(Ptree t : tree.children) {
-				buildStatementTable(t, table, false);
+				buildStatementTable(t, false);
 			}
 			
 		}
