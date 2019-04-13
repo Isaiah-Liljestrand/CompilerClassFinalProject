@@ -3,10 +3,16 @@ package CompilerCode;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents individual lines of IR
+ */
 public class IRelement {
 	public command cmd;
 	public List<String> parameters;
 	
+	/**
+	 * List of possible IR commands
+	 */
 	enum command {
 		declare,
 		destroy,
@@ -37,6 +43,11 @@ public class IRelement {
 		break_
 	}
 	
+	/**
+	 * Find the command from a string including the command
+	 * @param str string to retrieve command with
+	 * @return command
+	 */
 	public static command commandFromString(String str) {
 		if (str.equals("declare")) return command.declare; 
 		if (str.equals("destroy")) return command.destroy;
@@ -69,40 +80,36 @@ public class IRelement {
 		return null;
 	}
 	
+	/**
+	 * Outputs a string of the IRelement
+	 */
 	public String toString() {
 		if (this.cmd == null) {
 			return "";
 		}
-		String output = this.cmd.toString();
+		String output = cmd.toString();
 		for(String param : parameters) {
 			output += " " + param;
 		}
 		return output;
 	}
 	
+	/**
+	 * Creates an IR from a command and list of strings
+	 * @param cmd command to be added
+	 * @param parameters list of parameters pertaining to the command
+	 */
 	public IRelement(command cmd, List<String> parameters) {
 		this.cmd = cmd;
 		this.parameters = parameters;
 	}
 	
-	public IRelement(String cmd, List<String> parameters) {
-		this.cmd = commandFromString(cmd);
-		this.parameters = parameters;
-	}
-	
-	public IRelement(command cmd, String input) {
-		this.cmd = cmd;
-		String[] split = input.split(/*delimiter*/" ");
-		if (split.length > 0) {
-			this.parameters = new ArrayList<String>();
-			for(int i = 0; i < split.length; i++) {
-				this.parameters.add(split[i]);
-			}
-		}
-	}
-	
-	public IRelement(String input/*, String delimiter*/) {   //this seemed unnecessary
-		String[] split = input.split(/*delimiter*/" ");
+	/**
+	 * Creates an IRelement from a string that should represent one line of IR
+	 * @param input should be one line of IR with spaces seperating arguments
+	 */
+	public IRelement(String input) {
+		String[] split = input.split(" ");
 		if (split.length > 0) {
 			this.cmd = commandFromString(split[0]);
 			this.parameters = new ArrayList<String>();

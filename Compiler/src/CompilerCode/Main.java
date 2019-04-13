@@ -10,75 +10,123 @@ import java.util.List;
 
 public class Main {
 	public static void main(String[] args) {
-		boolean tokenize = true;
-		boolean PrintParse = true; //assuming true for testing
+		boolean printTokens = false;
+		boolean printParseTree = false;
+		boolean printSymbolTable = false;
+		boolean printIR = false;
+		boolean readIR = false;
 		String filename = null;
+		String IRfilename = null;
 		Scan scanner;
 		Grammar grammar;
 		SymbolTable symTable;
+		
+		//Not using command line arguments
+		if(args.length == 0) {
+			printTokens = true;
+			printParseTree = true;
+			printSymbolTable = true;
+			printIR = true;
+			filename = "Testfile.txt";
+		}
+		
+		
 		//Check for command line arguments
-		for (String arg: args) {
-			if (arg.compareTo("-t") == 0) {
-				tokenize = true;
+		for (int i = 0; i < args.length; i++) {
+			String arg = args[i];
+			switch(arg) {
+			case "-h":
+				System.out.println("Usage:");
+				System.out.println("./compiler [-t] [-p] [-s] [-ir] [-readIR filename][-f filename]");
+				System.out.println("    -t prints out scanner tokens");
+				System.out.println("    -p prints out parse tree");
+				System.out.println("    -s prints out the symbol table");
+				System.out.println("    -ir prints out the intermediate representation");
+				System.out.println("    -readIR reads the IR from a file");
+				return;
+			case "-t":
+				printTokens = true;
+				break;
+			case "-p":
+				printParseTree = true;
+				break;
+			case "-s":
+				printSymbolTable = true;
+				break;
+			case "-ir":
+				printIR = true;
+				break;
+			case "-f":
+				i++;
+				filename = args[i];
+				break;
+			case "-readIR":
+				i++;
+				IRfilename = args[i];
+				readIR = true;
+				break;
 			}
-			
 			if (arg == args[args.length - 1]) {
-				if(args.length > 1) {
-					filename = arg;
-				}
+				filename = arg;
 			}
 		}
+		if(!readIR) {
+			if(filename == null) {
+				filename = "Testfile.txt";
+			}
 		
-		/**if (filename == null) {
-			Scanner fname = new Scanner(System.in);
-			System.out.print("Input name of file: ");
-			filename = fname.nextLine().trim();
-			fname.close();
-			tokenize = true;
-		}*/
-		filename = "Testfile.txt";
+			List<String> lines = readFile(filename);
 		
-		List<String> lines = readFile(filename);
-		scanner = new Scan(lines);
+			//Scanner
+			scanner = new Scan(lines);
 		
-		if(ErrorHandler.errorsExist()) {
-			ErrorHandler.printStrings("Scanner");
-			return;
+			if(ErrorHandler.errorsExist()) {
+				ErrorHandler.printStrings("Scanner");
+				return;
+			}
+		
+			if (printTokens) {
+				System.out.println("Scanner:");
+				scanner.printTokens();
+			}
+		
+			//Parse Tree
+			grammar = new Grammar(scanner.tokens);
+			if(ErrorHandler.errorsExist()) {
+				ErrorHandler.printStrings("Parse Tree Creation");
+				return;
+			}
+		
+			if(printParseTree) {
+				grammar.printTree();
+			}
+		
+			Ptree.parseErrorChecker(grammar.root);
+			if(ErrorHandler.errorsExist()) {
+				ErrorHandler.printStrings("Goto Checker");
+				return;
+			}
+
+			//Symbol Table
+			symTable = new SymbolTable();
+			symTable.buildDeclarationTable(grammar.root, symTable);
+			if(printSymbolTable) {
+				symTable.printSymbolTable();
+				System.out.println();
+			}
+			if(ErrorHandler.errorsExist()) {
+				ErrorHandler.printStrings("Symbol Table Creation");
+				return;
+			}
+		
+			//Intermediate Representation
+			IRcreation.createIR(grammar.root);
+		} else {
+			IR.readIRFromFile(IRfilename);
 		}
-		
-		if (tokenize) {
-			System.out.println("Scanner:");
-			scanner.printTokens();
+		if(printIR) {
+			IR.printIR();
 		}
-		
-		grammar = new Grammar(scanner.tokens);
-		if(ErrorHandler.errorsExist()) {
-			ErrorHandler.printStrings("Parse Tree Creation");
-			return;
-		}
-		
-		Ptree.parseErrorChecker(grammar.root);
-		if(ErrorHandler.errorsExist()) {
-			ErrorHandler.printStrings("Goto Checker");
-			return;
-		}
-		
-		if (PrintParse && grammar != null){
-			//System.out.print("check");
-			grammar.printTree();
-		}
-		
-		symTable = new SymbolTable();
-		symTable.buildDeclarationTable(grammar.root);
-		symTable.printSymbolTable();
-		if(ErrorHandler.errorsExist()) {
-			ErrorHandler.printStrings("Symbol Table Creation");
-			return;
-		}
-		
-		System.out.println();
-		IRcreation.createIR(grammar.root);
-		IR.printIR();
 		if(ErrorHandler.errorsExist()) {
 			ErrorHandler.printStrings("IR creation");
 			return;
