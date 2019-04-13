@@ -109,7 +109,7 @@ public class Main {
 
 			//Symbol Table
 			symTable = new SymbolTable();
-			symTable.buildDeclarationTable(grammar.root, symTable);
+			symTable.buildDeclarationTable(grammar.root);
 			if(printSymbolTable) {
 				symTable.printSymbolTable();
 				System.out.println();
