@@ -42,7 +42,7 @@ public class ARelement {
 		label
 	}
 	
-	private static String[] registers = RegStack.getRegisters();
+	//private static String[] registers = RegStack.getRegisters();
 	private static String[] registers = new String[] {"%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi", "%esp", "%ebp", "%r8d", "%r9d", "%r10d", "%r11d", "%r12d", "%r13d", "%r14d", "%r15d"};
 	private static String register_regex = String.join("|", registers);
 	
