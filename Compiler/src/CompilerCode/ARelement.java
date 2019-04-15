@@ -257,6 +257,8 @@ public class ARelement {
 				error = true;
 			}
 			break;
+		case label:
+			break;
 		default:
 			ErrorHandler.addError("ARelement method in ARelement. Default in switch case shouldn't have been reached. Assembly command must not have been accounted for.");
 			break;
@@ -271,9 +273,15 @@ public class ARelement {
 	@Override
 	public String toString() {
 		String newstring = cmd.toString();
+		if (cmd == command.label) {
+			newstring = "";
+		}
 		
 		//Append comma separated parameters.
 		newstring += " " + String.join(", ", parameters);
+		if (cmd == command.label) {
+			newstring += ":";
+		}
 		return newstring;
 	}
 }
