@@ -38,7 +38,8 @@ public class ARelement {
 		jl,
 		jle,
 		cmp,
-		call
+		call,
+		label
 	}
 	
 	private static String[] registers = new String[] {"%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi", "%esp", "%ebp", "%r8d", "%r9d", "%r10d", "%r11d", "%r12d", "%r13d", "%r14d", "%r15d"};
@@ -269,82 +270,7 @@ public class ARelement {
 	//Returns in the format: "cmd p1, p2, ...pn" where cmd is the command enum and the parameters are comma separated.
 	@Override
 	public String toString() {
-		String newstring = "";
-		//Convert the enum cmd to a string
-		switch(cmd) {
-		case mov:
-			newstring += "mov";
-			break;
-		case push:
-			newstring += "push";
-			break;
-		case pop:
-			newstring += "pop";
-			break;
-		case lea:
-			newstring += "lea";
-			break;
-		case ret:
-			newstring += "ret";
-			break;
-		case sub:
-			newstring += "sub";
-			break;
-		case add:
-			newstring += "add";
-			break;
-		case dec:
-			newstring += "dec";
-			break;
-		case inc:
-			newstring += "inc";
-			break;
-		case imul:
-			newstring += "imul";
-			break;
-		case idiv:
-			newstring += "idiv";
-			break;
-		case and:
-			newstring += "and";
-			break;
-		case or:
-			newstring += "or";
-			break;
-		case xor:
-			newstring += "xor";
-			break;
-		case not:
-			newstring += "not";
-			break;
-		case jmp:
-			newstring += "jmp";
-			break;
-		case je:
-			newstring += "je";
-			break;
-		case jne:
-			newstring += "jne";
-			break;
-		case jg:
-			newstring += "jg";
-			break;
-		case jl:
-			newstring += "jl";
-			break;
-		case jle:
-			newstring += "jle";
-			break;
-		case cmp:
-			newstring += "cmp";
-			break;
-		case call:
-			newstring += "call";
-			break;
-		default:
-			ErrorHandler.addError("toString function in ARelement. Default in switch case shouldn't have been reached. Assembly command must not have been accounted for.");
-			break;
-		}
+		String newstring = cmd.toString();
 		
 		//Append comma separated parameters.
 		newstring += " " + String.join(", ", parameters);

@@ -108,7 +108,7 @@ public class Main {
 			}
 
 			//Symbol Table
-			/*symTable = new SymbolTable();
+			symTable = new SymbolTable();
 			symTable.buildDeclarationTable(grammar.root);
 			if(printSymbolTable) {
 				symTable.printSymbolTable();
@@ -117,7 +117,10 @@ public class Main {
 			if(ErrorHandler.errorsExist()) {
 				ErrorHandler.printStrings("Symbol Table Creation");
 				return;
-			}*/
+			}
+			
+			//mov $5, (%eax, %edx, $5)
+			AR.addCommand(ARelement.command.mov, new String[] {"$5", "%eax"});
 		
 			//Intermediate Representation
 			IRcreation.createIR(grammar.root);

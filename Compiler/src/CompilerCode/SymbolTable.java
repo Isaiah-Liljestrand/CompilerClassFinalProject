@@ -129,7 +129,7 @@ public class SymbolTable {
 		switch(tree.token.type) {
 		case variableDeclarationInitialize:
 			if(tree.children.size() == 1) {
-				variableDeclarationHelper(tree, vType);
+				variableDeclarationHelper(tree.children.get(0), vType);
 			} else {
 				variableDeclarationHelper(tree.children.get(2), vType);
 				variableDeclarationHelper(tree.children.get(0), vType);
