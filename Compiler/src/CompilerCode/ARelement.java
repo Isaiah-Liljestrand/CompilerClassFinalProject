@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
  * Represents individual lines of IR
  */
 public class ARelement {
-	private command cmd;
-	private List<String> parameters;
+	protected command cmd;
+	protected List<String> parameters;
 	
 	/**
 	 * List of possible assembly commands
@@ -42,16 +42,9 @@ public class ARelement {
 		label
 	}
 	
+	private static String[] registers = RegStack.getRegisters();
 	private static String[] registers = new String[] {"%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi", "%esp", "%ebp", "%r8d", "%r9d", "%r10d", "%r11d", "%r12d", "%r13d", "%r14d", "%r15d"};
 	private static String register_regex = String.join("|", registers);
-	
-	public command getCmd() {
-		return this.cmd;
-	}
-	
-	public List<String> getParameters() {
-		return this.parameters;
-	}
 	
 	//Tests if a string is a label
 	private static boolean isLabel(String str) {
