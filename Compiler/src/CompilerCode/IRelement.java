@@ -49,34 +49,36 @@ public class IRelement {
 	 * @return command
 	 */
 	public static command commandFromString(String str) {
-		if (str.equals("declare")) return command.declare; 
-		if (str.equals("destroy")) return command.destroy;
-		if (str.equals("set")) return command.set;
-		if (str.equals("add")) return command.add;
-		if (str.equals("sub")) return command.sub;
-		if (str.equals("mul")) return command.mul;
-		if (str.equals("div")) return command.div;
-		if (str.equals("mod")) return command.mod;
-		if (str.equals("eq")) return command.eq;
-		if (str.equals("neq")) return command.neq;
-		if (str.equals("not")) return command.not;
-		if (str.equals("bor")) return command.bor;
-		if (str.equals("bxor")) return command.bxor;
-		if (str.equals("band")) return command.band;
-		if (str.equals("or")) return command.or;
-		if (str.equals("and")) return command.and;
-		if (str.equals("xor")) return command.xor;
-		if (str.equals("jmp")) return command.jmp;
-		if (str.equals("jmpcnd")) return command.jmpcnd;
-		if (str.equals("function")) return command.function;
-		if (str.equals("call")) return command.call;
-		if (str.equals("ret")) return command.ret;
-		if (str.equals("label")) return command.label;
-		if (str.equals("goto_")) return command.goto_;
-		if (str.equals("gotolabel")) return command.gotolabel;
-		if (str.equals("endfunction")) return command.endfunction;
-		if (str.equals("break_")) return command.break_;
-		ErrorHandler.addError("Command '" + str + "' not found while creating IRelement.\n");
+		switch(str) {
+		case "declare": return command.declare;
+		case "destroy": return command.destroy;
+		case "set": return command.set;
+		case "add": return command.add;
+		case "sub": return command.sub;
+		case "mul": return command.mul;
+		case "div": return command.div;
+		case "mod": return command.mod;
+		case "eq": return command.eq;
+		case "neq": return command.neq;
+		case "not": return command.not;
+		case "bor": return command.bor;
+		case "bxor": return command.bxor;
+		case "band": return command.band;
+		case "or": return command.or;
+		case "and": return command.and;
+		case "xor": return command.xor;
+		case "jmp": return command.jmp;
+		case "jmpcnd": return command.jmpcnd;
+		case "function": return command.function;
+		case "call": return command.call;
+		case "ret": return command.ret;
+		case "label": return command.label;
+		case "goto_": return command.goto_;
+		case "gotolabel": return command.gotolabel;
+		case "endfunction": return command.endfunction;
+		case "break_": return command.break_;
+		default: ErrorHandler.addError("Command '" + str + "' not found while creating IRelement.\n");
+		}
 		return null;
 	}
 	
@@ -117,5 +119,41 @@ public class IRelement {
 				this.parameters.add(split[i]);
 			}
 		}
+	}
+	
+	/**
+	 * Tests if the IRelement is an ending to a subchunk
+	 * @return true if it is a whileend, forend, or ifend label, false otherwise
+	 */
+	public boolean isChunkEnd() {
+		if(cmd == command.label) {
+			String n = parameters.get(0);
+			if(n.length() > 8 && n.substring(0, 8).equals("whileend")) {
+				return true;
+			} else if(n.length() > 6 && n.substring(0, 6).equals("forend")) {
+				return true;
+			} else if(n.length() > 5 && n.substring(0, 5).equals("ifend")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Tests if the IRelement is a beggining to a subchunk
+	 * @return true if it is a whilestart, forstart, or ifstart, false otherwise
+	 */
+	public boolean isChunkBeginning() {
+		if(cmd == command.label) {
+			String n = parameters.get(0);
+			if(n.length() > 10 && n.substring(0, 10).equals("whilestart")) {
+				return true;
+			} else if(n.length() > 8 && n.substring(0, 8).equals("forstart")) {
+				return true;
+			} else if(n.length() > 7 && n.substring(0, 7).equals("ifstart")) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

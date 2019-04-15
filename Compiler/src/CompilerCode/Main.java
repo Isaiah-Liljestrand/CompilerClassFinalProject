@@ -118,9 +118,6 @@ public class Main {
 				ErrorHandler.printStrings("Symbol Table Creation");
 				return;
 			}
-			
-			//mov $5, (%eax, %edx, $5)
-			AR.addCommand(ARelement.command.mov, new String[] {"$5", "%eax"});
 		
 			//Intermediate Representation
 			IRcreation.createIR(grammar.root);
@@ -134,6 +131,9 @@ public class Main {
 			ErrorHandler.printStrings("IR creation");
 			return;
 		}
+		
+		IRtransformation.IRtransformationFunction();
+		IR.printIR();
 	}
 
 	

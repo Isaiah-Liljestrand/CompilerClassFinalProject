@@ -40,7 +40,11 @@ public class IR {
 	 */
 	public static void printIR() {
 		for(IRelement elem : instructions) {
-			System.out.println(elem.toString());
+			if(elem.cmd == IRelement.command.label) {
+				System.out.println(elem.toString());
+			} else {
+				System.out.println("\t" + elem.toString());
+			}
 		}
 	}
 

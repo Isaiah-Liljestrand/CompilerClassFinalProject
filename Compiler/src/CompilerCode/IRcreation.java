@@ -254,7 +254,7 @@ public class IRcreation {
 		IR.addCommand(IRelement.command.not, "%1");
 		
 		//Test variable %1 and jump to whileend label if the test fails
-		IR.addCommand(IRelement.command.jmpcnd, "whileend" + wc + " 1");
+		IR.addCommand(IRelement.command.jmpcnd, "whileend" + wc);
 		
 		//Handle the statements inside the while loop.
 		//The returned list of strings includes the names of all variables created in the statement list.
@@ -307,7 +307,7 @@ public class IRcreation {
 		IR.addCommand(IRelement.command.not, "%1");
 		
 		//Jump conditionally to the end if the condition fails
-		IR.addCommand(IRelement.command.jmpcnd, "forend" + fc + " 1");
+		IR.addCommand(IRelement.command.jmpcnd, "forend" + fc);
 		
 		//Handle the statementList inside the for loop body
 		destroyVars(statementHandler(tree.children.get(next + 5)));
@@ -361,7 +361,7 @@ public class IRcreation {
 			IR.addCommand(IRelement.command.not, "%1");
 			
 			//Jump conditionally to the else statement if the condition fails
-			IR.addCommand(IRelement.command.jmpcnd, "else" + ic + " 1");
+			IR.addCommand(IRelement.command.jmpcnd, "else" + ic);
 			
 			//Handle the statementList inside the if statement body and deletes variables
 			destroyVars(statementHandler(tree.children.get(5)));
@@ -387,7 +387,7 @@ public class IRcreation {
 			IR.addCommand(IRelement.command.not, "%1");
 			
 			//Jump conditionally to the end if the condition fails
-			IR.addCommand(IRelement.command.jmpcnd, "ifend" + ic + " 1");
+			IR.addCommand(IRelement.command.jmpcnd, "ifend" + ic);
 			
 			//Handle the statementList inside the if statement body
 			destroyVars(statementHandler(tree.children.get(5)));

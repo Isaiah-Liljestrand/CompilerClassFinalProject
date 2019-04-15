@@ -17,10 +17,7 @@ jump:
 	}
 	//lolhaha
 	for(int n = 89; m != 99; m++) {
-		x *= n;/*fdsasdf      
-		asdf
-	}
-	t = 5 / i;*/
+		x *= n;
 	}
 	int r = t;
 	goto rel;
