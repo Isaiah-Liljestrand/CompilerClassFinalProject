@@ -363,6 +363,8 @@ public class IRcreation {
 			//Jump conditionally to the else statement if the condition fails
 			IR.addCommand(IRelement.command.jmpcnd, "else" + ic);
 			
+			IR.addCommand(IRelement.command.label, "ifstart" + ic);
+			
 			//Handle the statementList inside the if statement body and deletes variables
 			destroyVars(statementHandler(tree.children.get(5)));
 			
@@ -373,7 +375,7 @@ public class IRcreation {
 			IR.addCommand(IRelement.command.label, "else" + ic);
 			
 			//Handle the statementList inside the else statement body
-			destroyVars(statementHandler(tree.children.get(8)));
+			destroyVars(statementHandler(tree.children.get(9)));
 			
 			//Add a label for the end of the if statement
 			IR.addCommand(IRelement.command.label, "ifend" + ic);
@@ -388,6 +390,9 @@ public class IRcreation {
 			
 			//Jump conditionally to the end if the condition fails
 			IR.addCommand(IRelement.command.jmpcnd, "ifend" + ic);
+			
+			//Indicates start of the if statement
+			IR.addCommand(IRelement.command.label, "ifstart" + ic);
 			
 			//Handle the statementList inside the if statement body
 			destroyVars(statementHandler(tree.children.get(5)));

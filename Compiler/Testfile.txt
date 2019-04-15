@@ -1,5 +1,5 @@
 int main(int i, int j) {
-	int killeveryone = 6-5;
+	int killeveryone = 6-5, r;
 	goto jump;
 	i = killeveryone;
 	int t = 9;
@@ -9,8 +9,12 @@ rel:
 	j = 7;
 	int x = 5 + y, m = 2 * 5 + 7;
 jump:
-	while(t == x + 5 - 5 * 8) {
-		return 'a';
+	while(1) {
+		if(killeveryone == 1) {
+			killeveryone--;
+		} else {
+			killeveryone++;
+		}
 	}
 	
 	for(int n = 89; m != 99; m++) {
@@ -21,7 +25,11 @@ jump:
 	for(int n = 89; m != 99; m++) {
 		x *= n;
 	}
-	int r = t;
 	goto rel;
+	if(1) {
+		r++;
+	} else {
+		r--;
+	}
 	return r;
 }

@@ -837,7 +837,7 @@ public class Grammar {
 		index = GrammarHelper.findMatchingBracket(tokens, index2 + 2);
 		
 		//Checks if the bracket index is a legitimate size
-		if(index == -1 || !(index2 + 3 < index) || index != tokens.size()) {
+		if(index == -1 || !(index2 + 3 < index) || index != (tokens.size() - 1)) {
 			ErrorHandler.addError("Not found or invalid matching bracket in if statement:" + tokens.get(index2 + 2).lineNumber);
 			return null;
 		}

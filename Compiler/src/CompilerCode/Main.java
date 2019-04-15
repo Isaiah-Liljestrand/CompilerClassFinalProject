@@ -101,9 +101,9 @@ public class Main {
 				grammar.printTree();
 			}
 		
-			Ptree.parseErrorChecker(grammar.root);
+			grammar.root.parseErrorChecker();
 			if(ErrorHandler.errorsExist()) {
-				ErrorHandler.printStrings("Goto Checker");
+				ErrorHandler.printStrings("parseErrorChecker");
 				return;
 			}
 

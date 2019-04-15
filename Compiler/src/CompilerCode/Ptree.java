@@ -110,13 +110,13 @@ public class Ptree {
 	 * @param tree root of the parse tree
 	 * @return true if all goto statements match up
 	 */
-	public static void parseErrorChecker(Ptree tree) {
-		tree.breakChecker(false);
+	public void parseErrorChecker() {
+		breakChecker(false);
 		List<Ptree> gotoJumpPlace = new ArrayList<Ptree>();
-		tree.findTrees(gotoJumpPlace, type_enum.gotoJumpPlace);
+		findTrees(gotoJumpPlace, type_enum.gotoJumpPlace);
 		
 		List<Ptree> gotoCalls = new ArrayList<Ptree>();
-		tree.findTrees(gotoCalls, type_enum.gotoStatement);
+		findTrees(gotoCalls, type_enum.gotoStatement);
 		
 		boolean b;
 		for(Ptree tcall : gotoCalls) {
@@ -153,14 +153,16 @@ public class Ptree {
 	 * @param inLoop whether the current node is in 
 	 */
 	private void breakChecker(boolean inLoop) {
-		if(this.token.type == type_enum.k_break && !inLoop) {
-			ErrorHandler.addError("break statement at " + this.token.lineNumber + " is not in a loop");
+		if(token.type == type_enum.breakStatement && !inLoop) {
+			ErrorHandler.addError("break statement at " + token.lineNumber + " is not in a loop");
+			return;
 		}
 		
-		if(this.token.type == type_enum.whileStatement && this.token.type == type_enum.forStatement) {
+		if(token.type == type_enum.whileStatement && token.type == type_enum.forStatement) {
 			inLoop = true;
 		}
-		for(Ptree t : this.children) {
+		
+		for(Ptree t : children) {
 			t.breakChecker(inLoop);
 		}
 	}
@@ -168,7 +170,7 @@ public class Ptree {
 	/**
 	 * finds all of one type of Ptree recursively
 	 * @param token to be found
-	 * @param trees must be initialized to a new arraylist before call
+	 * @param trees must be initialized to a new array list before call
 	 * @return List of Ptrees containing specified token
 	 */
 	public void findTrees(List<Ptree> trees, type_enum type) {

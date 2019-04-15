@@ -234,6 +234,9 @@ public class Token {
 		case "if":
 			this.type = type_enum.k_if;
 			break;
+		case "else":
+			this.type = type_enum.k_else;
+			break;
 		case "int":
 			this.type = type_enum.k_int;
 			break;

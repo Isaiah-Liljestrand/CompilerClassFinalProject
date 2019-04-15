@@ -5,9 +5,9 @@ import java.util.List;
 
 public class VarElement {
 	public String name;
-	public List<String> location = new ArrayList<String>();
+	public List<Integer> location = new ArrayList<Integer>();
 	
-	public VarElement(String name, String location) {
+	public VarElement(String name, int location) {
 		this.name = name;
 		this.location.add(location);
 	}
@@ -16,7 +16,7 @@ public class VarElement {
 		return this.name;
 	}
 	
-	public List<String> getLocation() {
+	public List<Integer> getLocation() {
 		return this.location;
 	}
 }
