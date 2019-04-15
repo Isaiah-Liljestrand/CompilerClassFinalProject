@@ -118,7 +118,7 @@ public class Main {
 				ErrorHandler.printStrings("Symbol Table Creation");
 				return;
 			}
-		
+					
 			//Intermediate Representation
 			IRcreation.createIR(grammar.root);
 		} else {
