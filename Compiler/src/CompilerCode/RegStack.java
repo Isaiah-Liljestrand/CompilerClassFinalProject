@@ -135,6 +135,10 @@ public class RegStack {
 		}
 	}
 	
+	public int giveMeStack() {
+		return nextFreeSpace();
+	}
+	
 	/**
 	 * uses the next free space
 	 * @return the int in stack space of that space
