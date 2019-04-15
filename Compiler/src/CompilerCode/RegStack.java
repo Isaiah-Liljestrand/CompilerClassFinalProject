@@ -9,11 +9,14 @@ import java.util.ArrayList;
 public class RegStack {
 	int regNum;
 	private ArrayList<Integer> stack = new ArrayList<Integer>();
+	private ArrayList<String> names = new ArrayList<String>();
 	
 	
 	RegStack(){
 		this.regNum = 14; //rsp & rbp not touched
 		setup(regNum);
+		//How to get associated stack value from name
+		//stack.get(names.lastIndexOf("%eax"));
 	}
 	
 	RegStack(int regNum){
