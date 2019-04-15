@@ -59,14 +59,14 @@ public class ARelement {
 	
 	//Tests if a string is a constant
 	private static boolean isConstant(String str) {
-		Pattern REGEX = Pattern.compile("$\\d+");
+		Pattern REGEX = Pattern.compile("\\$\\d+");
 		Matcher test = REGEX.matcher(str);
 		return test.matches();
 	}
 	
 	//Tests if a string is a register
 	private static boolean isReg(String str) {
-		String test_pat = "(" + register_regex + ")|"; //Tests just a register by itself: %eax
+		String test_pat = register_regex; //Tests just a register by itself: %eax
 		Pattern REGEX = Pattern.compile(test_pat);
 		Matcher test = REGEX.matcher(str);
 		return test.matches();
@@ -74,8 +74,8 @@ public class ARelement {
 	
 	//Tests if a string is a memory access
 	private static boolean isMem(String str) {
-		String test_pat = "\\d??(" + register_regex + ")|"; //Tests register in parenthesis with an optional int in front: (%eax) or 5(%eax)
-		test_pat += "\\(" + register_regex + "," + register_regex + ",\\d\\)"; //Tests three params in parenthesis: (%edx,%eax,5)
+		String test_pat = "(\\d?\\((" + register_regex + ")\\))|"; //Tests register in parenthesis with an optional int in front: (%eax) or 5(%eax)
+		test_pat += "(\\((" + register_regex + "), ?(" + register_regex + "), ?\\$\\d\\))"; //Tests three params in parenthesis: (%edx,%eax,5)
 		Pattern REGEX = Pattern.compile(test_pat);
 		Matcher test = REGEX.matcher(str);
 		return test.matches();
@@ -112,7 +112,7 @@ public class ARelement {
 	//Each possible test is separated by a |.
 	//For example "rr|cr" will return true if the second parameter is a register and the first is either a register or a constant.
 	private static boolean checkMulParams(String check, String[] parameters) {
-		String[] checks = check.split("|");
+		String[] checks = check.split("\\|");
 		for(String c : checks) {
 			if (checkParams(c, parameters)) {
 				return true;
