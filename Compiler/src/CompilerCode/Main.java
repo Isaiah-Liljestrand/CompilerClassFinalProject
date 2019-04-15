@@ -133,6 +133,7 @@ public class Main {
 		}
 		
 		IRtransformation.IRtransformationFunction();
+		System.out.println("\n");
 		IR.printIR();
 	}
 

@@ -96,8 +96,10 @@ public class IRtransformation {
 					valid = i;
 				}
 				offset++;
+				continue;
 			} else if(IR.instructions.get(i).isChunkEnd()) {
 				offset--;
+				continue;
 			} else if(offset == 0) {
 				valid = i;
 			}
@@ -120,11 +122,13 @@ public class IRtransformation {
 				if(offset == 0) {
 					valid = i;
 				}
+				continue;
 			} else if(IR.instructions.get(i).isChunkEnd()) {
 				if(offset == 0) {
 					valid = i + 1;
 				}
 				offset++;
+				continue;
 			} else if(offset == 0) {
 				valid = i;
 			}
