@@ -35,6 +35,10 @@ public class IR {
 		instructions.add(new IRelement(cmd, parameters));
 	}
 	
+	public static void addCommand(IRelement.command cmd) {
+		instructions.add(new IRelement(cmd, null));
+	}
+	
 	/**
 	 * Prints out the IR
 	 */

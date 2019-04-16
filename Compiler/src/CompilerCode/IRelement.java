@@ -103,7 +103,11 @@ public class IRelement {
 	 */
 	public IRelement(command cmd, List<String> parameters) {
 		this.cmd = cmd;
-		this.parameters = parameters;
+		if(parameters != null) {
+			this.parameters = parameters;
+		} else {
+			this.parameters = new ArrayList<String>();
+		}
 	}
 	
 	/**

@@ -110,12 +110,12 @@ public class IRcreation {
 		//Adds a return statement if it is necessary
 		if(!returnStatementExists(tree2)) {
 			if(tree.children.get(0).children.get(0).token.type == type_enum.k_void) {
-				IR.addCommand(IRelement.command.ret, "");
+				IR.addCommand(IRelement.command.ret);
 			} else {
 				IR.addCommand(IRelement.command.ret, "0");
 			}
 		}
-		IR.addCommand(IRelement.command.endfunction, "");
+		IR.addCommand(IRelement.command.endfunction);
 	}
 	
 	/**
@@ -179,7 +179,7 @@ public class IRcreation {
 			break;
 		case returnStatement:
 			if(tree.children.size() == 2) {
-				IR.addCommand(IRelement.command.ret, "");
+				IR.addCommand(IRelement.command.ret);
 			} else {
 				String n = simpleExpressionHandler(tree.children.get(1), 1);
 				if(n == null) {
@@ -196,7 +196,7 @@ public class IRcreation {
 			IR.addCommand(IRelement.command.goto_, tree.children.get(1).token.token);
 			break;
 		case breakStatement:
-			IR.addCommand(IRelement.command.break_, "");
+			IR.addCommand(IRelement.command.break_);
 			break;
 		case expressionStatement:
 			expressionHandler(tree);

@@ -153,12 +153,11 @@ public class Ptree {
 	 * @param inLoop whether the current node is in 
 	 */
 	private void breakChecker(boolean inLoop) {
-		if(token.type == type_enum.breakStatement && !inLoop) {
+		if(token.type == type_enum.k_break && !inLoop) {
 			ErrorHandler.addError("break statement at " + token.lineNumber + " is not in a loop");
-			return;
 		}
 		
-		if(token.type == type_enum.whileStatement && token.type == type_enum.forStatement) {
+		if(token.type == type_enum.whileStatement || token.type == type_enum.forStatement) {
 			inLoop = true;
 		}
 		

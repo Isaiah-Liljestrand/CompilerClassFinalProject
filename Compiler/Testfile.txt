@@ -12,6 +12,7 @@ jump:
 	while(1) {
 		if(killeveryone == 1) {
 			killeveryone--;
+			break;
 		} else {
 			killeveryone++;
 		}
