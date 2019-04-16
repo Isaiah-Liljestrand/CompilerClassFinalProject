@@ -129,6 +129,7 @@ public class ARelement {
 		//Check validity. Return errors if a assembly command is invalid.
 		boolean error = false;
 		switch(cmd) {
+		//Isaiah
 		case mov:
 			//For checkMulParams the first parameter represents the possible types of parameters.
 			//r is a register
@@ -140,116 +141,139 @@ public class ARelement {
 				error = true;
 			}
 			break;
+		//Jacob
 		case push:
 			if (!checkMulParams("r|m|c", trimmed)) {
 				error = true;
 			}
 			break;
+		//Isaiah
 		case pop:
 			if (!checkMulParams("r|m", trimmed)) {
 				error = true;
 			}
 			break;
+		//Chris
 		case lea:
 			if (!checkMulParams("mr", trimmed)) {
 				error = true;
 			}
 			break;
+		//Isaiah
 		case ret:
 			if (!checkMulParams("", trimmed)) {
 				error = true;
 			}
 			break;
+		//Chris
 		case sub:
 			if (!checkMulParams("rr|mr|rm|cr|cm", trimmed)) {
 				error = true;
 			}
 			break;
+		//Isaiah
 		case add:
 			if (!checkMulParams("rr|mr|rm|cr|cm", trimmed)) {
 				error = true;
 			}
 			break;
+		//Jacob
 		case dec:
 			if (!checkMulParams("r|m", trimmed)) {
 				error = true;
 			}
 			break;
+		//Ben
 		case inc:
 			if (!checkMulParams("r|m", trimmed)) {
 				error = true;
 			}
 			break;
+		//Jacob
 		case imul:
 			if (!checkMulParams("rr|mr|crr|cmr", trimmed)) {
 				error = true;
 			}
 			break;
+		//Chris
 		case idiv:
 			if (!checkMulParams("r|m", trimmed)) {
 				error = true;
 			}
 			break;
+		//Chris
 		case and:
 			if (!checkMulParams("rr|mr|rm|cr|cm", trimmed)) {
 				error = true;
 			}
 			break;
+		//Ben
 		case or:
 			if (!checkMulParams("rr|mr|rm|cr|cm", trimmed)) {
 				error = true;
 			}
 			break;
+		//Ben
 		case xor:
 			if (!checkMulParams("rr|mr|rm|cr|cm", trimmed)) {
 				error = true;
 			}
 			break;
+		//Chris
 		case not:
 			if (!checkMulParams("r|m", trimmed)) {
 				error = true;
 			}
 			break;
+		//Isaiah
 		case jmp:
 			if (!checkMulParams("l", trimmed)) {
 				error = true;
 			}
 			break;
+		//Jacob
 		case je:
 			if (!checkMulParams("l", trimmed)) {
 				error = true;
 			}
 			break;
+		//Isaiah
 		case jne:
 			if (!checkMulParams("l", trimmed)) {
 				error = true;
 			}
 			break;
+		//Isaiah
 		case jg:
 			if (!checkMulParams("l", trimmed)) {
 				error = true;
 			}
 			break;
+		//Chris
 		case jl:
 			if (!checkMulParams("l", trimmed)) {
 				error = true;
 			}
 			break;
+		//Jacob
 		case jle:
 			if (!checkMulParams("l", trimmed)) {
 				error = true;
 			}
 			break;
+		//Jacob
 		case cmp:
 			if (!checkMulParams("rr|mr|rm|cr", trimmed)) {
 				error = true;
 			}
 			break;
+		//Jacob
 		case call:
 			if (!checkMulParams("l", trimmed)) {
 				error = true;
 			}
 			break;
+		//Chris		
 		case label:
 			break;
 		default:
