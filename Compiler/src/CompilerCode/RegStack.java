@@ -13,7 +13,7 @@ public class RegStack {
 	
 	
 	RegStack(){
-		this.regNum = 14; //rsp & rbp not touched
+		this.regNum = 16;
 		setup(regNum);
 		//How to get associated stack value from name
 		//stack.get(names.lastIndexOf("%eax"));
@@ -33,8 +33,26 @@ public class RegStack {
 		for(i = 0; i < regNum; i++){
 			stack.add(0);
 		}
-		//sets the stack and base to never be used for standard operations
+		names.add("RAX");
+		names.add("RBX");
+		names.add("RCX");
+		names.add("RDX");
+		names.add("RSP");
+		names.add("RBP");
+		//adding general usage registers now
+		names.add("RSI");
+		names.add("RDI");
+		names.add("R8");
+		names.add("R9");
+		names.add("R10");
+		names.add("R11");
+		names.add("R12");
+		names.add("R13");
+		names.add("R14");
+		names.add("R15");
 	}
+	
+	
 	
 	/**
 	 * gives user the next free reg or a stack space if no free reg exist
@@ -58,8 +76,8 @@ public class RegStack {
 	 * @return free reg or lest used reg if no free reg exist
 	 */
 	public int findLRUReg(){
-		int holder = 0;
-		for(int i = 0; i < regNum; i++){
+		int holder = 5; //To not let ax, bx, cx, dx, bp, sp used for general usage
+		for(int i = 5; i < regNum; i++){
 			if(stack.get(i) == 0){ //free reg!
 				return i;
 			}
@@ -123,6 +141,12 @@ public class RegStack {
 		stack.set(num, 1);
 	}
 	
+	public void usedReg(String Reg){
+		int num = regToInt(Reg);
+		incrementLRU();
+		stack.set(num, 1);
+	}
+	
 	/**
 	 * increments the LRU, we used a register, for optimization
 	 */
@@ -159,6 +183,47 @@ public class RegStack {
 	 */
 	public int stackSize(){
 		return stack.size()-regNum;
+	}
+	
+	/**
+	 * string to ret value
+	 * @param Reg
+	 * @return
+	 */
+	public int regToInt(String Reg){
+		int num = -1;
+		num = names.lastIndexOf(Reg);
+		return num;
+	}
+	
+	public String intToReg (int Reg){
+		return names.get(Reg);
+	}
+	
+	public void freeItem(int item){
+		stack.set(item, 0);
+	}
+	
+	public void freeReg(String reg){
+		freeItem(regToInt(reg));
+	}
+	
+	public int useStack(int i){
+		return useItem(i);
+	}
+	
+	public int useItem(int i){
+		if(i < regNum){
+			usedReg(i);
+			return i;
+		}
+		else if(i > stack.size()){
+			return nextFreeSpace();
+		}
+		else{
+			stack.set(i, 1);
+			return i;
+		}
 	}
 }
 
