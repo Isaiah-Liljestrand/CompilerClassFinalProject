@@ -39,14 +39,14 @@ public class VarList {
 		}
 	}
 	
-	public void declaration(String name) {
+	public void declaration(String name, int location) {
 		for(VarElement e : list) {
 			if(name == e.name) {
-				//add to beginning of list
+				e.location.add(0, location);
 				return;
 			}
 		}
-		//add whole element
+		addElement(name, location);
 	}
 	
 	
