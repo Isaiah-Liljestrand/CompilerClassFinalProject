@@ -7,8 +7,9 @@ package CompilerCode;
 public class IRtransformation {
 	public static void IRtransformationFunction() {
 		breakHandler();
-		gotoHandler();
-		declarationDestructionOptimizer();
+		if(gotoHandler()) {
+			declarationDestructionOptimizer();
+		}
 	}
 	
 	
@@ -185,16 +186,19 @@ public class IRtransformation {
 	/**
 	 * Removes all goto calls and statements and replaces them with jumps and labels
 	 */
-	private static void gotoHandler() {
+	private static boolean gotoHandler() {
+		boolean b = true;
 		for(IRelement e : IR.instructions) {
 			if(e.cmd == IRelement.command.goto_) {
 				e.parameters.set(0,"goto_" + e.parameters.get(0));
 				e.cmd = IRelement.command.jmp;
+				b = false;
 			}
 			if(e.cmd == IRelement.command.gotolabel) {
 				e.parameters.set(0,"goto_" + e.parameters.get(0));
 				e.cmd = IRelement.command.label;
 			}
 		}
+		return b;
 	}
 }
