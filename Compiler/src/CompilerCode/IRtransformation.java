@@ -5,9 +5,9 @@ package CompilerCode;
  * IRtransformation applies minor changes to the IR in order to prepare it for x86 transformations
  */
 public class IRtransformation {
-	public static void IRtransformationFunction() {
+	public static void IRtransformationFunction(boolean global) {
 		breakHandler();
-		if(gotoHandler()) {
+		if(gotoHandler() && !global) {
 			declarationDestructionOptimizer();
 		}
 	}

@@ -19,7 +19,7 @@ public class Main {
 		String IRfilename = null;
 		Scan scanner;
 		Grammar grammar;
-		SymbolTable symTable;
+		SymbolTable symTable = null;
 		
 		//Not using command line arguments
 		if(args.length == 0) {
@@ -27,7 +27,7 @@ public class Main {
 			printParseTree = true;
 			printSymbolTable = true;
 			printIR = true;
-			filename = "Testfile.txt";
+			filename = "Whiletest.txt";
 		}
 		
 		
@@ -132,7 +132,7 @@ public class Main {
 			return;
 		}
 		
-		IRtransformation.IRtransformationFunction();
+		IRtransformation.IRtransformationFunction(symTable.entries.size() > 0);
 		System.out.println("\n");
 		IR.printIR();
 	}

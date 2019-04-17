@@ -1,0 +1,17 @@
+int k;
+
+
+void foo(int r) {
+	r += 7;
+	int f = r;
+}
+
+
+
+int main(int j, int k) {
+	while(j == k) {
+		j++;
+	}
+	int t = 7;
+	t += foo(t);
+}

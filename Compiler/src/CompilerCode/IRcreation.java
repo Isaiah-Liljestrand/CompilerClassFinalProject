@@ -736,13 +736,17 @@ public class IRcreation {
 			}
 			IR.addCommand(IRelement.command.call, ID + name);
 		} else {
-			name = String.valueOf(i);
+
+			List<String> list = new ArrayList<String>();
+			name = "%" + String.valueOf(i);
 			if(i == 0) {
 				i++;
 				name = null;
+			} else {
+				list.add(name);
 			}
 			List<Ptree> trees = new ArrayList<Ptree>();
-			List<String> list = new ArrayList<String>();
+			list.add(ID);
 			tree.children.get(2).findTrees(trees, type_enum.simpleExpression);
 			for(Ptree t : trees) {
 				n = simpleExpressionHandler(t, i);
@@ -752,9 +756,6 @@ public class IRcreation {
 				} else {
 					list.add(n);
 				}
-			}
-			if(name != null) {
-				list.add(name);
 			}
 			IR.addCommand(command.call, list);
 		}
