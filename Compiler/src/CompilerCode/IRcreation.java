@@ -462,10 +462,10 @@ public class IRcreation {
 		String ID = tree.findTree(type_enum.identifier).token.token;
 		switch(tree.children.get(1).token.type) {
 		case incrementOperator:
-			IR.addCommand(IRelement.command.add, ID + " 1");
+			IR.addCommand(IRelement.command.inc, ID);
 			break;
 		case decrementOperator:
-			IR.addCommand(IRelement.command.sub, ID + " 1");
+			IR.addCommand(IRelement.command.dec, ID);
 			break;
 		case additionAssignmentOperator:
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {

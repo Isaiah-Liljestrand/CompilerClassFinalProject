@@ -31,6 +31,8 @@ public class IRelement {
 		or,
 		and,
 		xor,
+		inc,
+		dec,
 		jmp,
 		jmpcnd,
 		function,
@@ -67,6 +69,8 @@ public class IRelement {
 		case "or": return command.or;
 		case "and": return command.and;
 		case "xor": return command.xor;
+		case "inc": return command.inc;
+		case "dec": return command.dec;
 		case "jmp": return command.jmp;
 		case "jmpcnd": return command.jmpcnd;
 		case "function": return command.function;

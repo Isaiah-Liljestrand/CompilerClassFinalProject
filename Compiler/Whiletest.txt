@@ -13,5 +13,5 @@ int main(int j, int k) {
 		j++;
 	}
 	int t = 7;
-	t += foo(t);
+	foo(t);
 }
