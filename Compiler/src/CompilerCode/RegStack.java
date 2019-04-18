@@ -6,29 +6,33 @@ import java.util.ArrayList;
  * @author Ben
  *
  */
-public class RegStack {
-	int regNum;
-	private ArrayList<Integer> stack = new ArrayList<Integer>();
-	private ArrayList<String> names = new ArrayList<String>();
+public final class RegStack {
+	static int regNum = 16;
+	static private ArrayList<Integer> stack = new ArrayList<Integer>();
+	static private ArrayList<String> names = new ArrayList<String>();
 	
 	
-	RegStack(){
+	private RegStack(){
 		this.regNum = 16;
 		setup(regNum);
 		//How to get associated stack value from name
 		//stack.get(names.lastIndexOf("%eax"));
 	}
 	
-	RegStack(int regNum){
+	private RegStack(int regNum){
 		this.regNum = regNum;
 		setup(regNum);
+	}
+	
+	protected static void setup(){
+		setup(16);
 	}
 	
 	/**
 	 * sets adds the number of free registers
 	 * @param regNum
 	 */
-	private void setup(int regNum){
+	protected static void setup(int regNum){
 		int i = 0;
 		for(i = 0; i < regNum; i++){
 			stack.add(0);
@@ -58,7 +62,7 @@ public class RegStack {
 	 * gives user the next free reg or a stack space if no free reg exist
 	 * @return
 	 */
-	public int giveMeReg(){
+	public static int giveMeReg(){
 		int LRU = findLRUReg();
 		if(stack.get(LRU) == 0){ //reg is free!
 			stack.set(LRU, 1);
@@ -75,7 +79,7 @@ public class RegStack {
 	 * 
 	 * @return free reg or lest used reg if no free reg exist
 	 */
-	public int findLRUReg(){
+	public static int findLRUReg(){
 		int holder = 5; //To not let ax, bx, cx, dx, bp, sp used for general usage
 		for(int i = 5; i < regNum; i++){
 			if(stack.get(i) == 0){ //free reg!
@@ -92,28 +96,33 @@ public class RegStack {
 	 * rename of isRegEmpty for useability
 	 * @return
 	 */
-	public boolean isThereEmptyReg(){
-		return isRegEmpty();
+	public static boolean isThereEmptyReg(){
+		int i = 0;
+		while(isRegEmpty(i)){
+			if(i >= regNum)
+				return true;
+		}
+		return false;
 	}
 	
 	/**
 	 * checks if the LRU reg is free (0) (if there is a free reg)
 	 * @return
-	 */
-	public boolean isRegEmpty(){
+	 
+	public static boolean isRegEmpty(){
 		int tmp = stack.get(this.findLRUReg());
 		if(tmp == 0){
 			return true;
 		}
 		return false;
-	}
+	}*/
 	
 	/**
 	 * checks if reg is free (0)
 	 * @param reg
 	 * @return
 	 */
-	public boolean isRegEmpty(int reg){
+	public static boolean isRegEmpty(int reg){
 		int tmp = stack.get(reg);
 		if(tmp == 0){
 			return true;
@@ -126,7 +135,7 @@ public class RegStack {
 	 * @param reg
 	 * @return
 	 */
-	public int pushToStack(int reg){
+	public static int pushToStack(int reg){
 		int tmp = nextFreeSpace();
 		stack.set(tmp, 0);
 		return tmp;
@@ -136,12 +145,12 @@ public class RegStack {
 	 * increments the LRU, sets the used register to 1, for optimization
 	 * @param num
 	 */
-	public void usedReg(int num){
+	public static void usedReg(int num){
 		incrementLRU();
 		stack.set(num, 1);
 	}
 	
-	public void usedReg(String Reg){
+	public static void usedReg(String Reg){
 		int num = regToInt(Reg);
 		incrementLRU();
 		stack.set(num, 1);
@@ -150,7 +159,7 @@ public class RegStack {
 	/**
 	 * increments the LRU, we used a register, for optimization
 	 */
-	private void incrementLRU(){
+	private static void incrementLRU(){
 		int i = 0;
 		for(i = 0; i < regNum; i++){
 			if(stack.get(i) != 0){ //increments the used regs
@@ -159,7 +168,7 @@ public class RegStack {
 		}
 	}
 	
-	public int giveMeStack() {
+	public static int giveMeStack() {
 		return nextFreeSpace();
 	}
 	
@@ -167,7 +176,7 @@ public class RegStack {
 	 * uses the next free space
 	 * @return the int in stack space of that space
 	 */
-	public int nextFreeSpace(){ //on stack
+	public static int nextFreeSpace(){ //on stack
 		for(int i = regNum; i < stack.size(); i++){
 			if(stack.get(i) == 0){ //free spot already allocated stack				
 				stack.set(i, 1); //marks as now used space
@@ -181,7 +190,7 @@ public class RegStack {
 	/**
 	 * give effectively rsp size
 	 */
-	public int stackSize(){
+	public static int stackSize(){
 		return stack.size()-regNum;
 	}
 	
@@ -190,29 +199,32 @@ public class RegStack {
 	 * @param Reg
 	 * @return
 	 */
-	public int regToInt(String Reg){
+	public static int regToInt(String Reg){
 		int num = -1;
 		num = names.lastIndexOf(Reg);
 		return num;
 	}
 	
-	public String intToReg (int Reg){
-		return names.get(Reg);
+	public static String intToReg (int Reg){
+		if(Reg < regNum)
+			return names.get(Reg);
+		else
+			return Integer.toString((Reg - regNum) * 4) + "(%rbp)";
 	}
 	
-	public void freeItem(int item){
+	public static void freeItem(int item){
 		stack.set(item, 0);
 	}
 	
-	public void freeReg(String reg){
+	public static void freeReg(String reg){
 		freeItem(regToInt(reg));
 	}
 	
-	public int useStack(int i){
+	public static int useStack(int i){
 		return useItem(i);
 	}
 	
-	public int useItem(int i){
+	public static int useItem(int i){
 		if(i < regNum){
 			usedReg(i);
 			return i;
