@@ -47,19 +47,19 @@ public class ARelement {
 	private static String register_regex = String.join("|", registers);
 	
 	//Tests if a string is a label
-	private static boolean isLabel(String str) {
+	public static boolean isLabel(String str) {
 		return str.charAt(str.length() - 1) == ':';
 	}
 	
 	//Tests if a string is a constant
-	private static boolean isConstant(String str) {
+	public static boolean isConstant(String str) {
 		Pattern REGEX = Pattern.compile("\\$\\d+");
 		Matcher test = REGEX.matcher(str);
 		return test.matches();
 	}
 	
 	//Tests if a string is a register
-	private static boolean isReg(String str) {
+	public static boolean isReg(String str) {
 		String test_pat = register_regex; //Tests just a register by itself: %eax
 		Pattern REGEX = Pattern.compile(test_pat);
 		Matcher test = REGEX.matcher(str);
@@ -67,7 +67,7 @@ public class ARelement {
 	}
 	
 	//Tests if a string is a memory access
-	private static boolean isMem(String str) {
+	public static boolean isMem(String str) {
 		String test_pat = "(\\d?\\((" + register_regex + ")\\))|"; //Tests register in parenthesis with an optional int in front: (%eax) or 5(%eax)
 		test_pat += "(\\((" + register_regex + "), ?(" + register_regex + "), ?\\$\\d\\))"; //Tests three params in parenthesis: (%edx,%eax,5)
 		Pattern REGEX = Pattern.compile(test_pat);
