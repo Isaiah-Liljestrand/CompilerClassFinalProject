@@ -1,6 +1,8 @@
 package CompilerCode;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ARcreation {
 	public void createAR(IR ir) {
@@ -69,7 +71,29 @@ public class ARcreation {
 		}
 	}
 	
-	private String[] ARParamsFromIRelem(IRelement element) {
-		return null;
+	private static boolean isInt(String str) {
+		try {
+			Integer.parseInt(str);
+			return true;
+		}
+		catch (NumberFormatException ex) {
+			return false;
+		}
+	}
+	
+	private static String[] ARParamsFromIRelem(IRelement element) {
+		String[] newparams = new String[element.parameters.size()];
+		int i = 0;
+		for(String param : element.parameters) {
+			if (isInt(param)) {
+				newparams[i] = "$" + param;
+			}
+			else
+			{
+				newparams[i] = RegStack.regToInt(VarList.varLocation(param));
+			}
+			i++;
+		}
+		return newparams;
 	}
 }
