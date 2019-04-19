@@ -34,9 +34,9 @@ public class ARelement {
 		jmp,
 		je,
 		jne,
-		jg,
-		jl,
-		jle,
+		//jg,  Shouldn't need these, no less than or greater than operands currently
+		//jl,
+		//jle,
 		cmp,
 		call,
 		label
@@ -244,7 +244,7 @@ public class ARelement {
 			}
 			break;
 		//Isaiah
-		case jg:
+		/*case jg:
 			if (!checkMulParams("l", trimmed)) {
 				error = true;
 			}
@@ -260,7 +260,7 @@ public class ARelement {
 			if (!checkMulParams("l", trimmed)) {
 				error = true;
 			}
-			break;
+			break;*/
 		//Jacob
 		case cmp:
 			if (!checkMulParams("rr|mr|rm|cr", trimmed)) {

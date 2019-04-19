@@ -44,14 +44,13 @@ public class ARcreation {
 				break;
 			case and: //Ben
 				break;
-			case xor: //Chris
-				break;
 			case jmp: //Jacob
 				break;
 			case jmpcnd: //Jacob
 				break;
 			case function:
-				AR.addCommand(ARelement.command.label, new String[] {element.parameters.get(0) + "_fun"});
+				AR.addCommand(ARelement.command.label, new String[] {"fun_" + element.parameters.get(0)});
+				//Account for passed in parameters parameters
 				break;
 			case call: //Isaiah
 				break;
@@ -88,9 +87,10 @@ public class ARcreation {
 			if (isInt(param)) {
 				newparams[i] = "$" + param;
 			}
-			else
-			{
-				newparams[i] = RegStack.regToInt(VarList.varLocation(param));
+			else if(param.charAt(0) == '%') {
+				newparams[i] = RegStack.intToReg(Integer.parseInt((param.substring(1, param.length()))));
+			} else {
+				newparams[i] = RegStack.intToReg(VarList.varLocation(param));
 			}
 			i++;
 		}

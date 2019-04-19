@@ -13,10 +13,10 @@ public class VarElement {
 	}
 	
 	public String getName() {
-		return this.name;
+		return name;
 	}
 	
-	public List<Integer> getLocation() {
-		return this.location;
+	public int getLocation() {
+		return location.get(0);
 	}
 }

@@ -11,21 +11,20 @@ public class VarList {
 	}
 
 	
-	public static List<Integer> varLocation(String Name) {
+	public static int varLocation(String Name) {
 		for(VarElement var : list) {
 			if(var.getName() == Name) {
 				return var.getLocation();
 			}
 		}
-		return null;
+		ErrorHandler.addError("varLocation called on name that was not in the list");
+		return -1;
 	}
 	
 	public static String locVariable(int Location) {
 		for(VarElement var : list) {
-			for(int loc : var.getLocation()) {
-				if(loc == Location) {
-					return var.getName();
-				}
+			if(var.location.get(0) == Location) {
+				return var.getName();
 			}
 		}
 		return null;
@@ -39,7 +38,8 @@ public class VarList {
 		}
 	}
 	
-	public static void declaration(String name, int location) {
+	public static void declaration(String name) {
+		int location = RegStack.nextFreeSpace();
 		for(VarElement e : list) {
 			if(name == e.name) {
 				e.location.add(0, location);
@@ -56,8 +56,10 @@ public class VarList {
 			if(name == e.name) {
 				if(e.location.size() > 1) {
 					e.location.remove(0);
+					return;
 				} else {
 					list.remove(e);
+					return;
 				}
 			}
 		}

@@ -30,7 +30,6 @@ public class IRelement {
 		band,
 		or,
 		and,
-		xor,
 		inc,
 		dec,
 		jmp,
@@ -68,7 +67,6 @@ public class IRelement {
 		case "band": return command.band;
 		case "or": return command.or;
 		case "and": return command.and;
-		case "xor": return command.xor;
 		case "inc": return command.inc;
 		case "dec": return command.dec;
 		case "jmp": return command.jmp;
