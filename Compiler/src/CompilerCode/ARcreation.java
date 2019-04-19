@@ -10,8 +10,10 @@ public class ARcreation {
 		for(IRelement element : ir.instructions) {
 			switch(element.cmd) {
 			case declare: //Jacob
+				VarList.declaration(element.parameters.get(0));
 				break;
 			case destroy: //Jacob
+				VarList.destroy(element.parameters.get(0));
 				break;
 			case set: //Ben
 				break;
@@ -45,8 +47,16 @@ public class ARcreation {
 			case and: //Ben
 				break;
 			case jmp: //Jacob
+				AR.addCommand(ARelement.command.jmp, new String[] {element.parameters.get(0)});
 				break;
 			case jmpcnd: //Jacob
+				//%1 to register
+				//This will only work assuming a register is returned! If a memory access is returned it won't work.
+				//We should talk about if this could ever happen.
+				String tempvar = RegStack.intToReg(1);
+				//Just compares tempvar %1 with constant 1. If equal it then jumps.
+				AR.addCommand(ARelement.command.cmp, new String[] {"$1", tempvar});
+				AR.addCommand(ARelement.command.je, new String[] {element.parameters.get(0)});
 				break;
 			case function:
 				AR.addCommand(ARelement.command.label, new String[] {"fun_" + element.parameters.get(0)});
@@ -80,9 +90,10 @@ public class ARcreation {
 		}
 	}
 	
+	//Reverses the order of parameters and replaces IR parameters with AR equivalent
 	private static String[] ARParamsFromIRelem(IRelement element) {
 		String[] newparams = new String[element.parameters.size()];
-		int i = 0;
+		int i = newparams.length - 1;
 		for(String param : element.parameters) {
 			if (isInt(param)) {
 				newparams[i] = "$" + param;
@@ -92,7 +103,7 @@ public class ARcreation {
 			} else {
 				newparams[i] = RegStack.intToReg(VarList.varLocation(param));
 			}
-			i++;
+			i--;
 		}
 		return newparams;
 	}
