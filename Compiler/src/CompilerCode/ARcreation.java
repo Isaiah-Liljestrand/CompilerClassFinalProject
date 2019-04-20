@@ -55,8 +55,8 @@ public class ARcreation {
 				//We should talk about if this could ever happen.
 				String tempvar = RegStack.intToReg(1);
 				//Just compares tempvar %1 with constant 1. If equal it then jumps.
-				AR.addCommand(ARelement.command.cmp, new String[] {"$1", tempvar});
-				AR.addCommand(ARelement.command.je, new String[] {element.parameters.get(0)});
+				AR.addCommand(ARelement.command.cmp, new String[] {"$0", tempvar});
+				AR.addCommand(ARelement.command.jne, new String[] {element.parameters.get(0)});
 				break;
 			case function:
 				AR.addCommand(ARelement.command.label, new String[] {"fun_" + element.parameters.get(0)});
