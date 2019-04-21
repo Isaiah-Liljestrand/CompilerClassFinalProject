@@ -185,7 +185,7 @@ public class IRcreation {
 				if(n == null) {
 					IR.addCommand(IRelement.command.ret, "%1");
 				} else {
-					IR.addCommand(IRelement.command.ret, n);
+					IR.addCommand(IRelement.command.ret, "" + findValue(n));
 				}
 			}
 			break;
@@ -429,7 +429,7 @@ public class IRcreation {
 				if((expression = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
 					IR.addCommand(IRelement.command.set, ID + " %1");
 				} else {
-					IR.addCommand(IRelement.command.set, ID + " " + expression);
+					IR.addCommand(IRelement.command.set, ID + " " + findValue(expression));
 				}
 			}
 			list.add(ID);
@@ -471,35 +471,35 @@ public class IRcreation {
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
 				IR.addCommand(IRelement.command.add, ID + " %1");
 			} else {
-				IR.addCommand(IRelement.command.add, ID + " " + n);
+				IR.addCommand(IRelement.command.add, ID + " " + findValue(n));
 			}
 			break;
 		case subtractionAssignmentOperator:
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
 				IR.addCommand(IRelement.command.sub, ID + " %1");
 			} else {
-				IR.addCommand(IRelement.command.sub, ID + " " + n);
+				IR.addCommand(IRelement.command.sub, ID + " " + findValue(n));
 			}
 			break;
 		case multiplicationAssignmentOperator:
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
 				IR.addCommand(IRelement.command.mul, ID + " %1");
 			} else {
-				IR.addCommand(IRelement.command.mul, ID + " " + n);
+				IR.addCommand(IRelement.command.mul, ID + " " + findValue(n));
 			}
 			break;
 		case divisionAssignmentOperator:
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
 				IR.addCommand(IRelement.command.div, ID + " %1");
 			} else {
-				IR.addCommand(IRelement.command.div, ID + " " + n);
+				IR.addCommand(IRelement.command.div, ID + " " + findValue(n));
 			}
 			break;
 		case assignmentOperator:
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
 				IR.addCommand(IRelement.command.set, ID + " %1");
 			} else {
-				IR.addCommand(IRelement.command.set, ID + " " + n);
+				IR.addCommand(IRelement.command.set, ID + " " + findValue(n));
 			}
 			break;
 		default:
@@ -617,7 +617,7 @@ public class IRcreation {
 		case term:
 			if(tree.children.get(1).children.get(0).token.type == type_enum.multiplicationOperator) {
 				c = command.mul;
-			} else if (tree.children.get(1).token.type == type_enum.divisionOperator){
+			} else if (tree.children.get(1).children.get(0).token.type == type_enum.divisionOperator) {
 				c = command.div;
 			} else {
 				c = command.mod;
@@ -630,9 +630,9 @@ public class IRcreation {
 		if(n == null && n2 == null) {
 			IR.addCommand(c, "%" + i + " %" + (i + 1));
 		} else if(n == null && n2 != null) {
-			IR.addCommand(c, "%" + i + " " + n2);
+			IR.addCommand(c, "%" + i + " " + findValue(n2));
 		} else if(n != null && n2 == null) {
-			IR.addCommand(IRelement.command.set, "%" + i + " " + n);
+			IR.addCommand(IRelement.command.set, "%" + i + " " + findValue(n));
 			IR.addCommand(c, "%" + i + " %" + (i + 1));
 		} else {
 			return preProcess(tree, n, n2);

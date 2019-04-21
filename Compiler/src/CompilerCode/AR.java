@@ -19,6 +19,15 @@ public class AR {
 	}
 	
 	/**
+	 * Adds an AR command (Only for single parameter commands)
+	 * @param cmd command being added
+	 * @param parameter single parameter being used for command
+	 */
+	public static void addCommand(ARelement.command cmd, String parameter) {
+		instructions.add(new ARelement(cmd, new String [] {parameter}));
+	}
+	
+	/**
 	 * Prints out the AR
 	 */
 	public static void printAR() {

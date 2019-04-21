@@ -27,7 +27,8 @@ public class Main {
 			printParseTree = true;
 			printSymbolTable = true;
 			printIR = true;
-			filename = "Whiletest.txt";
+			filename = "Testfile.txt";
+			//filename = "Whiletest.txt";
 		}
 		
 		

@@ -39,7 +39,7 @@ public class VarList {
 	}
 	
 	public static void declaration(String name) {
-		int location = RegStack.nextFreeSpace();
+		int location = RegStack.addToStack();
 		for(VarElement e : list) {
 			if(name == e.name) {
 				e.location.add(0, location);
@@ -54,6 +54,7 @@ public class VarList {
 	public static void destroy(String name) {
 		for(VarElement e : list) {
 			if(name == e.name) {
+				RegStack.removeFromStack(e.getLocation());
 				if(e.location.size() > 1) {
 					e.location.remove(0);
 					return;

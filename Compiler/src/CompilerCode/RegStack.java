@@ -7,9 +7,61 @@ import java.util.ArrayList;
  *
  */
 public final class RegStack {
-	static int regNum = 16;
-	static private ArrayList<Integer> stack = new ArrayList<Integer>();
-	static private ArrayList<String> names = new ArrayList<String>();
+	private static ArrayList<Integer> stack = new ArrayList<Integer>();
+	
+	public static String intVarToReg(String intVar) {
+		int s = Integer.parseInt(intVar.substring(1));
+		String reg [] = {"%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi", "%r8d", "%r9d", "%r10d", "%r11d", "%r12d", "%r13d"/*, "%r14d", "%r15d"*/};
+		return reg[s - 1];
+	}
+	
+	public static int addToStack() {
+		int i = 0;
+		for(int s : stack) {
+			if(s == 0) {
+				s = 1;
+				return i;
+			}
+			i++;
+		}
+		stack.add(1);
+		return stack.size() - 1;
+	}
+	
+	public static String varToStack(String var) {
+		//int location = VarList.varLocation(var);
+		//TODO:convert int to esp or ebp location string
+		return "";
+	}
+	
+	public static void removeFromStack(int i) {
+		stack.set(i, 0);
+	}
+	
+	public static boolean isSwiss() {
+		for(int s : stack) {
+			if(s == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static int stackSize(){
+		return stack.size();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*int regNum = 16;
+	//private static ArrayList<Integer> stack = new ArrayList<Integer>();
+	private static ArrayList<String> names = new ArrayList<String>();
 	
 	
 	private RegStack(){
@@ -26,13 +78,15 @@ public final class RegStack {
 	
 	protected static void setup(){
 		setup(16);
-	}
+	}*/
+	
+	
 	
 	/**
 	 * sets adds the number of free registers
 	 * @param regNum
 	 */
-	protected static void setup(int regNum){
+	/*protected static void setup(int regNum){
 		int i = 0;
 		for(i = 0; i < regNum; i++){
 			stack.add(0);
@@ -54,7 +108,7 @@ public final class RegStack {
 		names.add("R13");
 		names.add("R14");
 		names.add("R15");
-	}
+	}*/
 	
 	
 	
@@ -62,7 +116,7 @@ public final class RegStack {
 	 * gives user the next free reg or a stack space if no free reg exist
 	 * @return
 	 */
-	public static int giveMeReg(){
+	/*public static int giveMeReg(){
 		int LRU = findLRUReg();
 		if(stack.get(LRU) == 0){ //reg is free!
 			stack.set(LRU, 1);
@@ -73,13 +127,17 @@ public final class RegStack {
 			//auto pushing to stack
 			return nextFreeSpace();
 		}
-	}
+	}*/
+	
+	/*public static boolean stackFull() {
+		if(stack.)
+	}*/
 	
 	/**
 	 * 
 	 * @return free reg or lest used reg if no free reg exist
 	 */
-	public static int findLRUReg(){
+	/*public static int findLRUReg(){
 		int holder = 5; //To not let ax, bx, cx, dx, bp, sp used for general usage
 		for(int i = 5; i < regNum; i++){
 			if(stack.get(i) == 0){ //free reg!
@@ -90,20 +148,20 @@ public final class RegStack {
 			}
 		}
 		return holder;
-	}
+	}*/
 	
 	/**
 	 * rename of isRegEmpty for useability
 	 * @return
 	 */
-	public static boolean isThereEmptyReg(){
+	/*public static boolean isThereEmptyReg(){
 		int i = 0;
 		while(isRegEmpty(i)){
 			if(i >= regNum)
 				return true;
 		}
 		return false;
-	}
+	}*/
 	
 	/**
 	 * checks if the LRU reg is free (0) (if there is a free reg)
@@ -122,61 +180,61 @@ public final class RegStack {
 	 * @param reg
 	 * @return
 	 */
-	public static boolean isRegEmpty(int reg){
+	/*public static boolean isRegEmpty(int reg){
 		int tmp = stack.get(reg);
 		if(tmp == 0){
 			return true;
 		}
 		return false;
-	}
+	}*/
 	
 	/**
 	 * uses the next reg and frees the reg
 	 * @param reg
 	 * @return
 	 */
-	public static int pushToStack(int reg){
+	/*public static int pushToStack(int reg){
 		int tmp = nextFreeSpace();
 		stack.set(tmp, 0);
 		return tmp;
-	}
+	}*/
 	
 	/**
 	 * increments the LRU, sets the used register to 1, for optimization
 	 * @param num
 	 */
-	public static void usedReg(int num){
+	/*public static void usedReg(int num){
 		incrementLRU();
 		stack.set(num, 1);
-	}
+	}*/
 	
-	public static void usedReg(String Reg){
+	/*public static void usedReg(String Reg){
 		int num = regToInt(Reg);
 		incrementLRU();
 		stack.set(num, 1);
-	}
+	}*/
 	
 	/**
 	 * increments the LRU, we used a register, for optimization
 	 */
-	private static void incrementLRU(){
+	/*private static void incrementLRU(){
 		int i = 0;
 		for(i = 0; i < regNum; i++){
 			if(stack.get(i) != 0){ //increments the used regs
 				stack.set(i, stack.get(i)+1);
 			}
 		}
-	}
+	}*/
 	
-	public static int giveMeStack() {
+	/*public static int giveMeStack() {
 		return nextFreeSpace();
-	}
+	}*/
 	
 	/**
 	 * uses the next free space
 	 * @return the int in stack space of that space
 	 */
-	public static int nextFreeSpace(){ //on stack
+	/*public static int nextFreeSpace(){ //on stack
 		for(int i = regNum; i < stack.size(); i++){
 			if(stack.get(i) == 0){ //free spot already allocated stack				
 				stack.set(i, 1); //marks as now used space
@@ -185,21 +243,15 @@ public final class RegStack {
 		}
 		stack.add(1); //no already allocated stack spaces are free
 		return stack.size();
-	}
-	
-	/**
-	 * give effectively rsp size
-	 */
-	public static int stackSize(){
-		return stack.size()-regNum;
-	}
+	}*/
+
 	
 	/**
 	 * string to ret value
 	 * @param Reg
 	 * @return
 	 */
-	public static int regToInt(String Reg){
+	/*public static int regToInt(String Reg){
 		int num = -1;
 		num = names.lastIndexOf(Reg);
 		return num;
@@ -236,7 +288,7 @@ public final class RegStack {
 			stack.set(i, 1);
 			return i;
 		}
-	}
+	}*/
 }
 
 

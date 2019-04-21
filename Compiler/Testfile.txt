@@ -1,5 +1,6 @@
 int main(int i, int j) {
-	int killeveryone = 6-5, r;
+	int killeveryone = 'r', r;
+	int cry = (r +(r + (r + (r + r))));
 	goto jump;
 	i = killeveryone;
 	int t = 9;
