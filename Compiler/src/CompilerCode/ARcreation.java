@@ -30,7 +30,7 @@ public class ARcreation {
 			case destroy:
 				VarList.destroy(element.parameters.get(0));
 				break;
-			case set: 
+			case set:
 				if(isHighIntVar(element.parameters.get(0))) {
 					AR.addCommand(ARelement.command.push, ARParamFromIRparam(element.parameters.get(1)));
 				}
@@ -39,59 +39,28 @@ public class ARcreation {
 				AR.addCommand(ARelement.command.mov, ARParamsFromIRelem(element));
 				
 				break;
-			case add: //Chris
-				if(isHighIntVar(element.parameters.get(0))) {
-					//Both parameters are on the stack
-					AR.addCommand(ARelement.command.pop, "%r15d");
-					AR.addCommand(ARelement.command.pop, "%r14d");
-					AR.addCommand(ARelement.command.add, new String [] {"%r15d", "%r14d"});
-					AR.addCommand(ARelement.command.push, "%r14");
-				} else if(isHighIntVar(element.parameters.get(1))) {
-					//Only the second parameter is on the stack
-					AR.addCommand(ARelement.command.pop, "%r14d");
-					AR.addCommand(ARelement.command.add, new String [] {"%r14d", "%r13d"});
-				} else {
-					//normal case
-					AR.addCommand(ARelement.command.add, ARParamsFromIRelem(element));
-				}
-				break;
-			case sub: //Ben
-				break;
-			case mul: //Chris
-				break;
-			case div: //Ben
-				break;
-			case mod: //Chris
-				break;
-			case eq: //Ben
-				break;
-			case neq: //Chris
-				break;
-			case not: //Ben
-				break;
+			case add:
 			case bor:
-				AR.addCommand(ARelement.command.or, ARParamsFromIRelem(element));
-				break;
 			case bxor:
-				AR.addCommand(ARelement.command.xor, ARParamsFromIRelem(element));
-				break;
 			case band:
-				AR.addCommand(ARelement.command.and, ARParamsFromIRelem(element));
+			case sub:
+			case mul:
+			case div:
+			case mod:
+			case eq:
+			case neq:
+			case or:
+			case and:
+				operation(element);
 				break;
-			case or: //Chris
-				break;
-			case and: //Ben
+			case not:
+				AR.addCommand(ARelement.command.not, ARParamFromIRparam(element.parameters.get(0)));
 				break;
 			case jmp: //Jacob
-				AR.addCommand(ARelement.command.jmp, new String[] {element.parameters.get(0)});
+				AR.addCommand(ARelement.command.jmp, element.parameters.get(0));
 				break;
 			case jmpcnd: //Jacob
-				//%1 to register
-				//This will only work assuming a register is returned! If a memory access is returned it won't work.
-				//We should talk about if this could ever happen.
-				String tempvar = RegStack.intVarToReg("%1");
-				//Just compares tempvar %1 with constant 1. If equal it then jumps.
-				AR.addCommand(ARelement.command.cmp, new String[] {"$0", tempvar});
+				AR.addCommand(ARelement.command.cmp, new String[] {"$0", RegStack.intVarToReg("%1")});
 				AR.addCommand(ARelement.command.jne, new String[] {element.parameters.get(0)});
 				break;
 			case function:
@@ -159,5 +128,58 @@ public class ARcreation {
 			return true;
 		}
 		return false;
+	}
+	
+	private static void operation(IRelement ir) {
+		String params[];
+		if(isHighIntVar(ir.parameters.get(0))) {
+			//Both parameters are on the stack
+			AR.addCommand(ARelement.command.pop, "%r15d");
+			AR.addCommand(ARelement.command.pop, "%r14d");
+			params = new String [] {"%r15d", "%r14d"};
+		} else if(isHighIntVar(ir.parameters.get(1))) {
+			//Only the second parameter is on the stack
+			AR.addCommand(ARelement.command.pop, "%r14d");
+			params = new String [] {"%r14d", "%r13d"};
+		} else {
+			params = ARParamsFromIRelem(ir);
+			AR.addCommand(ARelement.command.add, ARParamsFromIRelem(ir));
+		}
+		
+		
+		switch(ir.cmd) {
+		case add:
+			AR.addCommand(ARelement.command.add, params);
+		case sub:
+			AR.addCommand(ARelement.command.sub, params);
+			break;
+		case bor:
+			AR.addCommand(ARelement.command.or, params);
+			break;
+		case bxor:
+			AR.addCommand(ARelement.command.xor, params);
+			break;
+		case band:
+			AR.addCommand(ARelement.command.and, params);
+			break;
+		case mul: //Chris
+			break;
+		case div: //Ben
+			break;
+		case mod: //Chris
+			break;
+		case eq: //Ben
+			break;
+		case neq: //Chris
+			break;
+		case or: //Chris
+			break;
+		case and: //Ben
+			break;
+		}
+		
+		if(isHighIntVar(ir.parameters.get(0))) {
+			AR.addCommand(ARelement.command.push, "%r14d");
+		}
 	}
 }

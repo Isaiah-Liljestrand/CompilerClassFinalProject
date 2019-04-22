@@ -47,7 +47,7 @@ public final class RegStack {
 		return false;
 	}
 	
-	public static int stackSize(){
+	public static int stackSize() {
 		return stack.size();
 	}
 	
