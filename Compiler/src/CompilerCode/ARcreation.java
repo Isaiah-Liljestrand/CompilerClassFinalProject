@@ -150,6 +150,7 @@ public class ARcreation {
 		switch(ir.cmd) {
 		case add:
 			AR.addCommand(ARelement.command.add, params);
+			break;
 		case sub:
 			AR.addCommand(ARelement.command.sub, params);
 			break;
