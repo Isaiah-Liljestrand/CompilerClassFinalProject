@@ -4,6 +4,7 @@ package CompilerCode;
 public class ARcreation {
 	public void createAR(IR ir) {
 		boolean skip = false;
+		String params[]; 
 		int line = 0;
 		for(IRelement element : IR.instructions) {
 			if(skip) {
@@ -40,18 +41,63 @@ public class ARcreation {
 				
 				break;
 			case add:
+				params = setUpParams(element);
+				AR.addCommand(ARelement.command.add, params);
+				pushResults(element);
+				break;
 			case bor:
+				params = setUpParams(element);
+				AR.addCommand(ARelement.command.or, params);
+				pushResults(element);
+				break;
 			case bxor:
+				params = setUpParams(element);
+				AR.addCommand(ARelement.command.xor, params);
+				pushResults(element);
+				break;
 			case band:
+				params = setUpParams(element);
+				AR.addCommand(ARelement.command.and, params);
+				pushResults(element);
+				break;
 			case sub:
+				params = setUpParams(element);
+				AR.addCommand(ARelement.command.sub, params);
+				pushResults(element);
+				break;
 			case mul:
-			case div:
-			case mod:
-			case eq:
-			case neq:
-			case or:
-			case and:
-				operation(element);
+				params = setUpParams(element);
+				AR.addCommand(ARelement.command.imul, params);
+				break;
+			case div: //Ben
+				params = setUpParams(element);
+				//Code
+				pushResults(element);
+				break;
+			case mod: //Chris
+				params = setUpParams(element);
+				//Code
+				pushResults(element);
+				break;
+			case eq: //Ben
+				params = setUpParams(element);
+				//Code
+				pushResults(element);
+				break;
+			case neq: //Chris
+				params = setUpParams(element);
+				//Code
+				pushResults(element);
+				break;
+			case or: //Ben
+				params = setUpParams(element);
+				//Code
+				pushResults(element);
+				break;
+			case and: //Chris
+				params = setUpParams(element);
+				//Code
+				pushResults(element);
 				break;
 			case not:
 				AR.addCommand(ARelement.command.not, ARParamFromIRparam(element.parameters.get(0)));
@@ -130,39 +176,49 @@ public class ARcreation {
 		return false;
 	}
 	
-	private static void operation(IRelement ir) {
+	private static String[] setUpParams(IRelement ir) {
 		String params[];
 		if(isHighIntVar(ir.parameters.get(0))) {
 			//Both parameters are on the stack
-			AR.addCommand(ARelement.command.pop, "%r15d");
-			AR.addCommand(ARelement.command.pop, "%r14d");
-			params = new String [] {"%r15d", "%r14d"};
+			AR.addCommand(ARelement.command.pop, "%e15d");
+			AR.addCommand(ARelement.command.pop, "%e14d");
+			params = new String [] {"%e15d", "%e14d"};
 		} else if(isHighIntVar(ir.parameters.get(1))) {
 			//Only the second parameter is on the stack
-			AR.addCommand(ARelement.command.pop, "%r14d");
-			params = new String [] {"%r14d", "%r13d"};
+			AR.addCommand(ARelement.command.pop, "%e14d");
+			params = new String [] {"%e14d", "%e13d"};
 		} else {
 			params = ARParamsFromIRelem(ir);
-			AR.addCommand(ARelement.command.add, ARParamsFromIRelem(ir));
+		}
+		return params;
+	}
+	
+	private static void pushResults(IRelement ir) {
+		if(isHighIntVar(ir.parameters.get(0))) {
+			AR.addCommand(ARelement.command.push, "%r14d");
+		}
+	}
+
+	
+	/*private static void operation(IRelement ir) {
+		String params[];
+		if(isHighIntVar(ir.parameters.get(0))) {
+			//Both parameters are on the stack
+			AR.addCommand(ARelement.command.pop, "%e15d");
+			AR.addCommand(ARelement.command.pop, "%e14d");
+			params = new String [] {"%e15d", "%e14d"};
+		} else if(isHighIntVar(ir.parameters.get(1))) {
+			//Only the second parameter is on the stack
+			AR.addCommand(ARelement.command.pop, "%e14d");
+			params = new String [] {"%e14d", "%e13d"};
+		} else {
+			params = ARParamsFromIRelem(ir);
 		}
 		
 		
 		switch(ir.cmd) {
 		case add:
-			if(isHighIntVar(element.parameters.get(0))) {
-				//Both parameters are on the stack
-				AR.addCommand(ARelement.command.pop, "%r15d");
-				AR.addCommand(ARelement.command.pop, "%r14d");
-				AR.addCommand(ARelement.command.add, new String [] {"%r15d", "%r14d"});
-				AR.addCommand(ARelement.command.push, "%r14");
-			} else if(isHighIntVar(element.parameters.get(1))) {
-				//Only the second parameter is on the stack
-				AR.addCommand(ARelement.command.pop, "%r14d");
-				AR.addCommand(ARelement.command.add, new String [] {"%r14d", "%r13d"});
-			} else {
-				//normal case
-				AR.addCommand(ARelement.command.add, ARParamsFromIRelem(element));
-			}
+			AR.addCommand(ARelement.command.add, params);
 			break;
 		case sub:
 			AR.addCommand(ARelement.command.sub, params);
@@ -209,7 +265,6 @@ public class ARcreation {
 				AR.addCommand((ARelement.command.mov, new String [] {"%rax", "%r13d"});
 				AR.addCommand(ARelement.command.mov, new String [] {"%rbx", "%r12d"});
 				AR.addCommand(ARelement.command.idiv, "%rbx");
-				AR.addCommand(ARelement.command.push, "%rdx");
 			}
 			break;
 		case eq: //Ben
@@ -225,17 +280,16 @@ public class ARcreation {
 			} else if(isHighIntVar(element.parameters.get(1))) {
 				AR.addCommand(ARelement.command.pop, "%r14d");
 				AR.addCommand(ARelement.command.or, new String [] {"%r14d", "%r13d"});
-				AR.addCommand(ARelement.command.push, "%r14d");
 			} else {
 				AR.addCommand(ARelement.command.or, ARParamsFromIRelem(element));
 			}
 			break;
 		case and: //Ben
 			break;
+		default:
+			ErrorHandler.addError("Default switch called in operation function");
 		}
 		
-		if(isHighIntVar(ir.parameters.get(0))) {
-			AR.addCommand(ARelement.command.push, "%r14d");
-		}
-	}
+
+	}*/
 }
