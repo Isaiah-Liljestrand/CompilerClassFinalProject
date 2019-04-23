@@ -69,9 +69,11 @@ public class ARcreation {
 				params = setUpParams(element);
 				AR.addCommand(ARelement.command.imul, params);
 				break;
+			//assumes the thing being divied is first argument
 			case div: //Ben
 				params = setUpParams(element);
-				//Code
+				AR.addCommand(ARelement.command.mov, "%eas, %e15d");
+				AR.addCommand(ARelement.command.idiv, "%e14d");
 				pushResults(element);
 				break;
 			case mod: //Chris
