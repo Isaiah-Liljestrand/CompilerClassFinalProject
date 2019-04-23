@@ -246,6 +246,23 @@ public class ARcreation {
 			}
 			break;
 		case div: //Ben
+			if(isHighIntVar(element.parameters.get(0))) { //parameter on the stack
+				AR.addCommand(ARelement.command.mov, new String [] {"%rdx", "0"}); //clearing dividend
+				AR.addCommand(ARelement.command.pop, "%rax"); //number to be divided
+				AR.addCommand(ARelement.command.pop, "%r15d");
+				AR.addCommand(ARelement.command.idiv, "%r15d");
+				AR.addCommand(ARelement.command.push, "%rax");
+			} else if(isHighIntVar(element.parameters.get(1))) {
+				AR.addCommand(ARelement.command.mov, new String [] {"%rdx", "0"});
+				AR.addCommand(ARelement.command.pop, "%r15d");
+				AR.addCommand(ARelement.command.idiv, "%r15d");
+				AR.addCommand(ARelement.command.push, "%rax");
+			}
+				else { 
+				AR.addCommand(ARelement.command.mov, new String [] {"%rdx", "0"});
+				AR.addCommand(ARelement.command.idiv, "%r15d");
+				AR.addCommand(ARelement.command.push, "%rax");
+			}
 			break;
 		case mod: //Chris
 			if(isHighIntVar(element.parameters.get(0))) {
