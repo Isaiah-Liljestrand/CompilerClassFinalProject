@@ -13,10 +13,14 @@ public class IRtransformation {
 		}
 	}
 	
+	/**
+	 * Checks if there are any high temporary variables in IR
+	 * @return true if there are, false otherwise
+	 */
 	public static boolean highintvars() {
 		for(IRelement e : IR.instructions) {
 			for(String s : e.parameters) {
-				if(s.charAt(0) == '%' && Integer.parseInt(s.substring(1)) > 13) {
+				if(isHighIntVar(s)) {
 					return true;
 				}
 			}
@@ -24,14 +28,17 @@ public class IRtransformation {
 		return false;
 	}
 	
+	/**
+	 * Tests if the passed in string is an 
+	 * @param v string of an IRelement parameter
+	 * @return true if the string is %>12
+	 */
 	public static boolean isHighIntVar(String v) {
-		if(v.charAt(0) == '%' && Integer.parseInt(v.substring(1)) > 13) {
+		if(v.charAt(0) == '%' && Integer.parseInt(v.substring(1)) > 12) {
 			return true;
 		}
 		return false;
 	}
-	
-	
 	
 	
 	/**

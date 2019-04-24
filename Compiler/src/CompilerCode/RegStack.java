@@ -9,12 +9,21 @@ import java.util.ArrayList;
 public final class RegStack {
 	private static ArrayList<Integer> stack = new ArrayList<Integer>();
 	
+	/**
+	 * Converts and intermediate variable to to it's corresponding register location
+	 * @param intVar string of the intermediate variable
+	 * @return string of the register being accessed
+	 */
 	public static String intVarToReg(String intVar) {
 		int s = Integer.parseInt(intVar.substring(1));
 		String reg [] = {"%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi", "%r8d", "%r9d", "%r10d", "%r11d", "%r12d", "%r13d"/*, "%r14d", "%r15d"*/};
 		return reg[s - 1];
 	}
 	
+	/**
+	 * Adds an element to the stack and returns the index
+	 * @return
+	 */
 	public static int addToStack() {
 		int i = 0;
 		for(int s : stack) {
@@ -28,16 +37,30 @@ public final class RegStack {
 		return stack.size() - 1;
 	}
 	
+	/**
+	 * Given a variable name, returns the string of it's location on the stack
+	 * @param var name of the variable
+	 * @return String of the memory location of a variable
+	 */
 	public static String varToStack(String var) {
-		//int location = VarList.varLocation(var);
-		//TODO:convert int to esp or ebp location string
-		return "";
+		int location = VarList.varLocation(var);
+		location++;
+		location *= 4;
+		return "-" + location + "(%rbp)";
 	}
 	
+	/**
+	 * Removes a specified index from the stack
+	 * @param i index of variable being removed
+	 */
 	public static void removeFromStack(int i) {
 		stack.set(i, 0);
 	}
 	
+	/**
+	 * Checks if there is empty room on the stack from cleared variables
+	 * @return true if there is empty room, false otherwise
+	 */
 	public static boolean isSwiss() {
 		for(int s : stack) {
 			if(s == 0) {
@@ -47,6 +70,10 @@ public final class RegStack {
 		return false;
 	}
 	
+	/**
+	 * Returns the size of the stack
+	 * @return stack size
+	 */
 	public static int stackSize() {
 		return stack.size();
 	}

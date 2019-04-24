@@ -69,11 +69,11 @@ public class ARcreation {
 				params = setUpParams(element);
 				AR.addCommand(ARelement.command.imul, params);
 				break;
-			//assumes the thing being divied is first argument
+			//assumes the thing being divided is first argument
 			case div: //Ben
 				params = setUpParams(element);
-				AR.addCommand(ARelement.command.mov, "%eas, %e15d");
-				AR.addCommand(ARelement.command.idiv, "%e14d");
+				AR.addCommand(ARelement.command.mov, "%rax, %r15d");
+				AR.addCommand(ARelement.command.idiv, "%r14d");
 				pushResults(element);
 				break;
 			case mod: //Chris
@@ -117,7 +117,13 @@ public class ARcreation {
 				break;
 			case call: //Isaiah
 				break;
-			case ret: //Isaiah
+			case ret:
+				if(element.parameters.size() == 0 || element.parameters.get(0) == "%1") {
+					AR.addCommand(ARelement.command.ret);
+				} else {
+					AR.addCommand(ARelement.command.mov, new String [] {"$" + element.parameters.get(0), "%rax"});
+					AR.addCommand(ARelement.command.ret);
+				}
 				break;
 			case label:
 				AR.addCommand(ARelement.command.label, new String[] {element.parameters.get(0)});
@@ -133,6 +139,11 @@ public class ARcreation {
 		}
 	}
 	
+	/**
+	 * Checks if the string passed in is a constant
+	 * @param str should be a constant
+	 * @return true if it is a constant
+	 */
 	private static boolean isInt(String str) {
 		try {
 			Integer.parseInt(str);
@@ -143,6 +154,11 @@ public class ARcreation {
 		}
 	}
 	
+	/**
+	 * Converts a single parameter from an IR parameter to an AR parameter
+	 * @param param String of the IR parameter
+	 * @return String of an ARparam
+	 */
 	private static String ARParamFromIRparam(String param) {
 		if(isInt(param)) {
 			return "$" + param;
@@ -153,7 +169,11 @@ public class ARcreation {
 		}
 	}
 	
-	//Reverses the order of parameters and replaces IR parameters with AR equivalent
+	/**
+	 * Reverses the order of parameters and converts them to x86
+	 * @param element IRelement being converted into assembly
+	 * @return list of strings that are paramers for the x86 instruction
+	 */
 	private static String[] ARParamsFromIRelem(IRelement element) {
 		String[] newparams = new String[element.parameters.size()];
 		int i = newparams.length - 1;
@@ -171,6 +191,11 @@ public class ARcreation {
 		return newparams;
 	}
 	
+	/**
+	 * Tests if a string is a high intermediate variable
+	 * @param var string being tested
+	 * @return true if it is
+	 */
 	private static boolean isHighIntVar(String var) {
 		if(var.charAt(0) == '%' && Integer.parseInt(var.substring(1)) > 12) {
 			return true;
@@ -178,6 +203,11 @@ public class ARcreation {
 		return false;
 	}
 	
+	/**
+	 * Sets up the parameters to use for the operation functions
+	 * @param ir IRelement being converted
+	 * @return string of parameters to be handled
+	 */
 	private static String[] setUpParams(IRelement ir) {
 		String params[];
 		if(isHighIntVar(ir.parameters.get(0))) {
@@ -195,6 +225,10 @@ public class ARcreation {
 		return params;
 	}
 	
+	/**
+	 * If two high temporary variables were used, it pushes the result back on the stack
+	 * @param ir Irelement being dealt with
+	 */
 	private static void pushResults(IRelement ir) {
 		if(isHighIntVar(ir.parameters.get(0))) {
 			AR.addCommand(ARelement.command.push, "%r14d");
