@@ -574,6 +574,9 @@ public class IRcreation {
 		IRelement.command c = command.set;
 		if(tree.token.type != type_enum.notExpression) {
 			n = simpleExpressionHandler(tree.children.get(0), i);
+			if(n != null && !returnsConst(tree.children.get(2))) {
+				IR.addCommand(IRelement.command.set, "%" + i + " " + findValue(n));
+			}
 			n2 = simpleExpressionHandler(tree.children.get(2), i + 1);
 		} else {
 			n = simpleExpressionHandler(tree.children.get(1), i);
@@ -632,12 +635,23 @@ public class IRcreation {
 		} else if(n == null && n2 != null) {
 			IR.addCommand(c, "%" + i + " " + findValue(n2));
 		} else if(n != null && n2 == null) {
-			IR.addCommand(IRelement.command.set, "%" + i + " " + findValue(n));
 			IR.addCommand(c, "%" + i + " %" + (i + 1));
 		} else {
 			return preProcess(tree, n, n2);
 		}
 		return null;
+	}
+	
+	private static boolean returnsConst(Ptree tree) {
+		if(tree.token.type == type_enum.variable) {
+			return false;
+		}
+		for(Ptree t : tree.children) {
+			if(!returnsConst(t)) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	/**
