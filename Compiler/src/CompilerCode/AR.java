@@ -28,6 +28,14 @@ public class AR {
 	}
 	
 	/**
+	 * Adds an AR command (Only for no parameter commands)
+	 * @param cmd command being added
+	 */
+	public static void addCommand(ARelement.command cmd) {
+		instructions.add(new ARelement(cmd, new String [] {}));
+	}
+	
+	/**
 	 * Prints out the AR
 	 */
 	public static void printAR() {
