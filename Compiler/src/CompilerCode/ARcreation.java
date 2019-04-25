@@ -176,7 +176,7 @@ public class ARcreation {
 					AR.addCommand(ARelement.command.mov, new String [] {"%rbx", "%rax"});
 					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
 					AR.addCommand(ARelement.command.idiv, "%rcx");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rax", "%rbx"});
+					AR.addCommand(ARelement.command.mov, new String [] {"%rdx", "%rbx"});
 					AR.addCommand(ARelement.command.pop, "%rax");
 				} else if((params[1] == "%rbx" || params[1] == "%rcx") && params[0].charAt(0) == '$') {
 					AR.addCommand(ARelement.command.push, "%rax");
@@ -231,10 +231,10 @@ public class ARcreation {
 			case not:
 				AR.addCommand(ARelement.command.not, ARParamFromIRparam(element.parameters.get(0)));
 				break;
-			case jmp: //Jacob
+			case jmp:
 				AR.addCommand(ARelement.command.jmp, element.parameters.get(0));
 				break;
-			case jmpcnd: //Jacob
+			case jmpcnd:
 				AR.addCommand(ARelement.command.cmp, new String[] {"$0", RegStack.intVarToReg("%1")});
 				AR.addCommand(ARelement.command.jne, new String[] {element.parameters.get(0)});
 				break;
