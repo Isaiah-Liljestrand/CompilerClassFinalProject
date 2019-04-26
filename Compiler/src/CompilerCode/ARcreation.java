@@ -5,7 +5,7 @@ public class ARcreation {
 	public void createAR(IR ir) {
 		boolean skip = false;
 		String params[]; 
-		int line = 0;
+		int line = 0, arithmeticCounter = 0;
 		for(IRelement element : IR.instructions) {
 			if(skip) {
 				skip = false;
@@ -208,59 +208,75 @@ public class ARcreation {
 				}
 				pushResults(element);
 				break;
-			case eq: //Ben
+			case eq:
 				params = setUpParams(element);
-
 				
+				if(params[0].charAt(0) == '$') {
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%r15"});
+					params[0] = "%r15";
+				}
 				
+				AR.addCommand(ARelement.command.cmp, new String [] {params[0], params[1]});
+				AR.addCommand(ARelement.command.je, "arithmeticlabel" + arithmeticCounter);
+				AR.addCommand(ARelement.command.mov, new String [] {"$0", params[1]});
+				AR.addCommand(ARelement.command.jmp, "arithmeticlabel" + (arithmeticCounter + 1));
+				AR.addCommand(ARelement.command.label, "arithmeticlabel" + arithmeticCounter);
+				AR.addCommand(ARelement.command.mov, new String [] {"$1", params[1]});
+				AR.addCommand(ARelement.command.label, "arithmeticlabel" + (arithmeticCounter + 1));
+				arithmeticCounter += 2;
 				pushResults(element);
 				break;
-			case neq: //Chris
+			case neq:
 				params = setUpParams(element);
-				//Code
+				AR.addCommand(ARelement.command.cmp, new String [] {params[0], params[1]});
+				AR.addCommand(ARelement.command.jne, "arithmeticlabel" + arithmeticCounter);
+				AR.addCommand(ARelement.command.mov, new String [] {"$0", params[1]});
+				AR.addCommand(ARelement.command.jmp, "arithmeticlabel" + (arithmeticCounter + 1));
+				AR.addCommand(ARelement.command.label, "arithmeticlabel" + arithmeticCounter);
+				AR.addCommand(ARelement.command.mov, new String [] {"$1", params[1]});
+				AR.addCommand(ARelement.command.label, "arithmeticlabel" + (arithmeticCounter + 1));
+				arithmeticCounter += 2;
 				pushResults(element);
 				break;
-			case or: //Ben
+			case or:
 				params = setUpParams(element);
-				/**
-				 * not sure if below is needed
-				 * if not it's just:
-				 * AR.addCommand(ARelement.command.or, new String [] {params[0], params[1]});
-				 */
 				
-				if(params[0].charAt(0) == '%' && params[1].charAt(0) == '%'){ //both elements in reg
-					AR.addCommand(ARelement.command.or, new String [] {params[0], params[1]});
+				if(params[0].charAt(0) == '$') {
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%r15"});
+					params[0] = "%r15";
 				}
-				else if(params[0].charAt(0) != '%' && params[1].charAt(0) == '%'){ //first element not in reg
-					AR.addCommand(ARelement.command.push, "%r13");
-					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%r13"});
-					AR.addCommand(ARelement.command.or, new String [] {"%r13", params[1]});
-					AR.addCommand(ARelement.command.xor, new String [] {"%r13", "%r13"});
-					AR.addCommand(ARelement.command.pop, "%r13");
-				}
-				else if(params[0].charAt(0) == '%' && params[1].charAt(0) != '%'){ //second element not in reg
-					AR.addCommand(ARelement.command.push, "%r13");
-					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%r13"});
-					AR.addCommand(ARelement.command.or, new String [] {"%r13", params[0]});
-					AR.addCommand(ARelement.command.xor, new String [] {"%r13", "%r13"});
-					AR.addCommand(ARelement.command.pop, "%r13");
-				}
-				else{ //both elements not in reg
-					AR.addCommand(ARelement.command.push, "%r12");
-					AR.addCommand(ARelement.command.push, "%r13");
-					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%r12"});
-					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%r13"});
-					AR.addCommand(ARelement.command.or, new String [] {"%r12", "%r13"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%r12", "%r12"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%r13", "%r13"});
-					AR.addCommand(ARelement.command.pop, "%r12");
-					AR.addCommand(ARelement.command.pop, "%r13");
-				}
+				
+				AR.addCommand(ARelement.command.cmp, new String [] {"$0", params[1]});
+				AR.addCommand(ARelement.command.jne, "arithmeticlabel" + arithmeticCounter);
+				AR.addCommand(ARelement.command.cmp, new String [] {"$0", params[0]});
+				AR.addCommand(ARelement.command.jne, "arithmeticlabel" + arithmeticCounter);
+				AR.addCommand(ARelement.command.mov, new String [] {"$0", params[1]});
+				AR.addCommand(ARelement.command.jmp, "arithmeticlabel" + (arithmeticCounter + 1));
+				AR.addCommand(ARelement.command.label, "arithmeticlabel" + arithmeticCounter);
+				AR.addCommand(ARelement.command.mov, new String [] {"$1", params[1]});
+				AR.addCommand(ARelement.command.label, "arithmeticlabel" + (arithmeticCounter + 1));
+				arithmeticCounter += 2;
 				pushResults(element);
 				break;
-			case and: //Chris
+			case and:
 				params = setUpParams(element);
-				//Code
+				
+				if(params[0].charAt(0) == '$') {
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%r15"});
+					params[0] = "%r15";
+				}
+				
+				AR.addCommand(ARelement.command.cmp, new String [] {"$0", params[1]});
+				AR.addCommand(ARelement.command.je, "arithmeticlabel" + arithmeticCounter);
+				AR.addCommand(ARelement.command.cmp, new String [] {"$0", params[0]});
+				AR.addCommand(ARelement.command.je, "arithmeticlabel" + arithmeticCounter);
+				AR.addCommand(ARelement.command.mov, new String [] {"$1", params[1]});
+				AR.addCommand(ARelement.command.jmp, "arithmeticlabel" + (arithmeticCounter + 1));
+				AR.addCommand(ARelement.command.label, "arithmeticlabel" + arithmeticCounter);
+				AR.addCommand(ARelement.command.mov, new String [] {"$0", params[1]});
+				AR.addCommand(ARelement.command.label, "arithmeticlabel" + (arithmeticCounter + 1));
+				arithmeticCounter += 2;
+				
 				pushResults(element);
 				break;
 			case not:
