@@ -210,7 +210,9 @@ public class ARcreation {
 				break;
 			case eq: //Ben
 				params = setUpParams(element);
-				//Code
+
+				
+				
 				pushResults(element);
 				break;
 			case neq: //Chris
@@ -220,7 +222,40 @@ public class ARcreation {
 				break;
 			case or: //Ben
 				params = setUpParams(element);
-				//Code
+				/**
+				 * not sure if below is needed
+				 * if not it's just:
+				 * AR.addCommand(ARelement.command.or, new String [] {params[0], params[1]});
+				 */
+				
+				if(params[0].charAt(0) == '%' && params[1].charAt(0) == '%'){ //both elements in reg
+					AR.addCommand(ARelement.command.or, new String [] {params[0], params[1]});
+				}
+				else if(params[0].charAt(0) != '%' && params[1].charAt(0) == '%'){ //first element not in reg
+					AR.addCommand(ARelement.command.push, "%r13");
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%r13"});
+					AR.addCommand(ARelement.command.or, new String [] {"%r13", params[1]});
+					AR.addCommand(ARelement.command.xor, new String [] {"%r13", "%r13"});
+					AR.addCommand(ARelement.command.pop, "%r13");
+				}
+				else if(params[0].charAt(0) == '%' && params[1].charAt(0) != '%'){ //second element not in reg
+					AR.addCommand(ARelement.command.push, "%r13");
+					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%r13"});
+					AR.addCommand(ARelement.command.or, new String [] {"%r13", params[0]});
+					AR.addCommand(ARelement.command.xor, new String [] {"%r13", "%r13"});
+					AR.addCommand(ARelement.command.pop, "%r13");
+				}
+				else{ //both elements not in reg
+					AR.addCommand(ARelement.command.push, "%r12");
+					AR.addCommand(ARelement.command.push, "%r13");
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%r12"});
+					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%r13"});
+					AR.addCommand(ARelement.command.or, new String [] {"%r12", "%r13"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%r12", "%r12"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%r13", "%r13"});
+					AR.addCommand(ARelement.command.pop, "%r12");
+					AR.addCommand(ARelement.command.pop, "%r13");
+				}
 				pushResults(element);
 				break;
 			case and: //Chris
