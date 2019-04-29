@@ -13,7 +13,7 @@ public class ARcreation {
 			}
 			switch(element.cmd) {
 			case declare:
-				
+						
 				if(RegStack.isSwiss()) {
 					VarList.declaration(element.parameters.get(0));
 				} else {
@@ -292,14 +292,19 @@ public class ARcreation {
 			case function:
 				AR.addCommand(ARelement.command.label, new String[] {"fun_" + element.parameters.get(0)});
 				//Account for passed in parameters parameters
+				AR.addCommand(ARelement.command.push, "%rbp");
+				AR.addCommand(ARelement.command.mov, new String [] {"%rsp", "%rsb"});
+				AR.addCommand(ARelement.command.sub, new String[] {"4", "%rsp"});
 				break;
 			case call: //Isaiah
 				break;
 			case ret:
 				if(element.parameters.size() == 0 || element.parameters.get(0) == "%1") {
+					AR.addCommand(ARelement.command.add, new String [] {"4","%rsp"});
 					AR.addCommand(ARelement.command.ret);
 				} else {
 					AR.addCommand(ARelement.command.mov, new String [] {"$" + element.parameters.get(0), "%rax"});
+					AR.addCommand(ARelement.command.add, new String [] {"4", "%rsp"});
 					AR.addCommand(ARelement.command.ret);
 				}
 				break;
