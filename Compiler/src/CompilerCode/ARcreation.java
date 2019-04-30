@@ -8,7 +8,7 @@ public class ARcreation {
 		int line = 0, arithmeticCounter = 0;
 		for(IRelement element : IR.instructions) {
 			if(skip) {
-				skip = false;
+				skip = false; 
 				continue;
 			}
 			switch(element.cmd) {
