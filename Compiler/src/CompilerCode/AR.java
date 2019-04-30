@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Holds all AR elements and deals with printing
  */
-public class AR {
+public class AR { 
 	public static List<ARelement> instructions = new ArrayList<ARelement>();
 	
 	/**

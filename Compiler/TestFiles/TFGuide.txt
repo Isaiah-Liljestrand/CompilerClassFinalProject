@@ -1,0 +1,8 @@
+0:empty main function
+1:basic math
+2:harder math
+3:loop test
+4:function call
+5:nested function call
+6:looped function call
+7:param passing stress test
