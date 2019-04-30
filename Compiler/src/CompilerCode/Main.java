@@ -136,6 +136,10 @@ public class Main {
 		IRtransformation.IRtransformationFunction(symTable.entries.size() > 0);
 		System.out.println("\n");
 		IR.printIR();
+		
+		System.out.println("\n\nAR output\n");
+		ARcreation.createAR();
+		AR.printAR();
 	}
 
 	

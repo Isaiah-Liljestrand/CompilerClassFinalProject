@@ -40,6 +40,9 @@ public class AR {
 	 */
 	public static void printAR() {
 		for(ARelement elem : instructions) {
+			if (elem.cmd != ARelement.command.label) {
+				System.out.print("\t");
+			}
 			System.out.println(elem.toString());
 		}
 	}

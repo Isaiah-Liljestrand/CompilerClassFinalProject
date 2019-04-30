@@ -1,5 +1,5 @@
 int foo(int i){
-  return i + 1;
+  return i + 5;
 }
 
 int main(){

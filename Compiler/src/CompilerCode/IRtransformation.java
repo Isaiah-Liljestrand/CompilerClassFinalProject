@@ -1,6 +1,6 @@
 package CompilerCode;
 
-
+import java.util.ArrayList;
 
 /*
  * IRtransformation applies minor changes to the IR in order to prepare it for x86 transformations
@@ -8,9 +8,10 @@ package CompilerCode;
 public class IRtransformation {
 	public static void IRtransformationFunction(boolean global) {
 		breakHandler();
-		if(gotoHandler() && !global && !highintvars()) {
+		if(gotoHandler() && !global && highintvars()) {
 			declarationDestructionOptimizer();
 		}
+		deleteParameters();
 	}
 	
 	/**
@@ -228,5 +229,26 @@ public class IRtransformation {
 			}
 		}
 		return b;
+	}
+	
+	/**
+	 * Finds every instance of the IR command "endfunction" and adds a destroy command to destroy each parameter of the function.
+	 */
+	public static void deleteParameters() {
+		ArrayList<String> names = new ArrayList<String>(); 
+		for (int i = 0; i < IR.instructions.size(); i++) {
+			if (IR.instructions.get(i).cmd == IRelement.command.function) {
+				names = new ArrayList<String>();
+				for(int j = 3; j < IR.instructions.get(i).parameters.size(); j += 2) {
+					names.add(IR.instructions.get(i).parameters.get(j));
+				}
+			}
+			if (IR.instructions.get(i).cmd == IRelement.command.endfunction) {
+				for (String name : names) {
+					IR.instructions.add(i, new IRelement("destroy " + name));
+					i++;
+				}
+			}
+		}
 	}
 }

@@ -246,13 +246,13 @@ public class ARelement {
 	//Returns in the format: "cmd p1, p2, ...pn" where cmd is the command enum and the parameters are comma separated.
 	@Override
 	public String toString() {
-		String newstring = cmd.toString();
+		String newstring = cmd.toString() + " ";
 		if (cmd == command.label) {
 			newstring = "";
 		}
 		
 		//Append comma separated parameters.
-		newstring += " " + String.join(", ", parameters);
+		newstring += String.join(", ", parameters);
 		if (cmd == command.label) {
 			newstring += ":";
 		}

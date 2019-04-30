@@ -1,8 +1,10 @@
 package CompilerCode;
 
+import java.util.List;
 
 public class ARcreation {
-	public void createAR(IR ir) {
+	public static void createAR() {
+		List<ARelement> TESTFUCK = AR.instructions;
 		boolean skip = false;
 		String params[]; 
 		int line = 0, arithmeticCounter = 0;
@@ -24,7 +26,7 @@ public class ARcreation {
 						skip = true;
 					} else {
 						//push zero onto the stack to move esp and instantiate uninitialized variable
-						AR.addCommand(ARelement.command.push, "0");
+						AR.addCommand(ARelement.command.push, "$0");
 					}
 				}
 				break;
@@ -290,14 +292,43 @@ public class ARcreation {
 				AR.addCommand(ARelement.command.jne, new String[] {element.parameters.get(0)});
 				break;
 			case function:
-				AR.addCommand(ARelement.command.label, new String[] {"fun_" + element.parameters.get(0)});
+				AR.addCommand(ARelement.command.label, "fun_" + element.parameters.get(1));
 				//Account for passed in parameters parameters
 				AR.addCommand(ARelement.command.push, "%rbp");
-				AR.addCommand(ARelement.command.mov, new String [] {"%rsp", "%rsb"});
+				AR.addCommand(ARelement.command.mov, new String [] {"%rsp", "%rbp"});
+				for (int i = 2; i < element.parameters.size(); i++) {
+					VarList.paramdeclaration(element.parameters.get(i));
+				}
 				break;
-			case call: //Isaiah
+			case call:
+				//Push current registers onto the stack
+				int regcount;
+				for (regcount = 0; regcount < RegStack.registers.length; regcount++) {
+					if (RegStack.registers[regcount] == RegStack.intVarToReg(element.parameters.get(0))) {
+						break;
+					}
+					AR.addCommand(ARelement.command.push, RegStack.registers[regcount]);
+				}
+				for (int i = 2; i < element.parameters.size(); i++) {
+					if (isInt(element.parameters.get(i))) {
+						AR.addCommand(ARelement.command.push, "$" + element.parameters.get(i));
+					} else {
+						AR.addCommand(ARelement.command.push, RegStack.intVarToReg(element.parameters.get(i)));
+					}
+				}
+				AR.addCommand(ARelement.command.call, "fun_" + element.parameters.get(1));
+				if (element.parameters.get(0) != "%0") {
+					AR.addCommand(ARelement.command.mov, new String[] {"%rax", RegStack.intVarToReg(element.parameters.get(0))});
+				}
+				AR.addCommand(ARelement.command.add, new String [] { "$" + Integer.toString(element.parameters.size() - 2), "%rsp"});
+				//pop contents off the stack back into registers
+				for (; regcount > 0; regcount--) {
+					AR.addCommand(ARelement.command.pop, RegStack.registers[regcount]);
+				}
 				break;
 			case ret:
+				AR.addCommand(ARelement.command.mov, new String[] {"%rsp", "%rbp"});
+				AR.addCommand(ARelement.command.pop, "%rbp");
 				if(element.parameters.size() == 0 || element.parameters.get(0) == "%1") {
 					AR.addCommand(ARelement.command.ret);
 				} else {
