@@ -52,6 +52,18 @@ public class IR {
 		}
 	}
 
+	public static String IRtoFile() {
+		StringBuilder string = new StringBuilder();
+		for(IRelement elem : instructions) {
+			if (elem.cmd == IRelement.command.label) {
+				string.append(elem.toString());
+			} else {
+				string.append("\t" + elem.toString());
+			}
+		}
+		return string.toString();
+	}
+	
 	/**
 	 * Creates IR from a list of strings
 	 * @param lines list of strings representing an IR

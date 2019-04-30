@@ -158,7 +158,9 @@ public class Main {
 		}
 		
 		if(exportIR) {
-			
+			BufferedWriter writer = new BufferedWriter(new FileWriter(IRfilename2));
+			writer.write(IR.IRtoFile());
+			writer.close();
 		}
 		
 		if(exportAR) {
