@@ -57,6 +57,17 @@ public class VarList {
 		}
 	}
 	
+	public static void paramdeclaration(String name) {
+		int location = RegStack.addToParamStack();
+		for(VarElement e : list) {
+			if(name == e.name) {
+				e.location.add(0, location);
+				return;
+			}
+		}
+		addElement(name, location);
+	}
+	
 	/**
 	 * Declares a variable and adds it to the stack
 	 * @param name name of the variable being declared

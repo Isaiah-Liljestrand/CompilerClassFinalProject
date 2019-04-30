@@ -8,6 +8,7 @@ import java.util.ArrayList;
  */
 public final class RegStack {
 	private static ArrayList<Integer> stack = new ArrayList<Integer>();
+	private static ArrayList<Integer> paramstack = new ArrayList<Integer>();
 	
 	/**
 	 * Converts and intermediate variable to to it's corresponding register location
@@ -18,6 +19,12 @@ public final class RegStack {
 		int s = Integer.parseInt(intVar.substring(1));
 		String reg [] = {"%eax", "%ebx", "%ecx", "%edx", "%esi", "%edi", "%r8d", "%r9d", "%r10d", "%r11d", "%r12d", "%r13d"/*, "%r14d", "%r15d"*/};
 		return reg[s - 1];
+	}
+	
+	public static int addToParamStack() {
+		int i = 0;
+		paramstack.add(1);
+		return paramstack.size() * -1;
 	}
 	
 	/**
@@ -44,6 +51,10 @@ public final class RegStack {
 	 */
 	public static String varToStack(String var) {
 		int location = VarList.varLocation(var);
+		if(location < 0) {
+			location *= -4;
+			return location + "(%rbp)";
+		}
 		location++;
 		location *= 4;
 		return "-" + location + "(%rbp)";
