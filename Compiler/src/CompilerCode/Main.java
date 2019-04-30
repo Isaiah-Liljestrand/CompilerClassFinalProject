@@ -9,14 +9,19 @@ import java.util.List;
 
 
 public class Main {
-	public static void main(String[] args) {
+	public static void main(String[] args){
 		boolean printTokens = false;
 		boolean printParseTree = false;
 		boolean printSymbolTable = false;
 		boolean printIR = false;
+		boolean printAR = false;
 		boolean readIR = false;
+		boolean exportIR = false;
+		boolean exportAR = false;
 		String filename = null;
 		String IRfilename = null;
+		String IRfilename2 = null;
+		String ARfilename = null;
 		Scan scanner;
 		Grammar grammar;
 		SymbolTable symTable = null;
@@ -38,12 +43,15 @@ public class Main {
 			switch(arg) {
 			case "-h":
 				System.out.println("Usage:");
-				System.out.println("./compiler [-t] [-p] [-s] [-ir] [-readIR filename][-f filename]");
+				System.out.println("./compiler [-t] [-p] [-s] [-ir] [-ar] [-readIR filename] [-exportIR filename] [-exportAR filename] [-f filename]");
 				System.out.println("    -t prints out scanner tokens");
 				System.out.println("    -p prints out parse tree");
 				System.out.println("    -s prints out the symbol table");
 				System.out.println("    -ir prints out the intermediate representation");
+				System.out.println("    -ar prints out the Assembly Representation");
 				System.out.println("    -readIR reads the IR from a file");
+				System.out.println("    -exportIR exports the IR to a file");
+				System.out.println("    -exportAR exports the AR to a file");
 				return;
 			case "-t":
 				printTokens = true;
@@ -57,6 +65,9 @@ public class Main {
 			case "-ir":
 				printIR = true;
 				break;
+			case "-ar":
+				printAR = true;
+				break;
 			case "-f":
 				i++;
 				filename = args[i];
@@ -65,6 +76,16 @@ public class Main {
 				i++;
 				IRfilename = args[i];
 				readIR = true;
+				break;
+			case "-exportIR":
+				i++;
+				IRfilename2 = args[i];
+				exportIR = true;
+				break;
+			case "-exportAR":
+				i++;
+				ARfilename = args[i];
+				exportAR = true;
 				break;
 			}
 			if (arg == args[args.length - 1]) {
@@ -125,8 +146,21 @@ public class Main {
 		} else {
 			IR.readIRFromFile(IRfilename);
 		}
+		
 		if(printIR) {
 			IR.printIR();
+		}
+		
+		if(printAR) {
+			AR.printAR();
+		}
+		
+		if(exportIR) {
+			
+		}
+		
+		if(exportAR) {
+			
 		}
 		if(ErrorHandler.errorsExist()) {
 			ErrorHandler.printStrings("IR creation");
