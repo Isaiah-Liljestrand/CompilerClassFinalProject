@@ -1,15 +1,17 @@
 package CompilerCode;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class Main {
-	public static void main(String[] args){
+	public static void main(String[] args) throws IOException{
 		boolean printTokens = false;
 		boolean printParseTree = false;
 		boolean printSymbolTable = false;
@@ -160,7 +162,9 @@ public class Main {
 		}
 		
 		if(exportAR) {
-			
+			BufferedWriter writer = new BufferedWriter(new FileWriter(ARfilename));
+			writer.write(AR.ARtoFile());
+			writer.close();
 		}
 		if(ErrorHandler.errorsExist()) {
 			ErrorHandler.printStrings("IR creation");

@@ -46,4 +46,15 @@ public class AR {
 			System.out.println(elem.toString());
 		}
 	}
+	
+	public static String ARtoFile() {
+		StringBuilder string = new StringBuilder();
+		for(ARelement elem : instructions) {
+			if (elem.cmd != ARelement.command.label) {
+				string.append("\t");
+			}
+			string.append(elem.toString());
+		}
+		return string.toString();
+	}
 }
