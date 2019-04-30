@@ -6,3 +6,10 @@
 5:nested function call
 6:looped function call
 7:param passing stress test
+8:Test repeatedly calling function in a loop
+9:Test nested function calls in loops
+10:Test recursive function call
+11:More nested function calls
+12:Nested loops
+13:Nested loops with if else
+14:Declaring variables in multiple spots
