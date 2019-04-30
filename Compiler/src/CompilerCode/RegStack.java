@@ -17,8 +17,12 @@ public final class RegStack {
 	 * @return string of the register being accessed
 	 */
 	public static String intVarToReg(String intVar) {
-		int s = Integer.parseInt(intVar.substring(1));
-		return registers[s - 1];
+		//System.out.println("~~~" + intVar + "~~~");
+		if(intVar.substring(0, 1).equals("%")){
+			int s = Integer.parseInt(intVar.substring(1));
+			return registers[s - 1];
+		}
+		return registers[0]; //fed bad stuff, just defaults to eax
 	}
 	
 	public static int addToParamStack() {
