@@ -25,10 +25,10 @@ global varriables
 non-int varriables
 
 --Interesting features--
-passes all pramaters to functions on the stack
-when a register is needed and none are available, the least recently used register is used
-num constants are auto mathed when possible
-assigning 0 is done with xor
+Passes all pramaters to functions on the stack.
+Num constants are auto mathed when possible.
+Assigning 0 is done with xor.
+When all registers are full, the stack and last two registers are used to accomplish everything until another register is free.
 
 
 --C Tokens--
