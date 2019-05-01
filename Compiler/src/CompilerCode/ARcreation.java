@@ -74,139 +74,139 @@ public class ARcreation {
 			//assumes the thing being divided is first argument
 			case div:
 				params = setUpParams(element);
-				if(params[1] == "%rax" && params[0].charAt(0) == '$') {
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
-					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%rbx"});
-					AR.addCommand(ARelement.command.idiv, "%rbx");
-				} else if(params[1] == "%rax") {
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
-					AR.addCommand(ARelement.command.idiv, "%rbx");
-				} else if(params[1] == "%rdx" && params[0].charAt(0) == '$') {
-					AR.addCommand(ARelement.command.push, "%rax");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rdx", "%rax"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
-					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%rsi"});
-					AR.addCommand(ARelement.command.idiv, "%rsi");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rax", "%rdx"});
-					AR.addCommand(ARelement.command.pop, "%rax");
-				} else if(params[0] == "%rsi" && params[1] == "%rdx") {
-					AR.addCommand(ARelement.command.push, "%rax");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rdx", "%rax"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
-					AR.addCommand(ARelement.command.idiv, "%rsi");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rax", "%rdx"});
-					AR.addCommand(ARelement.command.pop, "%rax");
-				} else if(params[0] == "%rdx" && params[1] == "%rcx") {
-					AR.addCommand(ARelement.command.push, "%rax");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rcx", "%rax"});
-					AR.addCommand(ARelement.command.mov, new String [] {"%rdx", "%rcx"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
-					AR.addCommand(ARelement.command.idiv, "%rcx");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rax", "%rcx"});
-					AR.addCommand(ARelement.command.pop, "%rax");
-				} else if(params[0] == "%rcx" && params[1] == "%rbx") {
-					AR.addCommand(ARelement.command.push, "%rax");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rbx", "%rax"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
-					AR.addCommand(ARelement.command.idiv, "%rcx");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rax", "%rbx"});
-					AR.addCommand(ARelement.command.pop, "%rax");
-				} else if((params[1] == "%rbx" || params[1] == "%rcx") && params[0].charAt(0) == '$') {
-					AR.addCommand(ARelement.command.push, "%rax");
-					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%rax"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
-					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%rcx"});
-					AR.addCommand(ARelement.command.idiv, "%rcx");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rax", params[1]});
-					AR.addCommand(ARelement.command.pop, "%rax");
+				if(params[1] == "%eax" && params[0].charAt(0) == '$') {
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%ebx"});
+					AR.addCommand(ARelement.command.idiv, "%ebx");
+				} else if(params[1] == "%eax") {
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
+					AR.addCommand(ARelement.command.idiv, "%ebx");
+				} else if(params[1] == "%edx" && params[0].charAt(0) == '$') {
+					AR.addCommand(ARelement.command.push, "%eax");
+					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%eax"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%esi"});
+					AR.addCommand(ARelement.command.idiv, "%esi");
+					AR.addCommand(ARelement.command.mov, new String [] {"%eax", "%edx"});
+					AR.addCommand(ARelement.command.pop, "%eax");
+				} else if(params[0] == "%esi" && params[1] == "%edx") {
+					AR.addCommand(ARelement.command.push, "%eax");
+					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%eax"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
+					AR.addCommand(ARelement.command.idiv, "%esi");
+					AR.addCommand(ARelement.command.mov, new String [] {"%eax", "%edx"});
+					AR.addCommand(ARelement.command.pop, "%eax");
+				} else if(params[0] == "%edx" && params[1] == "%ecx") {
+					AR.addCommand(ARelement.command.push, "%eax");
+					AR.addCommand(ARelement.command.mov, new String [] {"%ecx", "%eax"});
+					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%ecx"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
+					AR.addCommand(ARelement.command.idiv, "%ecx");
+					AR.addCommand(ARelement.command.mov, new String [] {"%eax", "%ecx"});
+					AR.addCommand(ARelement.command.pop, "%eax");
+				} else if(params[0] == "%ecx" && params[1] == "%ebx") {
+					AR.addCommand(ARelement.command.push, "%eax");
+					AR.addCommand(ARelement.command.mov, new String [] {"%ebx", "%eax"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
+					AR.addCommand(ARelement.command.idiv, "%ecx");
+					AR.addCommand(ARelement.command.mov, new String [] {"%eax", "%ebx"});
+					AR.addCommand(ARelement.command.pop, "%eax");
+				} else if((params[1] == "%ebx" || params[1] == "%ecx") && params[0].charAt(0) == '$') {
+					AR.addCommand(ARelement.command.push, "%eax");
+					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%eax"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%ecx"});
+					AR.addCommand(ARelement.command.idiv, "%ecx");
+					AR.addCommand(ARelement.command.mov, new String [] {"%eax", params[1]});
+					AR.addCommand(ARelement.command.pop, "%eax");
 				} else if(params[0].charAt(0) == '$') {
-					AR.addCommand(ARelement.command.push, "%rax");
-					AR.addCommand(ARelement.command.push, "%rdx");
-					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%rax"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
+					AR.addCommand(ARelement.command.push, "%eax");
+					AR.addCommand(ARelement.command.push, "%edx");
+					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%eax"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
 					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%r15"});
 					AR.addCommand(ARelement.command.idiv, "%r15");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rax", params[1]});
-					AR.addCommand(ARelement.command.pop, "%rdx");
-					AR.addCommand(ARelement.command.pop, "%rax");
+					AR.addCommand(ARelement.command.mov, new String [] {"%eax", params[1]});
+					AR.addCommand(ARelement.command.pop, "%edx");
+					AR.addCommand(ARelement.command.pop, "%eax");
 				} else {
-					AR.addCommand(ARelement.command.push, "%rax");
-					AR.addCommand(ARelement.command.push, "%rdx");
-					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%rax"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
+					AR.addCommand(ARelement.command.push, "%eax");
+					AR.addCommand(ARelement.command.push, "%edx");
+					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%eax"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
 					AR.addCommand(ARelement.command.idiv, params[0]);
-					AR.addCommand(ARelement.command.mov, new String [] {"%rax", params[1]});
-					AR.addCommand(ARelement.command.pop, "%rdx");
-					AR.addCommand(ARelement.command.pop, "%rax");
+					AR.addCommand(ARelement.command.mov, new String [] {"%eax", params[1]});
+					AR.addCommand(ARelement.command.pop, "%edx");
+					AR.addCommand(ARelement.command.pop, "%eax");
 				}
 				pushResults(element);
 				break;
 			case mod:
 				params = setUpParams(element);
-				if(params[1] == "%rax" && params[0].charAt(0) == '$') {
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
-					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%rbx"});
-					AR.addCommand(ARelement.command.idiv, "%rbx");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rdx", "%rax"});
-				} else if(params[1] == "%rax") {
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
-					AR.addCommand(ARelement.command.idiv, "%rbx");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rdx", "%rax"});
-				} else if(params[1] == "%rdx" && params[0].charAt(0) == '$') {
-					AR.addCommand(ARelement.command.push, "%rax");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rdx", "%rax"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
-					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%rsi"});
-					AR.addCommand(ARelement.command.idiv, "%rsi");
-					AR.addCommand(ARelement.command.pop, "%rax");
-				} else if(params[0] == "%rsi" && params[1] == "%rdx") {
-					AR.addCommand(ARelement.command.push, "%rax");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rdx", "%rax"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
-					AR.addCommand(ARelement.command.idiv, "%rsi");
-					AR.addCommand(ARelement.command.pop, "%rax");
-				} else if(params[0] == "%rdx" && params[1] == "%rcx") {
-					AR.addCommand(ARelement.command.push, "%rax");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rcx", "%rax"});
-					AR.addCommand(ARelement.command.mov, new String [] {"%rdx", "%rcx"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
-					AR.addCommand(ARelement.command.idiv, "%rcx");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rdx", "%rcx"});
-					AR.addCommand(ARelement.command.pop, "%rax");
-				} else if(params[0] == "%rcx" && params[1] == "%rbx") {
-					AR.addCommand(ARelement.command.push, "%rax");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rbx", "%rax"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
-					AR.addCommand(ARelement.command.idiv, "%rcx");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rdx", "%rbx"});
-					AR.addCommand(ARelement.command.pop, "%rax");
-				} else if((params[1] == "%rbx" || params[1] == "%rcx") && params[0].charAt(0) == '$') {
-					AR.addCommand(ARelement.command.push, "%rax");
-					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%rax"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
-					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%rcx"});
-					AR.addCommand(ARelement.command.idiv, "%rcx");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rdx", params[1]});
-					AR.addCommand(ARelement.command.pop, "%rax");
+				if(params[1] == "%eax" && params[0].charAt(0) == '$') {
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%ebx"});
+					AR.addCommand(ARelement.command.idiv, "%ebx");
+					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%eax"});
+				} else if(params[1] == "%eax") {
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
+					AR.addCommand(ARelement.command.idiv, "%ebx");
+					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%eax"});
+				} else if(params[1] == "%edx" && params[0].charAt(0) == '$') {
+					AR.addCommand(ARelement.command.push, "%eax");
+					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%eax"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%esi"});
+					AR.addCommand(ARelement.command.idiv, "%esi");
+					AR.addCommand(ARelement.command.pop, "%eax");
+				} else if(params[0] == "%esi" && params[1] == "%edx") {
+					AR.addCommand(ARelement.command.push, "%eax");
+					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%eax"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
+					AR.addCommand(ARelement.command.idiv, "%esi");
+					AR.addCommand(ARelement.command.pop, "%eax");
+				} else if(params[0] == "%edx" && params[1] == "%ecx") {
+					AR.addCommand(ARelement.command.push, "%eax");
+					AR.addCommand(ARelement.command.mov, new String [] {"%ecx", "%eax"});
+					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%ecx"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
+					AR.addCommand(ARelement.command.idiv, "%ecx");
+					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%ecx"});
+					AR.addCommand(ARelement.command.pop, "%eax");
+				} else if(params[0] == "%ecx" && params[1] == "%ebx") {
+					AR.addCommand(ARelement.command.push, "%eax");
+					AR.addCommand(ARelement.command.mov, new String [] {"%ebx", "%eax"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
+					AR.addCommand(ARelement.command.idiv, "%ecx");
+					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%ebx"});
+					AR.addCommand(ARelement.command.pop, "%eax");
+				} else if((params[1] == "%ebx" || params[1] == "%ecx") && params[0].charAt(0) == '$') {
+					AR.addCommand(ARelement.command.push, "%eax");
+					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%eax"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%ecx"});
+					AR.addCommand(ARelement.command.idiv, "%ecx");
+					AR.addCommand(ARelement.command.mov, new String [] {"%edx", params[1]});
+					AR.addCommand(ARelement.command.pop, "%eax");
 				} else if(params[0].charAt(0) == '$') {
-					AR.addCommand(ARelement.command.push, "%rax");
-					AR.addCommand(ARelement.command.push, "%rdx");
-					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%rax"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
+					AR.addCommand(ARelement.command.push, "%eax");
+					AR.addCommand(ARelement.command.push, "%edx");
+					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%eax"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
 					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%r15"});
 					AR.addCommand(ARelement.command.idiv, "%r15");
-					AR.addCommand(ARelement.command.mov, new String [] {"%rdx", params[1]});
-					AR.addCommand(ARelement.command.pop, "%rdx");
-					AR.addCommand(ARelement.command.pop, "%rax");
+					AR.addCommand(ARelement.command.mov, new String [] {"%edx", params[1]});
+					AR.addCommand(ARelement.command.pop, "%edx");
+					AR.addCommand(ARelement.command.pop, "%eax");
 				} else {
-					AR.addCommand(ARelement.command.push, "%rax");
-					AR.addCommand(ARelement.command.push, "%rdx");
-					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%rax"});
-					AR.addCommand(ARelement.command.xor, new String [] {"%rdx", "%rdx"});
+					AR.addCommand(ARelement.command.push, "%eax");
+					AR.addCommand(ARelement.command.push, "%edx");
+					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%eax"});
+					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
 					AR.addCommand(ARelement.command.idiv, params[0]);
-					AR.addCommand(ARelement.command.mov, new String [] {"%rdx", params[1]});
-					AR.addCommand(ARelement.command.pop, "%rdx");
-					AR.addCommand(ARelement.command.pop, "%rax");
+					AR.addCommand(ARelement.command.mov, new String [] {"%edx", params[1]});
+					AR.addCommand(ARelement.command.pop, "%edx");
+					AR.addCommand(ARelement.command.pop, "%eax");
 				}
 				pushResults(element);
 				break;
@@ -294,8 +294,8 @@ public class ARcreation {
 			case function:
 				AR.addCommand(ARelement.command.label, "fun_" + element.parameters.get(1));
 				//Account for passed in parameters parameters
-				AR.addCommand(ARelement.command.push, "%rbp");
-				AR.addCommand(ARelement.command.mov, new String [] {"%rsp", "%rbp"});
+				AR.addCommand(ARelement.command.push, "%ebp");
+				AR.addCommand(ARelement.command.mov, new String [] {"%esp", "%ebp"});
 				for (int i = 2; i < element.parameters.size(); i++) {
 					VarList.paramdeclaration(element.parameters.get(i));
 				}
@@ -318,21 +318,21 @@ public class ARcreation {
 				}
 				AR.addCommand(ARelement.command.call, "fun_" + element.parameters.get(1));
 				if (element.parameters.get(0) != "%0") {
-					AR.addCommand(ARelement.command.mov, new String[] {"%rax", RegStack.intVarToReg(element.parameters.get(0))});
+					AR.addCommand(ARelement.command.mov, new String[] {"%eax", RegStack.intVarToReg(element.parameters.get(0))});
 				}
-				AR.addCommand(ARelement.command.add, new String [] { "$" + Integer.toString(element.parameters.size() - 2), "%rsp"});
+				AR.addCommand(ARelement.command.add, new String [] { "$" + Integer.toString(element.parameters.size() - 2), "%esp"});
 				//pop contents off the stack back into registers
 				for (; regcount > 0; regcount--) {
 					AR.addCommand(ARelement.command.pop, RegStack.registers[regcount]);
 				}
 				break;
 			case ret:
-				AR.addCommand(ARelement.command.mov, new String[] {"%rsp", "%rbp"});
-				AR.addCommand(ARelement.command.pop, "%rbp");
+				AR.addCommand(ARelement.command.mov, new String[] {"%esp", "%ebp"});
+				AR.addCommand(ARelement.command.pop, "%ebp");
 				if(element.parameters.size() == 0 || element.parameters.get(0) == "%1") {
 					AR.addCommand(ARelement.command.ret);
 				} else {
-					AR.addCommand(ARelement.command.mov, new String [] {"$" + element.parameters.get(0), "%rax"});
+					AR.addCommand(ARelement.command.mov, new String [] {"$" + element.parameters.get(0), "%eax"});
 					AR.addCommand(ARelement.command.ret);
 				}
 				break;
