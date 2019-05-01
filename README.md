@@ -73,3 +73,15 @@ Method names use lowerCamelCase.\n
 Constant names use all capitals with each word separated by an underscore.\n
 Parameter and local variable names use lowerCamelCase.\n
 Type variable names will use the form used by classes followed by a capital T.\n
+
+--CFlags--
+System.out.println("./compiler [-t] [-p] [-s] [-ir] [-ar] [-readIR filename] [-exportIR filename] [-exportAR filename] [-f filename]");
+Below is a list of the flags that can be used when running our compiler\n
+[-t] This flag will print out the tokens created by the scanner\n
+[-p] This flag will print out the parse tree\n
+[-s] This flag will print out the symbol table\n
+[-ir] This flag will print out the intermediate representation\n
+[-ar] This flag will print out the assembly representation\n
+[-readIR filename] This flag will read an intermediate representation in from the specified file\n
+[-exportIR filename] This flag will export the intermediate representation out to the specified file\n
+[-exportAR filename] This flag will export the assembly representation to the specified file\n
