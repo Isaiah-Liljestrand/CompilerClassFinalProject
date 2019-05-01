@@ -20,14 +20,14 @@ On the top tool bar, click the run main button (green right arrow)
 On the Console on the bottom screen, re-enter the filepath if prompted
 
 --Basic C items that where not implemented--
-global varriables
+global variables
 <, > <=, >= in boolean logic statements
 non-int variables
 
 --Interesting features--
-passes all pramaters to functions on the stack
+passes all parameters to functions on the stack
 when a register is needed and none are available, the least recently used register is used
-num constants are auto mathed when possible
+num constants are auto matched when possible
 assigning 0 is done with xor
 
 
@@ -73,7 +73,7 @@ while
 Java based\n
 Use branches for editing\n
 Merge branches that work\n
-Mostly following Google’s Java style guide: https://google.github.io/styleguide/javaguide.html\n
+Mostly following Google's Java style guide: https://google.github.io/styleguide/javaguide.html\n
 Braces will always be used even when the body contains only one line.\n
 Braces will be placed on the same line for if, else, for, while, and any other statements which need brackets.\n
 Both braces for an empty block can be placed on the same line for conciseness.\n
@@ -84,7 +84,7 @@ Method names use lowerCamelCase.\n
 Constant names use all capitals with each word separated by an underscore.\n
 Parameter and local variable names use lowerCamelCase.\n
 Type variable names will use the form used by classes followed by a capital T.\n
-All "backend" varriables are protected when reasonable for ease of coding.\n
+All "backend" variables are protected when reasonable for ease of coding.\n
 
 --CFlags--
 System.out.println("./compiler [-t] [-p] [-s] [-ir] [-ar] [-readIR filename] [-exportIR filename] [-exportAR filename] [-f filename]");
@@ -97,5 +97,6 @@ Below is a list of the flags that can be used when running our compiler\n
 [-readIR filename] This flag will read an intermediate representation in from the specified file\n
 [-exportIR filename] This flag will export the intermediate representation out to the specified file\n
 [-exportAR filename] This flag will export the assembly representation to the specified file\n
+
 
 
