@@ -15,9 +15,21 @@ Open the Following from the tool bar
         Run -> Run Configurations
         Go to the  Arguments tab and click apply once you've added your arguments.
         -t  -a "filepath"\Testfile.txt
-        -t for tokens. -a for abstract syntax tree.
+        -t for tokens. -a for abstract syntax tree
 On the top tool bar, click the run main button (green right arrow)
 On the Console on the bottom screen, re-enter the filepath if prompted
+
+--Basic C items that where not implemented--
+global varriables
+<, > <=, >= in boolean logic statements
+non-int varriables
+
+--Interesting features--
+passes all pramaters to functions on the stack
+when a register is needed and none are available, the least recently used register is used
+num constants are auto mathed when possible
+assigning 0 is done with xor
+
 
 --C Tokens--
 auto
@@ -61,15 +73,15 @@ while
 Java based\n
 Use branches for editing\n
 Merge branches that work\n
-Mostly following Googleís Java style guide: https://google.github.io/styleguide/javaguide.html\n
-8 Spaces will be used instead of tabs.\n
+Mostly following Google‚Äôs Java style guide: https://google.github.io/styleguide/javaguide.html\n
 Braces will always be used even when the body contains only one line.\n
 Braces will be placed on the same line for if, else, for, while, and any other statements which need brackets.\n
 Both braces for an empty block can be placed on the same line for conciseness.\n
-Identifier names must match the regular expression ì\w+î. Only ascii letters and digits.\n
+Identifier names must match the regular expression ‚Äú\w+‚Äù. Only ascii letters and digits.\n
 Package names are all lower case.\n
 Class names use UpperCamelCase.\n
 Method names use lowerCamelCase.\n
 Constant names use all capitals with each word separated by an underscore.\n
 Parameter and local variable names use lowerCamelCase.\n
 Type variable names will use the form used by classes followed by a capital T.\n
+All "backend" varriables are protected when reasonable for ease of coding.\n
