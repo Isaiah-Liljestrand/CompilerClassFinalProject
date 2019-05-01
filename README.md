@@ -25,8 +25,8 @@ global variables
 non-int variables
 
 --Interesting features--
-Passes all pramaters to functions on the stack.
-Num constants are auto mathed when possible.
+Passes all parameters to functions on the stack.
+Num constants are auto matched when possible.
 Assigning 0 is done with xor.
 When all registers are full, the stack and last two registers are used to accomplish everything until another register is free.
 
@@ -85,8 +85,8 @@ Parameter and local variable names use lowerCamelCase.\n
 Type variable names will use the form used by classes followed by a capital T.\n
 All "backend" variables are protected when reasonable for ease of coding.\n
 
---CFlags--
-Below is a list of the flags that can be used when running our compiler\n
+--CFlags--\n\n
+Below is a list of the flags that can be used when running our compiler\n\n
 [-t] This flag will print out the tokens created by the scanner\n
 [-p] This flag will print out the parse tree\n
 [-s] This flag will print out the symbol table\n
