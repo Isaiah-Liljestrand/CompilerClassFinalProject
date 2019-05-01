@@ -86,7 +86,6 @@ Type variable names will use the form used by classes followed by a capital T.\n
 All "backend" variables are protected when reasonable for ease of coding.\n
 
 --CFlags--
-System.out.println("./compiler [-t] [-p] [-s] [-ir] [-ar] [-readIR filename] [-exportIR filename] [-exportAR filename] [-f filename]");
 Below is a list of the flags that can be used when running our compiler\n
 [-t] This flag will print out the tokens created by the scanner\n
 [-p] This flag will print out the parse tree\n
