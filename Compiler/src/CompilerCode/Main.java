@@ -116,6 +116,10 @@ public class Main {
 		
 			//Parse Tree
 			grammar = new Grammar(scanner.tokens);
+			
+			if(grammar.valid == false) {
+				return;
+			}
 			if(ErrorHandler.errorsExist()) {
 				ErrorHandler.printStrings("Parse Tree Creation");
 				return;
@@ -165,7 +169,7 @@ public class Main {
 		
 		if(exportAR) {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(ARfilename));
-			writer.write(AR.ARtoFile());
+			//writer.write(AR.ARtoFile());
 			writer.close();
 		}
 		if(ErrorHandler.errorsExist()) {

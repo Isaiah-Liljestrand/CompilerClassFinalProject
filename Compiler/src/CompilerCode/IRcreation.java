@@ -741,24 +741,16 @@ public class IRcreation {
 	//Adds setting temp variables before function call.
 	private static void functionCallHandler(Ptree tree, int i) {
 		String ID = tree.children.get(0).token.token;
-		String name, n;
+		String returnval, n;
 		
 		if(tree.children.size() == 3) {
-			name = " %" + String.valueOf(i);
-			if(i == 0) {
-				name = "";
-			}
-			IR.addCommand(IRelement.command.call, ID + name);
+			returnval = "%" + String.valueOf(i) + " ";
+			IR.addCommand(IRelement.command.call, returnval + ID);
 		} else {
 
 			List<String> list = new ArrayList<String>();
-			name = "%" + String.valueOf(i);
-			if(i == 0) {
-				i++;
-				name = null;
-			} else {
-				list.add(name);
-			}
+			returnval = "%" + String.valueOf(i);
+			list.add(returnval);
 			List<Ptree> trees = new ArrayList<Ptree>();
 			list.add(ID);
 			tree.children.get(2).findTrees(trees, type_enum.simpleExpression);
