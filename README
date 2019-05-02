@@ -1,6 +1,6 @@
-# Fontes-Barry_Fowler_Iiljestrand_Marks_423
+﻿# Fontes-Barry_Fowler_Iiljestrand_Marks_423
 
---Usage--
+--Usage In Eclipse--
 Open Eclipse Oracle
 Open the Following from the tool bar
         file -> import
@@ -19,82 +19,109 @@ Open the Following from the tool bar
 On the top tool bar, click the run main button (green right arrow)
 On the Console on the bottom screen, re-enter the filepath if prompted
 
---Basic C items that where not implemented--
-global variables
-<, > <=, >= in boolean logic statements
-non-int variables
+--CFlags--
+Below is a list of the flags that can be used when running our compiler
+[-f filename] This flag specifies the path to the c file to run
+[-h] This flag will print out usage and return
+[-t] This flag will print out the tokens created by the scanner
+[-p] This flag will print out the parse tree
+[-s] This flag will print out the symbol table
+[-ir] This flag will print out the intermediate representation
+[-ar] This flag will print out the assembly representation
+[-readIR filename] This flag will read an intermediate representation in from the specified file
+[-exportIR filename] This flag will export the intermediate representation out to the specified file
+[-exportAR filename] This flag will export the assembly representation to the specified file
+
+--What is recognized/included--
+digits, character ('a'), and hexidecimal input,
+single line and multi line comments are supported
+operations supported + - * / ^ | & % ! == != && || /= *= += -= -- ++
+variables
+keywords supported   break, char, else, goto, if, int, return, void, while, for
+function declarations and function calls
+global variables are supported in the parser but not the back end;
+symbol table
+if statements
+if else statements
+while loops
+for loops
+correctly implemented scoping for everything.
+
+
+--Extra functionality--
+++, —, -=, +=, *=, /=
+for loops
+extra operations, or, and, xor, logical or, logical and
+preprocesses operations including only numbers and chars
+Fairly robust error handling
+full comment support
+
 
 --Interesting features--
 Passes all parameters to functions on the stack.
-Num constants are auto matched when possible.
+Num constants are preprocessed when possible.
 Assigning 0 is done with xor.
 When all registers are full, the stack and last two registers are used to accomplish everything until another register is free.
+stack space optimization via declaration/destroy statements
 
---C Tokens--
-auto
-break
-case
-char
-const
-continue
-default
-do
-double
-else
-enum
-extern
-float
-for
-goto
-if
-int
-long
-register
-return
-short
-signed
-sizeof
-static
-struct
-switch
-typedef
-union
-unsigned
-void
-volatile
-while
-()
-{}
-[]
-;
+--Intermediate Representation Design--
+Command supported
+Intermediate variables are used for all arithmetic.
+These are ultimately translated to x86 registers.
+Algorithms recursively build these from the parse tree directly.
+Distinct seperation of responsibility in functions generating IR.
+Generally kept fairly simple, kept all variables, declared and destroyed them to describe scope.
+This kept the IR fairly readable but made register and stack implementation harder.
+Labels used for all loops and if statements for jumps.
+Minor transformation translated IR into a slightly lower level IR (removing breaks, gotos, and optimizing declarations and destructions.
+Preprocessing of all two constant operations done when converting into IR.
+Registers are only used for each individual line or c, therefore keeping track of registers was easier when converting to x86.
+Downside - not abstract enough from c, with keeping variables and naming schemes.
+Advantage, most operations were translatable in one line to x86
+
+		declare,
+		destroy,
+		set,
+		add,
+		sub,
+		mul,
+		div,
+		mod,
+		eq,
+		neq,
+		not,
+		bor,
+		bxor,
+		band,
+		or,
+		and,
+		inc,
+		dec,
+		jmp,
+		jmpcnd,
+		function,
+		call,
+		ret,
+		label,
+		goto_,
+		gotolabel,
+		endfunction,
+		break_
+
 
 --Coding Standards--
-Java based\n
-Use branches for editing\n
-Merge branches that work\n
-Mostly following Google's Java style guide: https://google.github.io/styleguide/javaguide.html\n
-Braces will always be used even when the body contains only one line.\n
-Braces will be placed on the same line for if, else, for, while, and any other statements which need brackets.\n
-Both braces for an empty block can be placed on the same line for conciseness.\n
-Identifier names must match the regular expression “\w+”. Only ascii letters and digits.\n
-Package names are all lower case.\n
-Class names use UpperCamelCase.\n
-Method names use lowerCamelCase.\n
-Constant names use all capitals with each word separated by an underscore.\n
-Parameter and local variable names use lowerCamelCase.\n
-Type variable names will use the form used by classes followed by a capital T.\n
-All "backend" variables are protected when reasonable for ease of coding.\n
-
---CFlags--\n\n
-Below is a list of the flags that can be used when running our compiler\n\n
-[-t] This flag will print out the tokens created by the scanner\n
-[-p] This flag will print out the parse tree\n
-[-s] This flag will print out the symbol table\n
-[-ir] This flag will print out the intermediate representation\n
-[-ar] This flag will print out the assembly representation\n
-[-readIR filename] This flag will read an intermediate representation in from the specified file\n
-[-exportIR filename] This flag will export the intermediate representation out to the specified file\n
-[-exportAR filename] This flag will export the assembly representation to the specified file\n
-
-
-
+Java based
+Use branches for editing
+Merge branches that work
+Mostly following Google's Java style guide: https://google.github.io/styleguide/javaguide.html
+Braces will always be used even when the body contains only one line.
+Braces will be placed on the same line for if, else, for, while, and any other statements which need brackets.
+Both braces for an empty block can be placed on the same line for conciseness.
+Identifier names must match the regular expression “\w+”. Only ascii letters and digits.
+Package names are all lower case.
+Class names use UpperCamelCase.
+Method names use lowerCamelCase.
+Constant names use all capitals with each word separated by an underscore.
+Parameter and local variable names use lowerCamelCase.
+Type variable names will use the form used by classes followed by a capital T.
+All "backend" variables are protected when reasonable for ease of coding.
