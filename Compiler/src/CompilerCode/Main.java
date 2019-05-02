@@ -21,8 +21,8 @@ public class Main {
 		boolean exportIR = false;
 		boolean exportAR = false;
 		String filename = null;
-		String IRfilename = null;
-		String IRfilename2 = null;
+		String IRfilenamein = null;
+		String IRfilenameout = null;
 		String ARfilename = null;
 		Scan scanner;
 		Grammar grammar;
@@ -35,6 +35,10 @@ public class Main {
 			printSymbolTable = true;
 			printIR = true;
 			printAR = true;
+			exportIR = true;
+			exportAR = true;
+			IRfilenameout = "mywoman";
+			ARfilename = "mymane";
 			filename = "TestFiles/Testfile.txt";
 			//filename = "Whiletest.txt";
 		}
@@ -77,12 +81,12 @@ public class Main {
 				break;
 			case "-readIR":
 				i++;
-				IRfilename = args[i];
+				IRfilenamein = args[i];
 				readIR = true;
 				break;
 			case "-exportIR":
 				i++;
-				IRfilename2 = args[i];
+				IRfilenameout = args[i];
 				exportIR = true;
 				break;
 			case "-exportAR":
@@ -95,6 +99,11 @@ public class Main {
 				filename = arg;
 			}
 		}
+		
+		
+		
+		
+		
 		if(!readIR) {
 			if(filename == null) {
 				filename = "Testfile.txt";
@@ -151,7 +160,7 @@ public class Main {
 			//Intermediate Representation
 			IRcreation.createIR(grammar.root);
 		} else {
-			IR.readIRFromFile(IRfilename);
+			IR.readIRFromFile(IRfilenamein);
 		}
 		
 		if(ErrorHandler.errorsExist()) {
@@ -160,7 +169,7 @@ public class Main {
 		}
 		
 		if(exportIR) {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(IRfilename2));
+			BufferedWriter writer = new BufferedWriter(new FileWriter(IRfilenameout));
 			writer.write(IR.IRtoFile());
 			writer.close();
 		}
@@ -192,7 +201,7 @@ public class Main {
 		
 		if(exportAR) {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(ARfilename));
-			//writer.write(AR.ARtoFile());
+			writer.write(AR.ARtoFile());
 			writer.close();
 		}
 	}

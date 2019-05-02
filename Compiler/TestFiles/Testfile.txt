@@ -3,9 +3,6 @@ int main(int i, int j) {
 	int sup = 8;
 	int whatever = hello == sup;
 
-
-
-
 	int killeveryone = 'r', r;
 	int cry = (r +(r + (r + (r + r))));
 	int test = 4 - (5 - cry);

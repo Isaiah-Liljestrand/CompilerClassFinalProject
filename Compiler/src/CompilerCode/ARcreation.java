@@ -80,14 +80,14 @@ public class ARcreation {
 			//assumes the thing being divided is first argument
 			case div:
 				params = setUpParams(element);
-				if(params[1] == "%eax" && params[0].charAt(0) == '$') {
+				if(params[1].equals("%eax") && params[0].charAt(0) == '$') {
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
 					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%ebx"});
 					AR.addCommand(ARelement.command.idiv, "%ebx");
-				} else if(params[1] == "%eax") {
+				} else if(params[1].equals("%eax")) {
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
 					AR.addCommand(ARelement.command.idiv, "%ebx");
-				} else if(params[0].charAt(0) == '$' && params[1] == "%edx" ) {
+				} else if(params[0].charAt(0) == '$' && params[1].equals("%edx")) {
 					AR.addCommand(ARelement.command.push, "%eax");
 					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%eax"});
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
@@ -95,14 +95,14 @@ public class ARcreation {
 					AR.addCommand(ARelement.command.idiv, "%esi");
 					AR.addCommand(ARelement.command.mov, new String [] {"%eax", "%edx"});
 					AR.addCommand(ARelement.command.pop, "%eax");
-				} else if(params[0] == "%esi" && params[1] == "%edx") {
+				} else if(params[0].equals("%esi") && params[1].equals("%edx")) {
 					AR.addCommand(ARelement.command.push, "%eax");
 					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%eax"});
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
 					AR.addCommand(ARelement.command.idiv, "%esi");
 					AR.addCommand(ARelement.command.mov, new String [] {"%eax", "%edx"});
 					AR.addCommand(ARelement.command.pop, "%eax");
-				} else if(params[0] == "%edx" && params[1] == "%ecx") {
+				} else if(params[0].equals("%edx") && params[1].equals("%ecx")) {
 					AR.addCommand(ARelement.command.push, "%eax");
 					AR.addCommand(ARelement.command.mov, new String [] {"%ecx", "%eax"});
 					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%ecx"});
@@ -110,14 +110,14 @@ public class ARcreation {
 					AR.addCommand(ARelement.command.idiv, "%ecx");
 					AR.addCommand(ARelement.command.mov, new String [] {"%eax", "%ecx"});
 					AR.addCommand(ARelement.command.pop, "%eax");
-				} else if(params[0] == "%ecx" && params[1] == "%ebx") {
+				} else if(params[0].equals("%ecx") && params[1].equals("%ebx")) {
 					AR.addCommand(ARelement.command.push, "%eax");
 					AR.addCommand(ARelement.command.mov, new String [] {"%ebx", "%eax"});
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
 					AR.addCommand(ARelement.command.idiv, "%ecx");
 					AR.addCommand(ARelement.command.mov, new String [] {"%eax", "%ebx"});
 					AR.addCommand(ARelement.command.pop, "%eax");
-				} else if((params[1] == "%ebx" || params[1] == "%ecx") && params[0].charAt(0) == '$') {
+				} else if((params[1].equals("%ebx") || params[1] == "%ecx") && params[0].charAt(0) == '$') {
 					AR.addCommand(ARelement.command.push, "%eax");
 					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%eax"});
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
@@ -300,6 +300,14 @@ public class ARcreation {
 				}
 				break;
 			case call:
+				
+				for(int i = 0; i < element.parameters.size(); i++) {
+					if(isHighIntVar(element.parameters.get(i))) {
+						ErrorHandler.addError("Unsuported functionality, function in complex expression where all registers are used");
+						break;
+					}
+				}
+				
 				//Push current registers onto the stack
 				int regcount;
 				for (regcount = 0; regcount < RegStack.registers.length; regcount++) {
