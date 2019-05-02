@@ -54,6 +54,7 @@ public class AR {
 				string.append("\t");
 			}
 			string.append(elem.toString());
+			string.append("\n");
 		}
 		return string.toString();
 	}

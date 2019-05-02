@@ -57,8 +57,10 @@ public class IR {
 		for(IRelement elem : instructions) {
 			if (elem.cmd == IRelement.command.label) {
 				string.append(elem.toString());
+				string.append("\n");
 			} else {
 				string.append("\t" + elem.toString());
+				string.append("\n");
 			}
 		}
 		return string.toString();
