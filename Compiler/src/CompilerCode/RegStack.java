@@ -38,7 +38,7 @@ public final class RegStack {
 		int i = 0;
 		for(int s : stack) {
 			if(s == 0) {
-				s = 1;
+				stack.set(i, 1);
 				return i;
 			}
 			i++;
@@ -56,11 +56,11 @@ public final class RegStack {
 		int location = VarList.varLocation(var);
 		if(location < 0) {
 			location *= -4;
-			return location + "(%rbp)";
+			return location + "(%ebp)";
 		}
 		location++;
 		location *= 4;
-		return "-" + location + "(%rbp)";
+		return "-" + location + "(%ebp)";
 	}
 	
 	/**
@@ -68,7 +68,11 @@ public final class RegStack {
 	 * @param i index of variable being removed
 	 */
 	public static void removeFromStack(int i) {
-		stack.set(i, 0);
+		if(i < 0) {
+			paramstack.set((-i - 1), 0);
+		} else {
+			stack.set(i, 0);
+		}
 	}
 	
 	/**

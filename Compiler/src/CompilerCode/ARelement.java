@@ -45,7 +45,7 @@ public class ARelement {
 	
 	//Tests if a string is a label
 	public static boolean isLabel(String str) {
-		return str.charAt(str.length() - 1) == ':';
+		return true;
 	}
 	
 	//Tests if a string is a constant
@@ -65,8 +65,7 @@ public class ARelement {
 	
 	//Tests if a string is a memory access
 	public static boolean isMem(String str) {
-		String test_pat = "(\\d?\\((" + register_regex + ")\\))|"; //Tests register in parenthesis with an optional int in front: (%eax) or 5(%eax)
-		test_pat += "(\\((" + register_regex + "), ?(" + register_regex + "), ?\\$\\d\\))"; //Tests three params in parenthesis: (%edx,%eax,5)
+		String test_pat = "-?\\d+\\((" + register_regex + ")\\)"; //Tests register in parenthesis with an optional int in front: (%eax) or 5(%eax)
 		Pattern REGEX = Pattern.compile(test_pat);
 		Matcher test = REGEX.matcher(str);
 		return test.matches();

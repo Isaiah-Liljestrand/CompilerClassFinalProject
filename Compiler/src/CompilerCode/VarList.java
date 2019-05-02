@@ -22,7 +22,7 @@ public class VarList {
 	 */
 	public static int varLocation(String Name) {
 		for(VarElement var : list) {
-			if(var.getName() == Name) {
+			if(var.getName().equals(Name)) {
 				return var.getLocation();
 			}
 		}
@@ -51,7 +51,7 @@ public class VarList {
 	 */
 	public static void changeLocation(String Name, List<Integer> Locations) {
 		for(VarElement var : list) {
-			if(var.getName() == Name) {
+			if(var.getName().equals(Name)) {
 				var.location = Locations;
 			}
 		}
@@ -61,11 +61,11 @@ public class VarList {
 		int location = RegStack.addToParamStack();
 		for(VarElement e : list) {
 			if(name == e.name) {
-				e.location.add(0, location);
+				e.location.add(0, -location);
 				return;
 			}
 		}
-		addElement(name, location);
+		addElement(name, -location);
 	}
 	
 	/**
@@ -75,7 +75,7 @@ public class VarList {
 	public static void declaration(String name) {
 		int location = RegStack.addToStack();
 		for(VarElement e : list) {
-			if(name == e.name) {
+			if(name.equals(e.name)) {
 				e.location.add(0, location);
 				return;
 			}
@@ -89,7 +89,7 @@ public class VarList {
 	 */
 	public static void destroy(String name) {
 		for(VarElement e : list) {
-			if(name == e.name) {
+			if(name.equals(e.name)) {
 				RegStack.removeFromStack(e.getLocation());
 				if(e.location.size() > 1) {
 					e.location.remove(0);

@@ -179,6 +179,11 @@ public class Main {
 		
 		ARcreation.createAR();
 
+		/*if(ErrorHandler.errorsExist()) {
+			ErrorHandler.printStrings("AR Creation");
+			return;
+		}*/
+		
 		if(printAR) {
 			System.out.println("\n\nAR output\n");
 			AR.printAR();
