@@ -1,17 +1,21 @@
 int main(int i, int j) {
+	int hello = 7;
+	int sup = 8;
+	int whatever = hello == sup;
+
+
+
+
 	int killeveryone = 'r', r;
 	int cry = (r +(r + (r + (r + r))));
 	int test = 4 - (5 - cry);
 	int test2 = 3 - (cry - r);
-	goto jump;
 	i = killeveryone;
 	int t = 9;
-rel:
 	i++;
 	char y = 0;
 	j = 7;
 	int x = 5 + y, m = 2 * 5 + 7;
-jump:
 	while(1) {
 		if(killeveryone == 1) {
 			killeveryone--;
@@ -29,7 +33,6 @@ jump:
 	for(int n = 89; m != 99; m++) {
 		x *= n;
 	}
-	goto rel;
 	if(1) {
 		r++;
 	} else {

@@ -81,7 +81,7 @@ public class ARcreation {
 				} else if(params[1] == "%eax") {
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
 					AR.addCommand(ARelement.command.idiv, "%ebx");
-				} else if(params[1] == "%edx" && params[0].charAt(0) == '$') {
+				} else if(params[0].charAt(0) == '$' && params[1] == "%edx" ) {
 					AR.addCommand(ARelement.command.push, "%eax");
 					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%eax"});
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
@@ -115,8 +115,8 @@ public class ARcreation {
 					AR.addCommand(ARelement.command.push, "%eax");
 					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%eax"});
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
-					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%ecx"});
-					AR.addCommand(ARelement.command.idiv, "%ecx");
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], params[1]});
+					AR.addCommand(ARelement.command.idiv, params[1]);
 					AR.addCommand(ARelement.command.mov, new String [] {"%eax", params[1]});
 					AR.addCommand(ARelement.command.pop, "%eax");
 				} else if(params[0].charAt(0) == '$') {
@@ -124,8 +124,8 @@ public class ARcreation {
 					AR.addCommand(ARelement.command.push, "%edx");
 					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%eax"});
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
-					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%r15"});
-					AR.addCommand(ARelement.command.idiv, "%r15");
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%e15d"});
+					AR.addCommand(ARelement.command.idiv, "%e15d");
 					AR.addCommand(ARelement.command.mov, new String [] {"%eax", params[1]});
 					AR.addCommand(ARelement.command.pop, "%edx");
 					AR.addCommand(ARelement.command.pop, "%eax");
@@ -184,8 +184,8 @@ public class ARcreation {
 					AR.addCommand(ARelement.command.push, "%eax");
 					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%eax"});
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
-					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%ecx"});
-					AR.addCommand(ARelement.command.idiv, "%ecx");
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], params[1]});
+					AR.addCommand(ARelement.command.idiv, params[1]);
 					AR.addCommand(ARelement.command.mov, new String [] {"%edx", params[1]});
 					AR.addCommand(ARelement.command.pop, "%eax");
 				} else if(params[0].charAt(0) == '$') {
@@ -193,8 +193,8 @@ public class ARcreation {
 					AR.addCommand(ARelement.command.push, "%edx");
 					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%eax"});
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
-					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%r15"});
-					AR.addCommand(ARelement.command.idiv, "%r15");
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%e15d"});
+					AR.addCommand(ARelement.command.idiv, "%e15d");
 					AR.addCommand(ARelement.command.mov, new String [] {"%edx", params[1]});
 					AR.addCommand(ARelement.command.pop, "%edx");
 					AR.addCommand(ARelement.command.pop, "%eax");
@@ -212,12 +212,6 @@ public class ARcreation {
 				break;
 			case eq:
 				params = setUpParams(element);
-				
-				if(params[0].charAt(0) == '$') {
-					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%r15"});
-					params[0] = "%r15";
-				}
-				
 				AR.addCommand(ARelement.command.cmp, new String [] {params[0], params[1]});
 				AR.addCommand(ARelement.command.je, "arithmeticlabel" + arithmeticCounter);
 				AR.addCommand(ARelement.command.mov, new String [] {"$0", params[1]});
@@ -242,10 +236,9 @@ public class ARcreation {
 				break;
 			case or:
 				params = setUpParams(element);
-				
 				if(params[0].charAt(0) == '$') {
-					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%r15"});
-					params[0] = "%r15";
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], "e15d"});
+					params[0] = "%ea5d";
 				}
 				
 				AR.addCommand(ARelement.command.cmp, new String [] {"$0", params[1]});
@@ -264,8 +257,8 @@ public class ARcreation {
 				params = setUpParams(element);
 				
 				if(params[0].charAt(0) == '$') {
-					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%r15"});
-					params[0] = "%r15";
+					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%e15d"});
+					params[0] = "%e15d";
 				}
 				
 				AR.addCommand(ARelement.command.cmp, new String [] {"$0", params[1]});
@@ -296,7 +289,7 @@ public class ARcreation {
 				//Account for passed in parameters parameters
 				AR.addCommand(ARelement.command.push, "%ebp");
 				AR.addCommand(ARelement.command.mov, new String [] {"%esp", "%ebp"});
-				for (int i = 2; i < element.parameters.size(); i++) {
+				for (int i = element.parameters.size() - 1; i > 2; i -= 2) {
 					VarList.paramdeclaration(element.parameters.get(i));
 				}
 				break;
@@ -320,7 +313,7 @@ public class ARcreation {
 				if (element.parameters.get(0) != "%0") {
 					AR.addCommand(ARelement.command.mov, new String[] {"%eax", RegStack.intVarToReg(element.parameters.get(0))});
 				}
-				AR.addCommand(ARelement.command.add, new String [] { "$" + Integer.toString(element.parameters.size() - 2), "%esp"});
+				AR.addCommand(ARelement.command.add, new String [] { "$" + Integer.toString((element.parameters.size() - 2) * 4), "%esp"});
 				//pop contents off the stack back into registers
 				for (; regcount > 0; regcount--) {
 					AR.addCommand(ARelement.command.pop, RegStack.registers[regcount]);
@@ -432,8 +425,8 @@ public class ARcreation {
 			params = new String [] {"$" + ir.parameters.get(1), "%e14d"};
 			//One parameter on the stack
 		} else if(isHighIntVar(ir.parameters.get(1))) {
-			AR.addCommand(ARelement.command.pop, "%r14");
-			params = new String [] {"%r13", "%r14"};
+			AR.addCommand(ARelement.command.pop, "%e14d");
+			params = new String [] {"%e13d", "%e14d"};
 		} else {
 			params = ARParamsFromIRelem(ir);
 		}

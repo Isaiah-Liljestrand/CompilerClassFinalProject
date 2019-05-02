@@ -26,14 +26,13 @@ public final class RegStack {
 	}
 	
 	public static int addToParamStack() {
-		int i = 0;
 		paramstack.add(1);
-		return paramstack.size() * -1;
+		return paramstack.size();
 	}
 	
 	/**
-	 * Adds an element to the stack and returns the index
-	 * @return
+	 * Adds an element to the stack
+	 * @return index of the stack
 	 */
 	public static int addToStack() {
 		int i = 0;

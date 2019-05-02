@@ -34,7 +34,8 @@ public class Main {
 			printParseTree = true;
 			printSymbolTable = true;
 			printIR = true;
-			filename = "Testfile.txt";
+			printAR = true;
+			filename = "TestFiles/Testfile.txt";
 			//filename = "Whiletest.txt";
 		}
 		
@@ -153,12 +154,9 @@ public class Main {
 			IR.readIRFromFile(IRfilename);
 		}
 		
-		if(printIR) {
-			IR.printIR();
-		}
-		
-		if(printAR) {
-			AR.printAR();
+		if(ErrorHandler.errorsExist()) {
+			ErrorHandler.printStrings("IR creation");
+			return;
 		}
 		
 		if(exportIR) {
@@ -167,23 +165,31 @@ public class Main {
 			writer.close();
 		}
 		
+		
+		if(printIR) {
+			IR.printIR();
+		}
+		
+		IRtransformation.IRtransformationFunction(symTable.entries.size() > 0);
+		System.out.println("\n");
+		
+		if(printIR) {
+			IR.printIR();
+		}
+		
+		ARcreation.createAR();
+
+		if(printAR) {
+			System.out.println("\n\nAR output\n");
+			AR.printAR();
+		}
+		
+		
 		if(exportAR) {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(ARfilename));
 			//writer.write(AR.ARtoFile());
 			writer.close();
 		}
-		if(ErrorHandler.errorsExist()) {
-			ErrorHandler.printStrings("IR creation");
-			return;
-		}
-		
-		IRtransformation.IRtransformationFunction(symTable.entries.size() > 0);
-		System.out.println("\n");
-		IR.printIR();
-		
-		System.out.println("\n\nAR output\n");
-		ARcreation.createAR();
-		AR.printAR();
 	}
 
 	

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class IRtransformation {
 	public static void IRtransformationFunction(boolean global) {
 		breakHandler();
-		if(gotoHandler() && !global && highintvars()) {
+		if(gotoHandler() && !global && !highintvars()) {
 			declarationDestructionOptimizer();
 		}
 		deleteParameters();
