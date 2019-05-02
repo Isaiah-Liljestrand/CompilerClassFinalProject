@@ -35,12 +35,7 @@ public class Main {
 			printSymbolTable = true;
 			printIR = true;
 			printAR = true;
-			exportIR = true;
-			exportAR = true;
-			IRfilenameout = "mywoman";
-			ARfilename = "mymane";
 			filename = "TestFiles/Testfile.txt";
-			//filename = "Whiletest.txt";
 		}
 		
 		
@@ -51,6 +46,7 @@ public class Main {
 			case "-h":
 				System.out.println("Usage:");
 				System.out.println("./compiler [-t] [-p] [-s] [-ir] [-ar] [-readIR filename] [-exportIR filename] [-exportAR filename] [-f filename]");
+				System.out.println("    -f compiles the specified c file");
 				System.out.println("    -t prints out scanner tokens");
 				System.out.println("    -p prints out parse tree");
 				System.out.println("    -s prints out the symbol table");
@@ -188,10 +184,10 @@ public class Main {
 		
 		ARcreation.createAR();
 
-		/*if(ErrorHandler.errorsExist()) {
+		if(ErrorHandler.errorsExist()) {
 			ErrorHandler.printStrings("AR Creation");
 			return;
-		}*/
+		}
 		
 		if(printAR) {
 			System.out.println("\n\nAR output\n");

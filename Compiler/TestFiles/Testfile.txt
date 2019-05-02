@@ -24,7 +24,7 @@ int main(int i, int j) {
 	
 	for(int n = 89; m != 99; m++) {
 		int class = 8;
-		x *= n;
+		x *= 6;
 	}
 	//lolhaha
 	for(int n = 89; m != 99; m++) {

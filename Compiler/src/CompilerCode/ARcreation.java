@@ -36,10 +36,11 @@ public class ARcreation {
 			case set:
 				if(isHighIntVar(element.parameters.get(0))) {
 					AR.addCommand(ARelement.command.push, ARParamFromIRparam(element.parameters.get(1)));
+				} else if (element.parameters.get(0).charAt(0) == '%' && element.parameters.get(1).equals("0")) {
+					AR.addCommand(ARelement.command.xor, new String [] {ARParamFromIRparam(element.parameters.get(0)), ARParamFromIRparam(element.parameters.get(0))});
+				} else {
+					AR.addCommand(ARelement.command.mov, ARParamsFromIRelem(element));
 				}
-				
-				//case where no high int vars are used
-				AR.addCommand(ARelement.command.mov, ARParamsFromIRelem(element));
 				
 				break;
 			case inc:
@@ -75,6 +76,10 @@ public class ARcreation {
 				break;
 			case mul:
 				params = setUpParams(element);
+				if(params[1].charAt(0) == '$') {
+					AR.addCommand(ARelement.command.mov, new String [] {params[1], "r15d"});
+					params[1] = "r15d";
+				}
 				AR.addCommand(ARelement.command.imul, params);
 				break;
 			//assumes the thing being divided is first argument
@@ -149,29 +154,29 @@ public class ARcreation {
 				break;
 			case mod:
 				params = setUpParams(element);
-				if(params[1] == "%eax" && params[0].charAt(0) == '$') {
+				if(params[1].equals("%eax") && params[0].charAt(0) == '$') {
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
 					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%ebx"});
 					AR.addCommand(ARelement.command.idiv, "%ebx");
 					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%eax"});
-				} else if(params[1] == "%eax") {
+				} else if(params[1].equals("%eax")) {
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
 					AR.addCommand(ARelement.command.idiv, "%ebx");
 					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%eax"});
-				} else if(params[1] == "%edx" && params[0].charAt(0) == '$') {
+				} else if(params[1].equals("%edx") && params[0].charAt(0) == '$') {
 					AR.addCommand(ARelement.command.push, "%eax");
 					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%eax"});
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
 					AR.addCommand(ARelement.command.mov, new String [] {params[0], "%esi"});
 					AR.addCommand(ARelement.command.idiv, "%esi");
 					AR.addCommand(ARelement.command.pop, "%eax");
-				} else if(params[0] == "%esi" && params[1] == "%edx") {
+				} else if(params[0].equals("%esi") && params[1].equals("%edx")) {
 					AR.addCommand(ARelement.command.push, "%eax");
 					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%eax"});
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
 					AR.addCommand(ARelement.command.idiv, "%esi");
 					AR.addCommand(ARelement.command.pop, "%eax");
-				} else if(params[0] == "%edx" && params[1] == "%ecx") {
+				} else if(params[0].equals("%edx") && params[1].equals("%ecx")) {
 					AR.addCommand(ARelement.command.push, "%eax");
 					AR.addCommand(ARelement.command.mov, new String [] {"%ecx", "%eax"});
 					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%ecx"});
@@ -179,14 +184,14 @@ public class ARcreation {
 					AR.addCommand(ARelement.command.idiv, "%ecx");
 					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%ecx"});
 					AR.addCommand(ARelement.command.pop, "%eax");
-				} else if(params[0] == "%ecx" && params[1] == "%ebx") {
+				} else if(params[0].equals("%ecx") && params[1].equals("%ebx")) {
 					AR.addCommand(ARelement.command.push, "%eax");
 					AR.addCommand(ARelement.command.mov, new String [] {"%ebx", "%eax"});
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});
 					AR.addCommand(ARelement.command.idiv, "%ecx");
 					AR.addCommand(ARelement.command.mov, new String [] {"%edx", "%ebx"});
 					AR.addCommand(ARelement.command.pop, "%eax");
-				} else if((params[1] == "%ebx" || params[1] == "%ecx") && params[0].charAt(0) == '$') {
+				} else if((params[1].equals("%ebx") || params[1].equals("%ecx")) && params[0].charAt(0) == '$') {
 					AR.addCommand(ARelement.command.push, "%eax");
 					AR.addCommand(ARelement.command.mov, new String [] {params[1], "%eax"});
 					AR.addCommand(ARelement.command.xor, new String [] {"%edx", "%edx"});

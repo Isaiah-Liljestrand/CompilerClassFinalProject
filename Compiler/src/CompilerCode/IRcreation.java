@@ -469,30 +469,48 @@ public class IRcreation {
 			break;
 		case additionAssignmentOperator:
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
-				IR.addCommand(IRelement.command.add, ID + " %1");
+				IR.addCommand(IRelement.command.set, "%2 " + ID);
+				IR.addCommand(IRelement.command.add, "%1 %2");
+				IR.addCommand(IRelement.command.set, ID + " %1");
 			} else {
-				IR.addCommand(IRelement.command.add, ID + " " + findValue(n));
+				IR.addCommand(IRelement.command.set, "%1 " + ID);
+				IR.addCommand(IRelement.command.add, "%1 " + findValue(n));
+				IR.addCommand(IRelement.command.set, ID + " %1");
 			}
 			break;
 		case subtractionAssignmentOperator:
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
-				IR.addCommand(IRelement.command.sub, ID + " %1");
+				IR.addCommand(IRelement.command.set, "%2 " + ID);
+				IR.addCommand(IRelement.command.sub, "%1 %2");
+				IR.addCommand(IRelement.command.set, ID + " %1");
 			} else {
-				IR.addCommand(IRelement.command.sub, ID + " " + findValue(n));
+				IR.addCommand(IRelement.command.set, "%1 " + ID);
+				IR.addCommand(IRelement.command.sub, "%1 " + findValue(n));
+				IR.addCommand(IRelement.command.set, ID + " %1");
 			}
 			break;
 		case multiplicationAssignmentOperator:
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
-				IR.addCommand(IRelement.command.mul, ID + " %1");
+				IR.addCommand(IRelement.command.set, "%2 " + ID);
+				IR.addCommand(IRelement.command.mul, "%1 %2");
+				IR.addCommand(IRelement.command.set, ID + " %1");
 			} else {
-				IR.addCommand(IRelement.command.mul, ID + " " + findValue(n));
+				IR.addCommand(IRelement.command.set, "%1 " + ID);
+				IR.addCommand(IRelement.command.set, "%2 " + findValue(n));
+				IR.addCommand(IRelement.command.mul, "%1 %2");
+				IR.addCommand(IRelement.command.set, ID + " %1");
 			}
 			break;
 		case divisionAssignmentOperator:
 			if((n = simpleExpressionHandler(tree.children.get(2), 1)) == null) {
-				IR.addCommand(IRelement.command.div, ID + " %1");
+				IR.addCommand(IRelement.command.set, "%2 %1");
+				IR.addCommand(IRelement.command.set, "%1 " + ID);
+				IR.addCommand(IRelement.command.div, "%1 %2");
+				IR.addCommand(IRelement.command.set, ID + " %1");
 			} else {
-				IR.addCommand(IRelement.command.div, ID + " " + findValue(n));
+				IR.addCommand(IRelement.command.set, "%1 " + ID);
+				IR.addCommand(IRelement.command.div, "%1 " + findValue(n));
+				IR.addCommand(IRelement.command.set, ID + " %1");
 			}
 			break;
 		case assignmentOperator:
