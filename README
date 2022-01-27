@@ -1,4 +1,10 @@
-﻿# Fontes-Barry_Fowler_Iiljestrand_Marks_423
+﻿# Fontes-Barry_Fowler_Liljestrand_Marks_423
+ 
+Semester project for senior compilers class
+C compiler implemented in java. Implements most basic functionalities, includes flags to display various usage information.
+All design decision were discussed and decided on as a group.
+Team includes:Isaiah Liljestrand, Jacob Marks, Benjamin Fowler, and Christopher Fontes-Barry
+
 
 --Usage In Eclipse--
 Open Eclipse Oracle
