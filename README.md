@@ -1,55 +1,19 @@
-# Fontes-Barry_Fowler_Iiljestrand_Marks_423
+# Fontes-Barry_Fowler_Liljestrand_Marks_423
 
---Useage--
+Final Project for Senior Compilers class.
+Simple C compiler supporting most basic functionalities including variable assignment, arithmetic operations, loops, functions, and conditionals.
 
---C Tokens--
-auto
-break
-case
-char
-const
-continue
-default
-do
-double
-else
-enum
-extern
-float
-for
-goto
-if
-int
-long
-register
-return
-short
-signed
-sizeof
-static
-struct
-switch
-typedef
-union
-unsigned
-void
-volatile
-while
-()
-{}
-[]
-;
 
 --Coding Standards--
 Java based\n
 Use branches for editing\n
 Merge branches that work\n
-Mostly following Googleís Java style guide: https://google.github.io/styleguide/javaguide.html\n
+Mostly following Google‚Äôs Java style guide: https://google.github.io/styleguide/javaguide.html\n
 8 Spaces will be used instead of tabs.\n
 Braces will always be used even when the body contains only one line.\n
 Braces will be placed on the same line for if, else, for, while, and any other statements which need brackets.\n
 Both braces for an empty block can be placed on the same line for conciseness.\n
-Identifier names must match the regular expression ì\w+î. Only ascii letters and digits.\n
+Identifier names must match the regular expression ‚Äú\w+‚Äù. Only ascii letters and digits.\n
 Package names are all lower case.\n
 Class names use UpperCamelCase.\n
 Method names use lowerCamelCase.\n
